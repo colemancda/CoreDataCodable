@@ -20,6 +20,18 @@ class CoreDataCodableTests: XCTestCase {
         
         struct Test1: CoreDataEncodable {
             
+            struct Identifier: CoreDataIdentifier {
+                
+                typealias Encodable = Test1
+                
+                var rawValue: UUID
+                
+                init(rawValue: UUID) {
+                    
+                    self.rawValue = rawValue
+                }
+            }
+            
             var id: UUID
             
             var name: String

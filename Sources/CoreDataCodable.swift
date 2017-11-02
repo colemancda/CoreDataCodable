@@ -22,12 +22,14 @@ public final class CoreDataEncoder: Encoder {
     /// Any contextual information set by the user for encoding.
     public var userInfo = [CodingUserInfoKey : Any]()
     
+    /// The current managed object being encoded.
+    private var managedObject: NSManagedObject?
+    
     // MARK: - Initialization
     
-    public init(managedObjectContext: NSManagedObjectContext, options: Options) {
+    public init(managedObjectContext: NSManagedObjectContext) {
         
         self.managedObjectContext = managedObjectContext
-        self.options = options
     }
     
     // MARK: - Methods
@@ -35,31 +37,67 @@ public final class CoreDataEncoder: Encoder {
     public func encode<Encodable : CoreDataEncodable>(_ encodable: Encodable) throws -> Encodable.ManagedObject {
         
         // get managed object
-        let identifierKeyPath = Encodable.coreDataIdentifier
+        let managedObject = encodable.findOrCreate(in: managedObjectContext)
+        self.managedObject = managedObject
+        defer { self.managedObject = nil }
         
-        
+        // will throw if the encoder doesnt have any managed object
         try encodable.encode(to: self)
+        
+        
     }
     
     public func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         
-        return KeyedEncodingContainer<Key>(referencing: self, codingPath: codingPath)
+        if let managedObject = self.managedObject {
+            
+            let container = ManagedObjectKeyedEncodingContainer<Key>(referencing: self,
+                                                                     codingPath: codingPath,
+                                                                     wrapping: managedObject)
+            
+            return KeyedEncodingContainer<Key>(container)
+            
+        } else {
+            
+            let container = InvalidKeyedEncodingContainer<Key>(referencing: self,
+                                                               codingPath: codingPath,
+                                                               underlyingError: .noManagedObject)
+            
+            return KeyedEncodingContainer<Key>(container)
+        }
     }
     
     public func unkeyedContainer() -> UnkeyedEncodingContainer {
         
-        
+        fatalError()
     }
     
     public func singleValueContainer() -> SingleValueEncodingContainer {
         
-        return self
+        fatalError()
     }
     
     
 }
 
+private final class _CoreDataEncoder: Encodable {
+    
+    
+}
+
 // MARK: - Supporting Types
+
+public extension CoreDataEncoder {
+    
+    public enum Error: Swift.Error {
+        
+        /// The managed object is missing from the context.
+        /// Most likely this is due to using the encoding a type that does not conform to `CoreDataEncodable`.
+        case noManagedObject
+    }
+}
+
+public typealias CoreDataCodable = CoreDataEncodable // & CoreDataDecodable
 
 /// Specifies how a type can be encoded to be stored with Core Data.
 public protocol CoreDataEncodable: Encodable {
@@ -68,23 +106,87 @@ public protocol CoreDataEncodable: Encodable {
     
     /// Find or create
     func findOrCreate(in context: NSManagedObjectContext) -> ManagedObject
-    
-    func save(_ context: NSManagedObjectContext) throws -> ManagedObject
 }
 
-public extension CoreDataEncoder {
+public protocol CoreDataIdentifier: RawRepresentable, Codable {
     
-    public enum Error: Swift.Error {
-        
-        case notUnique
-    }
+    associatedtype CoreData: CoreDataCodable
 }
 
 // MARK: - KeyedEncodingContainer
 
-public extension CoreDataEncoder {
+private extension CoreDataEncoder {
     
-    public struct KeyedEncodingContainer<K : CodingKey> : KeyedEncodingContainerProtocol {
+    /// Fake container for invalid encoder context.
+    private struct InvalidKeyedEncodingContainer<K : CodingKey> : KeyedEncodingContainerProtocol {
+        
+        /// A reference to the encoder we're writing to.
+        private let encoder: CoreDataEncoder
+        
+        private let underlyingError: CoreDataEncoder.Error
+        
+        public private(set) var codingPath: [CodingKey]
+        
+        init(referencing encoder: CoreDataEncoder, codingPath: [CodingKey], underlyingError: CoreDataEncoder.Error) {
+            
+            self.encoder = encoder
+            self.codingPath = codingPath
+            self.underlyingError = underlyingError
+        }
+        
+        private mutating func encodingError(_ value: Any, for key: Key) -> Swift.Error {
+            
+            // set coding key context
+            codingPath.append(key)
+            defer { codingPath.removeLast() }
+            
+            let context = EncodingError.Context(codingPath: encoder.codingPath,
+                                                debugDescription: "Cannot encode due to invalid context",
+                                                underlyingError: underlyingError)
+            
+            let error = EncodingError.invalidValue(value, context)
+            
+            return error
+        }
+        
+        public mutating func encodeNil(forKey key: Key)               throws { throw encodingError(NSNull(), for: key) }
+        public mutating func encode(_ value: Bool, forKey key: Key)   throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: Int, forKey key: Key)    throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: Int8, forKey key: Key)   throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: Int16, forKey key: Key)  throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: Int32, forKey key: Key)  throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: Int64, forKey key: Key)  throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: UInt, forKey key: Key)   throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: UInt8, forKey key: Key)  throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: UInt16, forKey key: Key) throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: UInt32, forKey key: Key) throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: UInt64, forKey key: Key) throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: String, forKey key: Key) throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: Float, forKey key: Key) throws { throw encodingError(value, for: key)  }
+        public mutating func encode(_ value: Double, forKey key: Key) throws { throw encodingError(value, for: key)  }
+        public mutating func encode<T>(_ value: T, forKey key: K) throws where T : Encodable { throw encodingError(value, for: key)  }
+        public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: K) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+            
+            fatalError()
+        }
+        
+        public mutating func nestedUnkeyedContainer(forKey key: K) -> UnkeyedEncodingContainer {
+            
+            fatalError()
+        }
+        
+        public mutating func superEncoder() -> Encoder {
+            
+            return encoder
+        }
+        
+        public mutating func superEncoder(forKey key: K) -> Encoder {
+            
+            return encoder
+        }
+    }
+    
+    private struct ManagedObjectKeyedEncodingContainer<K : CodingKey> : KeyedEncodingContainerProtocol {
         
         public typealias Key = K
         
@@ -94,16 +196,16 @@ public extension CoreDataEncoder {
         /// A reference to the container we're writing to.
         private let container: NSManagedObject
         
-        /// The path of coding keys taken to get to this point in encoding.
-        private(set) public var codingPath: [CodingKey]
+        public private(set) var codingPath: [CodingKey]
         
         /// Initializes `self` with the given references.
-        fileprivate init(referencing encoder: CoreDataEncoder, codingPath: [CodingKey]) {
+        fileprivate init(referencing encoder: CoreDataEncoder, codingPath: [CodingKey], wrapping container: NSManagedObject) {
+            
+            precondition(container == encoder.managedObject)
             
             self.encoder = encoder
             self.codingPath = codingPath
-            
-            
+            self.container = container
         }
         
         private mutating func write(_ value: NSObject?, forKey key: Key) throws {
@@ -132,30 +234,35 @@ public extension CoreDataEncoder {
         public mutating func encode(_ value: String, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         public mutating func encode(_ value: Float, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         public mutating func encode(_ value: Double, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
+        public mutating func encode(_ value: UUID, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
+        public mutating func encode(_ value: URL, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
+        public mutating func encode(_ value: URL, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         
-        public mutating func encode<T>(_ value: T, forKey key: K) throws where T : Encodable {
+        public mutating func encode<T: Encodable>(_ value: T, forKey key: Key) throws {
             
+            // get value
             
+            try write(encoder.box(value), forKey: key)
         }
         
         public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: K) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
             
-            
+            fatalError()
         }
         
         public mutating func nestedUnkeyedContainer(forKey key: K) -> UnkeyedEncodingContainer {
             
-            
+            fatalError()
         }
         
         public mutating func superEncoder() -> Encoder {
             
-            
+            fatalError()
         }
         
         public mutating func superEncoder(forKey key: K) -> Encoder {
             
-            
+            fatalError()
         }
     }
 }
@@ -177,9 +284,9 @@ private extension CoreDataEncoder {
     func box(_ value: UInt16) -> NSObject { return NSNumber(value: value) }
     func box(_ value: UInt32) -> NSObject { return NSNumber(value: value) }
     func box(_ value: UInt64) -> NSObject { return NSNumber(value: value) }
-    func box(_ value: String) -> NSObject { return NSString(string: value) }
     func box(_ value: Float) -> NSObject { return NSNumber(value: value) }
     func box(_ value: Double) -> NSObject { return NSNumber(value: value) }
+    func box(_ value: String) -> NSObject { return NSString(string: value) }
     func box(_ date: Date) -> NSObject { return date as NSDate }
     func box(_ data: Data) -> NSObject { return data as NSData }
     func box(_ uuid: UUID) -> NSObject { return uuid as NSUUID }
