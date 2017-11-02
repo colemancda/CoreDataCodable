@@ -3,14 +3,25 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		52D6D9871BEFF229002C0205 /* CoreDataCodable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D6D97C1BEFF229002C0205 /* CoreDataCodable.framework */; };
+		6E0BD4A81FAB8EE100498866 /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4A71FAB8EE100498866 /* Encoder.swift */; };
+		6E0BD4A91FAB8EE100498866 /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4A71FAB8EE100498866 /* Encoder.swift */; };
+		6E0BD4AA1FAB8EE100498866 /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4A71FAB8EE100498866 /* Encoder.swift */; };
+		6E0BD4AB1FAB8EE100498866 /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4A71FAB8EE100498866 /* Encoder.swift */; };
+		6E0BD4AD1FABB7C300498866 /* TestAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */; };
+		6E0BD4AE1FABB7C300498866 /* TestAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */; };
+		6E0BD4AF1FABB7C300498866 /* TestAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */; };
 		6E7250E01FAAD15700BCF637 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */; };
 		6E7250E11FAAD15700BCF637 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */; };
 		6E7250E21FAAD15700BCF637 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */; };
+		6E7282E31FABC0EA001856FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282E21FABC0EA001856FA /* Extensions.swift */; };
+		6E7282E41FABC0EA001856FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282E21FABC0EA001856FA /* Extensions.swift */; };
+		6E7282E51FABC0EA001856FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282E21FABC0EA001856FA /* Extensions.swift */; };
+		6E7282E61FABC0EA001856FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282E21FABC0EA001856FA /* Extensions.swift */; };
 		8933C7851EB5B820000D00A4 /* CoreDataCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */; };
 		8933C7861EB5B820000D00A4 /* CoreDataCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */; };
 		8933C7871EB5B820000D00A4 /* CoreDataCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */; };
@@ -52,10 +63,11 @@
 		52D6D9E21BEFFF6E002C0205 /* CoreDataCodable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreDataCodable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52D6D9F01BEFFFBE002C0205 /* CoreDataCodable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreDataCodable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52D6DA0F1BF000BD002C0205 /* CoreDataCodable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreDataCodable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E0BD4A11FAB6F9C00498866 /* CoreDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataExtensions.swift; sourceTree = "<group>"; };
-		6E0BD4A61FAB6FD400498866 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		6E0BD4A71FAB8EE100498866 /* Encoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encoder.swift; sourceTree = "<group>"; };
+		6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAttributes.swift; sourceTree = "<group>"; };
 		6E7250DF1FAAD15700BCF637 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		6E7250E31FAB5BD200BCF637 /* Encoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encoder.swift; sourceTree = "<group>"; };
+		6E7250E31FAB5BD200BCF637 /* JSONEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONEncoder.swift; sourceTree = "<group>"; };
+		6E7282E21FABC0EA001856FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataCodable.swift; sourceTree = "<group>"; };
 		8933C7891EB5B82A000D00A4 /* CoreDataCodableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataCodableTests.swift; sourceTree = "<group>"; };
 		AD2FAA261CD0B6D800659CF4 /* CoreDataCodable.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CoreDataCodable.plist; sourceTree = "<group>"; };
@@ -123,7 +135,6 @@
 		52D6D9721BEFF229002C0205 = {
 			isa = PBXGroup;
 			children = (
-				6E0BD4A61FAB6FD400498866 /* Cartfile */,
 				8933C7811EB5B7E0000D00A4 /* Sources */,
 				8933C7831EB5B7EB000D00A4 /* Tests */,
 				52D6D99C1BEFF38C002C0205 /* Configs */,
@@ -158,8 +169,9 @@
 			isa = PBXGroup;
 			children = (
 				8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */,
-				6E0BD4A11FAB6F9C00498866 /* CoreDataExtensions.swift */,
-				6E7250E31FAB5BD200BCF637 /* Encoder.swift */,
+				6E0BD4A71FAB8EE100498866 /* Encoder.swift */,
+				6E7250E31FAB5BD200BCF637 /* JSONEncoder.swift */,
+				6E7282E21FABC0EA001856FA /* Extensions.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -168,6 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				8933C7891EB5B82A000D00A4 /* CoreDataCodableTests.swift */,
+				6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */,
 				6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */,
 			);
 			name = Tests;
@@ -391,7 +404,7 @@
 				};
 			};
 			buildConfigurationList = 52D6D9761BEFF229002C0205 /* Build configuration list for PBXProject "CoreDataCodable" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -471,6 +484,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8933C7851EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
+				6E7282E31FABC0EA001856FA /* Extensions.swift in Sources */,
+				6E0BD4A81FAB8EE100498866 /* Encoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,6 +494,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8933C7901EB5B82D000D00A4 /* CoreDataCodableTests.swift in Sources */,
+				6E0BD4AD1FABB7C300498866 /* TestAttributes.swift in Sources */,
 				6E7250E01FAAD15700BCF637 /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -487,6 +503,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E0BD4AA1FAB8EE100498866 /* Encoder.swift in Sources */,
+				6E7282E51FABC0EA001856FA /* Extensions.swift in Sources */,
 				8933C7871EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -495,6 +513,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E0BD4AB1FAB8EE100498866 /* Encoder.swift in Sources */,
+				6E7282E61FABC0EA001856FA /* Extensions.swift in Sources */,
 				8933C7881EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -503,6 +523,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E0BD4A91FAB8EE100498866 /* Encoder.swift in Sources */,
+				6E7282E41FABC0EA001856FA /* Extensions.swift in Sources */,
 				8933C7861EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -513,6 +535,7 @@
 			files = (
 				8933C78F1EB5B82C000D00A4 /* CoreDataCodableTests.swift in Sources */,
 				6E7250E11FAAD15700BCF637 /* Model.xcdatamodeld in Sources */,
+				6E0BD4AE1FABB7C300498866 /* TestAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,6 +545,7 @@
 			files = (
 				8933C78E1EB5B82C000D00A4 /* CoreDataCodableTests.swift in Sources */,
 				6E7250E21FAAD15700BCF637 /* Model.xcdatamodeld in Sources */,
+				6E0BD4AF1FABB7C300498866 /* TestAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -705,6 +729,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Configs/CoreDataCodableTests.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.CoreDataCodable.CoreDataCodable-iOS-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -718,6 +743,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Configs/CoreDataCodableTests.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.CoreDataCodable.CoreDataCodable-iOS-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";

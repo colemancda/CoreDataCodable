@@ -8,36 +8,111 @@
 
 import Foundation
 import XCTest
+import CoreData
 import CoreDataCodable
 
-class CoreDataCodableTests: XCTestCase {
+final class CoreDataCodableTests: XCTestCase {
     
-    static var allTests = [
-        ("testExample", testExample),
-    ]
-    
-    func testExample() {
+    func testAttributes() {
         
-        struct Test1: CoreDataEncodable {
+        let value = TestAttributes(identifier: TestAttributes.Identifier(rawValue: "test01"),
+                                   boolean: true,
+                                   data: Data(bytes: [0x01, 0x02, 0x03]),
+                                   date: Date(),
+                                   decimal: Decimal(100.555555),
+                                   double: 1.66666,
+                                   float: 1.5555,
+                                   int16: 16,
+                                   int32: 32,
+                                   int64: 64,
+                                   string: "test",
+                                   uri: URL(string: "https://swift.org")!,
+                                   uuid: UUID(),
+                                   enumValue: .three)
+        
+        context {
             
-            struct Identifier: CoreDataIdentifier {
+            let encoder = CoreDataEncoder(managedObjectContext: $0)
+            
+            do {
                 
-                typealias Encodable = Test1
+                let managedObject = try encoder.encode(value)
                 
-                var rawValue: UUID
+                print(managedObject)
                 
-                init(rawValue: UUID) {
-                    
-                    self.rawValue = rawValue
-                }
+                XCTAssert(managedObject.identifier == value.identifier.rawValue)
+                XCTAssert(managedObject.boolean == value.boolean)
+                XCTAssert(managedObject.data == value.data)
+                XCTAssert(managedObject.date == value.date)
+                XCTAssert(managedObject.decimal.description == value.decimal.description) // NSDecimal bug?
+                XCTAssert(managedObject.double == value.double)
+                XCTAssert(managedObject.float == value.float)
+                XCTAssert(managedObject.int16 == value.int16)
+                XCTAssert(managedObject.int32 == value.int32)
+                XCTAssert(managedObject.int64 == value.int64)
+                XCTAssert(managedObject.string == value.string)
+                XCTAssert(managedObject.uri == value.uri)
+                XCTAssert(managedObject.uuid == value.uuid)
+                XCTAssert(managedObject.enumValue == value.enumValue.rawValue)
             }
             
-            var id: UUID
-            
-            var name: String
-            
-            var value: Int
+            catch { XCTFail("\(error)") }
         }
     }
+}
+
+extension CoreDataCodableTests {
     
+    var model: NSManagedObjectModel {
+        
+        return NSManagedObjectModel.mergedModel(from: Bundle.allBundles)!
+    }
+    
+    func testSQLiteURL() -> URL {
+        
+        let fileManager = FileManager.default
+        
+        // get cache folder
+        
+        let cacheURL = try! fileManager.url(for: .cachesDirectory,
+                                            in: .userDomainMask,
+                                            appropriateFor: nil,
+                                            create: false)
+        
+        // get app folder
+        let bundleIdentifier = "\(self)" //Bundle.main.bundleIdentifier!
+        let folderURL = cacheURL.appendingPathComponent(bundleIdentifier, isDirectory: true)
+        
+        // create folder if doesnt exist
+        var folderExists: ObjCBool = false
+        if fileManager.fileExists(atPath: folderURL.path, isDirectory: &folderExists) == false
+            || folderExists.boolValue == false {
+            
+            try! fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true)
+        }
+        
+        let fileURL = folderURL.appendingPathComponent("data" + UUID().uuidString + ".sqlite", isDirectory: false)
+        
+        return fileURL
+    }
+    
+    func context(_ block: (NSManagedObjectContext) -> ()) {
+        
+        let fileURL = testSQLiteURL()
+        
+        let managedObjectModel = self.model
+        
+        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: managedObjectModel)
+        
+        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        managedObjectContext.undoManager = nil
+        managedObjectContext.persistentStoreCoordinator = persistentStoreCoordinator
+        
+        try! persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType,
+                                                           configurationName: nil,
+                                                           at: fileURL,
+                                                           options: nil)
+        
+        block(managedObjectContext)
+    }
 }
