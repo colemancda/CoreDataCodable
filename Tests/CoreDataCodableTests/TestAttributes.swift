@@ -39,6 +39,8 @@ struct TestAttributes: Codable {
     var uuid: UUID
     
     var enumValue: TestEnum
+    
+    var optional: String?
 }
 
 extension TestAttributes {
@@ -136,4 +138,6 @@ public final class TestAttributesManagedObject: NSManagedObject {
     @NSManaged var uuid: UUID
     
     @NSManaged var enumValue: String
+    
+    @NSManaged var optional: String?
 }

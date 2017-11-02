@@ -28,11 +28,13 @@ final class CoreDataCodableTests: XCTestCase {
                                    string: "test",
                                    uri: URL(string: "https://swift.org")!,
                                    uuid: UUID(),
-                                   enumValue: .three)
+                                   enumValue: .three,
+                                   optional: nil)
         
         context {
             
-            let encoder = CoreDataEncoder(managedObjectContext: $0)
+            var encoder = CoreDataEncoder(managedObjectContext: $0)
+            encoder.log = { print($0) }
             
             do {
                 
@@ -54,6 +56,34 @@ final class CoreDataCodableTests: XCTestCase {
                 XCTAssert(managedObject.uri == value.uri)
                 XCTAssert(managedObject.uuid == value.uuid)
                 XCTAssert(managedObject.enumValue == value.enumValue.rawValue)
+                XCTAssertNil(managedObject.optional)
+            }
+            
+            catch { XCTFail("\(error)") }
+        }
+    }
+    
+    func testRelationships() {
+        
+        let parent = TestParent(identifier: TestParent.Identifier(rawValue: UUID()),
+                                child: TestChild.Identifier(rawValue: UUID()),
+                                children: [TestChild.Identifier(rawValue: UUID()),
+                                           TestChild.Identifier(rawValue: UUID())])
+        
+        context {
+            
+            var encoder = CoreDataEncoder(managedObjectContext: $0)
+            encoder.log = { print($0) }
+            
+            do {
+                
+                let managedObject = try encoder.encode(parent)
+                
+                print(managedObject)
+                
+                XCTAssert(managedObject.identifier == parent.identifier.rawValue)
+                XCTAssert(Set(managedObject.children.map({ $0.identifier })) == Set(parent.children.map({ $0.rawValue })))
+                XCTAssert(managedObject.child?.identifier == parent.child?.rawValue)
             }
             
             catch { XCTFail("\(error)") }

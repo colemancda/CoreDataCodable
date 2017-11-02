@@ -19,6 +19,9 @@ public struct CoreDataEncoder {
     /// Any contextual information set by the user for encoding.
     public var userInfo = [CodingUserInfoKey : Any]()
     
+    /// Logger handler
+    public var log: Log?
+    
     // MARK: - Initialization
     
     public init(managedObjectContext: NSManagedObjectContext) {
@@ -43,7 +46,8 @@ public struct CoreDataEncoder {
                               managedObject: managedObject,
                               encodable: encodable,
                               codingPath: codingPath,
-                              userInfo: userInfo)
+                              userInfo: userInfo,
+                              log: log)
         
         // encoder into container
         try encodable.encode(to: encoder)
@@ -67,6 +71,8 @@ public extension CoreDataEncoder {
         
         case invalidSelector(Selector)
     }
+    
+    public typealias Log = (String) -> ()
 }
 
 // MARK: - Encodable
@@ -92,19 +98,24 @@ fileprivate extension CoreDataEncoder {
         /// The Swift encodable type being encoded.
         public let encodable: Encodable
         
+        /// Logger
+        public let log: Log?
+        
         // MARK: - Initialization
         
         fileprivate init(managedObjectContext: NSManagedObjectContext,
                          managedObject: NSManagedObject,
                          encodable: Encodable,
                          codingPath: [CodingKey],
-                         userInfo: [CodingUserInfoKey : Any]) {
+                         userInfo: [CodingUserInfoKey : Any],
+                         log: Log?) {
             
             self.managedObjectContext = managedObjectContext
             self.managedObject = managedObject
             self.encodable = encodable
             self.codingPath = codingPath
             self.userInfo = userInfo
+            self.log = log
         }
         
         // MARK: - Methods
@@ -126,6 +137,37 @@ fileprivate extension CoreDataEncoder {
             //precondition(self.codingPath.last != nil)
             
             return SingleValueEncodingContainer(encoder: self)
+        }
+        
+        fileprivate func set(_ value: NSObject?, forKey key: CodingKey) throws {
+            
+            // log
+            log?("\(CoreDataEncoder.self): Will set \(value?.description ?? "nil") for key \(codingPath.reduce("", { $0 + "\($0.isEmpty ? "" : ".")" + $1.stringValue }))")
+            
+            // FIXME: test for valid property type
+            
+            let selector = Selector("set" + key.stringValue.capitalizingFirstLetter() + ":")
+             
+            let managedObject = self.managedObject
+            
+            // FIXME: Add option to throw or crash to improve performance
+            
+            guard managedObject.responds(to: selector) else {
+                
+                let context = EncodingError.Context(codingPath: codingPath,
+                                                    debugDescription: "No selector for the specified key.",
+                                                    underlyingError: CoreDataEncoder.Error.invalidSelector(selector))
+                
+                let error = EncodingError.invalidValue(value as Any, context)
+             
+                throw error
+             }
+            
+            // FIXME: call setter selector instead of `setValue:forKey`
+            //self.container.perform(selector, with: value)
+            
+            // set value on object
+            managedObject.setValue(value, forKey: key.stringValue)
         }
     }
 }
@@ -161,30 +203,8 @@ fileprivate extension CoreDataEncoder {
             codingPath.append(key)
             defer { codingPath.removeLast() }
             
-            // FIXME: test for valid property type
-            
-            // FIXME: call setter selector instead of `setValue:forKey`
-            
-            self.container.setValue(value, forKey: key.stringValue)
-            
-            /*
-            let selector = Selector("set" + key.stringValue.capitalizingFirstLetter() + ":")
-                
-            let managedObject = self.container
-            
-            guard managedObject.responds(to: selector) else {
-                
-                let context = EncodingError.Context(codingPath: codingPath,
-                                                    debugDescription: "No selector for the specified key.",
-                                                    underlyingError: CoreDataEncoder.Error.invalidSelector(selector))
-                
-                let error = EncodingError.invalidValue(value as Any, context)
-                
-                throw error
-            }
-            
-            self.container.perform(selector, with: value)
-            */
+            // set value
+            try encoder.set(value, forKey: key)
         }
         
         public mutating func encodeNil(forKey key: Key)               throws { try write(nil, forKey: key) }
@@ -209,6 +229,11 @@ fileprivate extension CoreDataEncoder {
         public mutating func encode(_ value: UUID, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         public mutating func encode(_ value: URL, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         public mutating func encode(_ value: Decimal, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
+        
+        public mutating func encode<Identifier: CoreDataIdentifier>(_ value: Identifier, forKey key: Key) throws {
+            
+            
+        }
         
         public mutating func encode<T: Swift.Encodable>(_ value: T, forKey key: Key) throws {
             
@@ -285,27 +310,22 @@ fileprivate extension CoreDataEncoder.Encoder {
             get { return encoder.codingPath }
         }
         
-        private func noKeyError(_ value: NSObject?) -> Error {
-            
-            let context = EncodingError.Context(codingPath: codingPath,
-                                                debugDescription: "No key was provided for single value container.",
-                                                underlyingError: CoreDataEncoder.Error.noKey)
-            
-            let error = EncodingError.invalidValue(value as Any, context)
-            
-            return error
-        }
-        
         @inline(__always)
         private func write(_ value: NSObject?) throws {
             
-            guard let codingKey = self.codingPath.last
-                else { throw noKeyError(value) }
+            guard let codingKey = self.codingPath.last else {
             
-            // FIXME: verify property type
+                let context = EncodingError.Context(codingPath: codingPath,
+                                                    debugDescription: "No key was provided for single value container.",
+                                                    underlyingError: CoreDataEncoder.Error.noKey)
+                
+                let error = EncodingError.invalidValue(value as Any, context)
+                
+                throw error
+            }
             
             // set value
-            self.container.setValue(value, forKey: codingKey.stringValue)
+            try encoder.set(value, forKey: codingKey)
         }
         
         public func encodeNil() throws {
@@ -385,7 +405,7 @@ fileprivate extension CoreDataEncoder.Encoder {
         
         public func encode<T : Swift.Encodable>(_ value: T) throws {
             
-            //try write(encoder.box(value))
+            try value.encode(to: encoder)
         }
     }
 }

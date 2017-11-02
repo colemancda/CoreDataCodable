@@ -58,3 +58,12 @@ public protocol CoreDataIdentifier: RawRepresentable, Equatable, Codable {
     
     associatedtype CoreData: CoreDataCodable
 }
+
+internal extension Sequence where Iterator.Element: CodingKey {
+    
+    /// Convert CodingKey sequence into key path string.
+    var keyPath: String {
+        
+        return self.reduce("", { $0 + "\($0.isEmpty ? "" : ".")" + $1.stringValue })
+    }
+}
