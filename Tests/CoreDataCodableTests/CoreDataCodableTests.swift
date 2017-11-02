@@ -11,13 +11,21 @@ import XCTest
 import CoreDataCodable
 
 class CoreDataCodableTests: XCTestCase {
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        //// XCTAssertEqual(CoreDataCodable().text, "Hello, World!")
-    }
     
     static var allTests = [
         ("testExample", testExample),
     ]
+    
+    func testExample() {
+        
+        struct Test1: CoreDataEncodable {
+            
+            var id: UUID
+            
+            var name: String
+            
+            var value: Int
+        }
+    }
+    
 }

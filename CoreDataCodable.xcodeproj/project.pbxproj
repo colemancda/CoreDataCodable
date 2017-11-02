@@ -8,6 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		52D6D9871BEFF229002C0205 /* CoreDataCodable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D6D97C1BEFF229002C0205 /* CoreDataCodable.framework */; };
+		6E0BD4A21FAB6F9C00498866 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4A11FAB6F9C00498866 /* CoreDataExtensions.swift */; };
+		6E0BD4A31FAB6F9C00498866 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4A11FAB6F9C00498866 /* CoreDataExtensions.swift */; };
+		6E0BD4A41FAB6F9C00498866 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4A11FAB6F9C00498866 /* CoreDataExtensions.swift */; };
+		6E0BD4A51FAB6F9C00498866 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4A11FAB6F9C00498866 /* CoreDataExtensions.swift */; };
+		6E7250E01FAAD15700BCF637 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */; };
+		6E7250E11FAAD15700BCF637 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */; };
+		6E7250E21FAAD15700BCF637 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */; };
+		6E7250E71FAB5BD600BCF637 /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250E31FAB5BD200BCF637 /* Encoder.swift */; };
+		6E7250E81FAB5BD700BCF637 /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250E31FAB5BD200BCF637 /* Encoder.swift */; };
+		6E7250E91FAB5BD700BCF637 /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250E31FAB5BD200BCF637 /* Encoder.swift */; };
+		6E7250EA1FAB5BD800BCF637 /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250E31FAB5BD200BCF637 /* Encoder.swift */; };
 		8933C7851EB5B820000D00A4 /* CoreDataCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */; };
 		8933C7861EB5B820000D00A4 /* CoreDataCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */; };
 		8933C7871EB5B820000D00A4 /* CoreDataCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */; };
@@ -49,6 +60,10 @@
 		52D6D9E21BEFFF6E002C0205 /* CoreDataCodable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreDataCodable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52D6D9F01BEFFFBE002C0205 /* CoreDataCodable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreDataCodable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52D6DA0F1BF000BD002C0205 /* CoreDataCodable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreDataCodable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E0BD4A11FAB6F9C00498866 /* CoreDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataExtensions.swift; sourceTree = "<group>"; };
+		6E0BD4A61FAB6FD400498866 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		6E7250DF1FAAD15700BCF637 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		6E7250E31FAB5BD200BCF637 /* Encoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encoder.swift; sourceTree = "<group>"; };
 		8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataCodable.swift; sourceTree = "<group>"; };
 		8933C7891EB5B82A000D00A4 /* CoreDataCodableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataCodableTests.swift; sourceTree = "<group>"; };
 		AD2FAA261CD0B6D800659CF4 /* CoreDataCodable.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CoreDataCodable.plist; sourceTree = "<group>"; };
@@ -116,6 +131,7 @@
 		52D6D9721BEFF229002C0205 = {
 			isa = PBXGroup;
 			children = (
+				6E0BD4A61FAB6FD400498866 /* Cartfile */,
 				8933C7811EB5B7E0000D00A4 /* Sources */,
 				8933C7831EB5B7EB000D00A4 /* Tests */,
 				52D6D99C1BEFF38C002C0205 /* Configs */,
@@ -150,6 +166,8 @@
 			isa = PBXGroup;
 			children = (
 				8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */,
+				6E7250E31FAB5BD200BCF637 /* Encoder.swift */,
+				6E0BD4A11FAB6F9C00498866 /* CoreDataExtensions.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -158,6 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				8933C7891EB5B82A000D00A4 /* CoreDataCodableTests.swift */,
+				6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */,
 			);
 			name = Tests;
 			path = Tests/CoreDataCodableTests;
@@ -347,7 +366,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0900;
-				ORGANIZATIONNAME = "ColemanCDA";
+				ORGANIZATIONNAME = ColemanCDA;
 				TargetAttributes = {
 					52D6D97B1BEFF229002C0205 = {
 						CreatedOnToolsVersion = 7.1;
@@ -459,7 +478,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E7250EA1FAB5BD800BCF637 /* Encoder.swift in Sources */,
 				8933C7851EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
+				6E0BD4A21FAB6F9C00498866 /* CoreDataExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -468,6 +489,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8933C7901EB5B82D000D00A4 /* CoreDataCodableTests.swift in Sources */,
+				6E7250E01FAAD15700BCF637 /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,7 +497,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E7250E81FAB5BD700BCF637 /* Encoder.swift in Sources */,
 				8933C7871EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
+				6E0BD4A41FAB6F9C00498866 /* CoreDataExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,7 +507,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E7250E71FAB5BD600BCF637 /* Encoder.swift in Sources */,
 				8933C7881EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
+				6E0BD4A51FAB6F9C00498866 /* CoreDataExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -491,7 +517,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E7250E91FAB5BD700BCF637 /* Encoder.swift in Sources */,
 				8933C7861EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
+				6E0BD4A31FAB6F9C00498866 /* CoreDataExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,6 +528,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8933C78F1EB5B82C000D00A4 /* CoreDataCodableTests.swift in Sources */,
+				6E7250E11FAAD15700BCF637 /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,6 +537,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8933C78E1EB5B82C000D00A4 /* CoreDataCodableTests.swift in Sources */,
+				6E7250E21FAAD15700BCF637 /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -981,6 +1011,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				6E7250DF1FAAD15700BCF637 /* Model.xcdatamodel */,
+			);
+			currentVersion = 6E7250DF1FAAD15700BCF637 /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 52D6D9731BEFF229002C0205 /* Project object */;
 }
