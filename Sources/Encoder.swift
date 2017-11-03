@@ -79,7 +79,7 @@ public extension CoreDataEncoder {
 
 fileprivate extension CoreDataEncoder {
     
-    fileprivate final class Encoder <Encodable: CoreDataCodable>: Swift.Encoder {
+    fileprivate class Encoder <Encodable: CoreDataCodable>: Swift.Encoder {
         
         // MARK: - Properties
         
@@ -171,7 +171,38 @@ fileprivate extension CoreDataEncoder {
         }
     }
 }
+/*
+// MARK: - ReferenceEncoder
 
+fileprivate extension CoreDataEncoder {
+    
+    fileprivate final class ReferencingEncoder <Encodable: CoreDataCodable>: Encoder {
+        
+        /// A reference to the encoder we're writing to.
+        fileprivate let encoder: CoreDataEncoder.Encoder<Encodable>
+        
+        fileprivate init(referencing encoder: Encoder<Encodable>, at index: Int, wrapping array: NSMutableArray) {
+            self.encoder = encoder
+            self.reference = .array(array, index)
+            super.init(options: encoder.options, codingPath: encoder.codingPath)
+            
+            self.codingPath.append(_JSONKey(index: index))
+        }
+        
+        func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
+            <#code#>
+        }
+        
+        func unkeyedContainer() -> UnkeyedEncodingContainer {
+            <#code#>
+        }
+        
+        func singleValueContainer() -> SingleValueEncodingContainer {
+            <#code#>
+        }
+    }
+}
+*/
 // MARK: - KeyedEncodingContainer
 
 fileprivate extension CoreDataEncoder {
@@ -552,6 +583,8 @@ fileprivate extension CoreDataEncoder.Encoder {
         }
         
         mutating func superEncoder() -> Swift.Encoder {
+            
+            
             
             return encoder
         }
