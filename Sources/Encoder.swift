@@ -138,39 +138,70 @@ fileprivate extension CoreDataEncoder {
             
             return SingleValueEncodingContainer(encoder: self)
         }
-        
-        fileprivate func set(_ value: NSObject?, forKey key: CodingKey) throws {
-            
-            // log
-            log?("\(CoreDataEncoder.self): Will set \(value?.description ?? "nil") for key \"\(codingPath.reduce("", { $0 + "\($0.isEmpty ? "" : ".")" + $1.stringValue }))\"")
-            
-            // FIXME: test for valid property type
-            
-            let selector = Selector("set" + key.stringValue.capitalizingFirstLetter() + ":")
-            
-            let managedObject = self.managedObject
-            
-            // FIXME: Add option to throw or crash to improve performance
-            
-            guard managedObject.responds(to: selector) else {
-                
-                let context = EncodingError.Context(codingPath: codingPath,
-                                                    debugDescription: "No selector for the specified key.",
-                                                    underlyingError: CoreDataEncoder.Error.invalidSelector(selector))
-                
-                let error = EncodingError.invalidValue(value as Any, context)
-             
-                throw error
-             }
-            
-            // FIXME: call setter selector instead of `setValue:forKey`
-            //self.container.perform(selector, with: value)
-            
-            // set value on object
-            managedObject.setValue(value, forKey: key.stringValue)
-        }
     }
 }
+
+fileprivate extension CoreDataEncoder.Encoder {
+    
+     func set(_ value: NSObject?, forKey key: CodingKey) throws {
+        
+        // log
+        log?("\(CoreDataEncoder.self): Will set \(value?.description ?? "nil") for key \"\(codingPath.reduce("", { $0 + "\($0.isEmpty ? "" : ".")" + $1.stringValue }))\"")
+        
+        // FIXME: test for valid property type
+        
+        let selector = Selector("set" + key.stringValue.capitalizingFirstLetter() + ":")
+        
+        let managedObject = self.managedObject
+        
+        // FIXME: Add option to throw or crash to improve performance
+        
+        guard managedObject.responds(to: selector) else {
+            
+            let context = EncodingError.Context(codingPath: codingPath,
+                                                debugDescription: "No selector for the specified key.",
+                                                underlyingError: CoreDataEncoder.Error.invalidSelector(selector))
+            
+            let error = EncodingError.invalidValue(value as Any, context)
+            
+            throw error
+        }
+        
+        // FIXME: call setter selector instead of `setValue:forKey`
+        //self.container.perform(selector, with: value)
+        
+        // set value on object
+        managedObject.setValue(value, forKey: key.stringValue)
+    }
+}
+
+// MARK: - Concrete Value Representations
+
+private extension CoreDataEncoder.Encoder {
+    
+    // Returns the given value boxed in a container appropriate for pushing onto the container stack.
+    
+    func box(_ value: Bool)   -> NSObject { return NSNumber(value: value) }
+    func box(_ value: Int)    -> NSObject { return NSNumber(value: value) }
+    func box(_ value: Int8)   -> NSObject { return NSNumber(value: value) }
+    func box(_ value: Int16)  -> NSObject { return NSNumber(value: value) }
+    func box(_ value: Int32)  -> NSObject { return NSNumber(value: value) }
+    func box(_ value: Int64)  -> NSObject { return NSNumber(value: value) }
+    func box(_ value: UInt)   -> NSObject { return NSNumber(value: value) }
+    func box(_ value: UInt8)  -> NSObject { return NSNumber(value: value) }
+    func box(_ value: UInt16) -> NSObject { return NSNumber(value: value) }
+    func box(_ value: UInt32) -> NSObject { return NSNumber(value: value) }
+    func box(_ value: UInt64) -> NSObject { return NSNumber(value: value) }
+    func box(_ value: Float) -> NSObject { return NSNumber(value: value) }
+    func box(_ value: Double) -> NSObject { return NSNumber(value: value) }
+    func box(_ value: String) -> NSObject { return NSString(string: value) }
+    func box(_ date: Date) -> NSObject { return date as NSDate }
+    func box(_ data: Data) -> NSObject { return data as NSData }
+    func box(_ uuid: UUID) -> NSObject { return uuid as NSUUID }
+    func box(_ url: URL) -> NSObject { return url as NSURL }
+    func box(_ decimal: Decimal) -> NSObject { return decimal as NSDecimalNumber }
+}
+
 /*
 // MARK: - ReferenceEncoder
 
@@ -221,7 +252,7 @@ fileprivate extension CoreDataEncoder {
         }
         
         /// The path of coding keys taken to get to this point in encoding.
-        public fileprivate(set) var codingPath: [CodingKey] {
+        public private(set) var codingPath: [CodingKey] {
             
             get { return encoder.codingPath }
             
@@ -256,11 +287,11 @@ fileprivate extension CoreDataEncoder {
         public mutating func encode(_ value: Double, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         
         // Custom
-        public mutating func encode(_ value: Data, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
-        public mutating func encode(_ value: Date, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
-        public mutating func encode(_ value: UUID, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
-        public mutating func encode(_ value: URL, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
-        public mutating func encode(_ value: Decimal, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
+        private mutating func encode(_ value: Data, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
+        private mutating func encode(_ value: Date, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
+        private mutating func encode(_ value: UUID, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
+        private mutating func encode(_ value: URL, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
+        private mutating func encode(_ value: Decimal, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         
         // Encodable
         public mutating func encode<T: Swift.Encodable>(_ value: T, forKey key: Key) throws {
@@ -281,6 +312,7 @@ fileprivate extension CoreDataEncoder {
             // identifier or to-one relationship
             if let identifier = value as? CoreDataIdentifier {
                 
+                // identifier
                 if key.stringValue == Encodable.identifierKey {
                     
                     // just write attribute value
@@ -294,6 +326,15 @@ fileprivate extension CoreDataEncoder {
                     // set new value
                     try write(managedObject, forKey: key)
                 }
+                
+            } else if let array = value as? [CoreDataIdentifier] {
+                
+                try setRelationship(array, forKey: key)
+                
+            } else if let set = value as? Set<AnyHashable>,
+                let array = Array(set) as? [CoreDataIdentifier] {
+                
+                try setRelationship(array, forKey: key)
                 
             } else if let value = value as? Data {
                 
@@ -339,6 +380,22 @@ fileprivate extension CoreDataEncoder {
         public mutating func superEncoder(forKey key: Key) -> Swift.Encoder {
             
             fatalError()
+        }
+        
+        private mutating func setRelationship(_ identifiers: [CoreDataIdentifier], forKey key: Key) throws {
+            
+            // set coding key context
+            codingPath.append(key)
+            defer { codingPath.removeLast() }
+            
+            let managedObjectContext = encoder.managedObjectContext
+            
+            let managedObjects = try identifiers.map { try $0.findOrCreate(in: managedObjectContext) }
+            
+            let set = NSSet(array: managedObjects)
+            
+            // set value
+            try encoder.set(set, forKey: key)
         }
     }
 }
@@ -584,8 +641,6 @@ fileprivate extension CoreDataEncoder.Encoder {
         
         mutating func superEncoder() -> Swift.Encoder {
             
-            
-            
             return encoder
         }
         
@@ -649,131 +704,3 @@ fileprivate extension CoreDataEncoder.Encoder {
         }
     }
 }
-
-// MARK: - Concrete Value Representations
-
-private extension CoreDataEncoder.Encoder {
-    
-    // Returns the given value boxed in a container appropriate for pushing onto the container stack.
-    
-    func box(_ value: Bool)   -> NSObject { return NSNumber(value: value) }
-    func box(_ value: Int)    -> NSObject { return NSNumber(value: value) }
-    func box(_ value: Int8)   -> NSObject { return NSNumber(value: value) }
-    func box(_ value: Int16)  -> NSObject { return NSNumber(value: value) }
-    func box(_ value: Int32)  -> NSObject { return NSNumber(value: value) }
-    func box(_ value: Int64)  -> NSObject { return NSNumber(value: value) }
-    func box(_ value: UInt)   -> NSObject { return NSNumber(value: value) }
-    func box(_ value: UInt8)  -> NSObject { return NSNumber(value: value) }
-    func box(_ value: UInt16) -> NSObject { return NSNumber(value: value) }
-    func box(_ value: UInt32) -> NSObject { return NSNumber(value: value) }
-    func box(_ value: UInt64) -> NSObject { return NSNumber(value: value) }
-    func box(_ value: Float) -> NSObject { return NSNumber(value: value) }
-    func box(_ value: Double) -> NSObject { return NSNumber(value: value) }
-    func box(_ value: String) -> NSObject { return NSString(string: value) }
-    func box(_ date: Date) -> NSObject { return date as NSDate }
-    func box(_ data: Data) -> NSObject { return data as NSData }
-    func box(_ uuid: UUID) -> NSObject { return uuid as NSUUID }
-    func box(_ url: URL) -> NSObject { return url as NSURL }
-    func box(_ decimal: Decimal) -> NSObject { return decimal as NSDecimalNumber }
-}
-/*
-fileprivate struct _CoreDataKeyedEncodingContainer<K : CodingKey> : KeyedEncodingContainerProtocol {
-    typealias Key = K
-    
-    // MARK: Properties
-    
-    /// A reference to the encoder we're writing to.
-    private let encoder: _CoreDataEncoder
-    
-    /// A reference to the container we're writing to.
-    private let container: NSManagedObject
-    
-    /// The path of coding keys taken to get to this point in encoding.
-    private(set) public var codingPath: [CodingKey]
-    
-    // MARK: - Initialization
-    
-    /// Initializes `self` with the given references.
-    fileprivate init(referencing encoder: _CoreDataEncoder, codingPath: [CodingKey], wrapping container: NSManagedObject) {
-        self.encoder = encoder
-        self.codingPath = codingPath
-        self.container = container
-    }
-    
-    // MARK: - Methods
-    
-    private func write(_ value: NSObject?, forKey key: Key) throws {
-        
-        // FIXME: test for valid property type
-        
-        self.container.setValue(value, forKey: key.stringValue)
-        
-        
-    }
-    
-    // MARK: - KeyedEncodingContainerProtocol Methods
-    
-    public mutating func encodeNil(forKey key: Key)               throws { try write(nil, forKey: key) }
-    public mutating func encode(_ value: Bool, forKey key: Key)   throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: Int, forKey key: Key)    throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: Int8, forKey key: Key)   throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: Int16, forKey key: Key)  throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: Int32, forKey key: Key)  throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: Int64, forKey key: Key)  throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: UInt, forKey key: Key)   throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: UInt8, forKey key: Key)  throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: UInt16, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: UInt32, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: UInt64, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
-    public mutating func encode(_ value: String, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
-    
-    public mutating func encode(_ value: Float, forKey key: Key)  throws {
-        // Since the float may be invalid and throw, the coding path needs to contain this key.
-        self.encoder.codingPath.append(key)
-        defer { self.encoder.codingPath.removeLast() }
-        self.container[key.stringValue] = try self.encoder.box(value)
-    }
-    
-    public mutating func encode(_ value: Double, forKey key: Key) throws {
-        // Since the double may be invalid and throw, the coding path needs to contain this key.
-        self.encoder.codingPath.append(key)
-        defer { self.encoder.codingPath.removeLast() }
-        self.container[key.stringValue] = try self.encoder.box(value)
-    }
-    
-    public mutating func encode<T : Encodable>(_ value: T, forKey key: Key) throws {
-        self.encoder.codingPath.append(key)
-        defer { self.encoder.codingPath.removeLast() }
-        self.container[key.stringValue] = try self.encoder.box(value)
-    }
-    
-    public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> {
-        let dictionary = NSMutableDictionary()
-        self.container[key.stringValue] = dictionary
-        
-        self.codingPath.append(key)
-        defer { self.codingPath.removeLast() }
-        
-        let container = _JSONKeyedEncodingContainer<NestedKey>(referencing: self.encoder, codingPath: self.codingPath, wrapping: dictionary)
-        return KeyedEncodingContainer(container)
-    }
-    
-    public mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
-        let array = NSMutableArray()
-        self.container[key.stringValue] = array
-        
-        self.codingPath.append(key)
-        defer { self.codingPath.removeLast() }
-        return _JSONUnkeyedEncodingContainer(referencing: self.encoder, codingPath: self.codingPath, wrapping: array)
-    }
-    
-    public mutating func superEncoder() -> Encoder {
-        return _JSONReferencingEncoder(referencing: self.encoder, at: _JSONKey.super, wrapping: self.container)
-    }
-    
-    public mutating func superEncoder(forKey key: Key) -> Encoder {
-        return _JSONReferencingEncoder(referencing: self.encoder, at: key, wrapping: self.container)
-    }
-}
-
-*/

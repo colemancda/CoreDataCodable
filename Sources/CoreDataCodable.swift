@@ -65,6 +65,15 @@ public protocol CoreDataIdentifier: Codable {
     func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject
 }
 
+public extension Sequence where Iterator.Element: CoreDataIdentifier {
+    
+    @inline(__always)
+    func findOrCreate(in context: NSManagedObjectContext) throws -> [NSManagedObject] {
+        
+        return try map { try $0.findOrCreate(in: context) }
+    }
+}
+
 internal extension Sequence where Iterator.Element: CodingKey {
     
     /// Convert CodingKey sequence into key path string.
