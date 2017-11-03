@@ -452,115 +452,94 @@ fileprivate extension CoreDataEncoder.Encoder {
         
         var count: Int { return (try? collection().count) ?? 0 }
         
-        private func codingKey() throws -> CodingKey {
-            
-            guard let codingKey = self.codingPath.last
-                else { throw CoreDataEncoder.Error.noKey }
-            
-            return codingKey
-        }
-        
-        private func collection() throws -> [NSManagedObject] {
-            
-            let key = try codingKey()
-            
-            if let value = container.value(forKey: key.stringValue) as! NSObject? {
-                
-                if let set = value as? NSSet {
-                    
-                    
-                } if let orderedSet = value as? NSOrderedSet {
-                    
-                    
-                } else {
-                    
-                    
-                }
-                
-            } else {
-                
-                
-            }
-            
-            
-        }
-        
-        @inline(__always)
-        private func write(_ managedObject: NSManagedObject) throws {
-            
-            
-            
-            let managedObjects = try collection()
-            
-            // set value
-            try encoder.set(value, forKey: codingKey)
-        }
-        
         mutating func encodeNil() throws {
             
             // do nothing
+            // FIXME: Add option to throw error
         }
         
         mutating func encode(_ value: Bool) throws {
             
-            
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: Int) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: Int8) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: Int16) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: Int32) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: Int64) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: UInt) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: UInt8) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: UInt16) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: UInt32) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: UInt64) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: Float) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: Double) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode(_ value: String) throws {
             
+            throw invalidTypeError(for: value)
         }
         
         mutating func encode<T>(_ value: T) throws where T : Swift.Encodable {
             
-            
+            if let identifier = value as? CoreDataIdentifier {
+                
+                let managedObject = try identifier.findOrCreate(in: encoder.managedObjectContext)
+                
+                try write(managedObject)
+                
+            } else {
+                
+                throw invalidTypeError(for: value)
+            }
         }
         
         mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> Swift.KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
@@ -575,6 +554,65 @@ fileprivate extension CoreDataEncoder.Encoder {
         mutating func superEncoder() -> Swift.Encoder {
             
             return encoder
+        }
+        
+        private func codingKey() throws -> CodingKey {
+            
+            guard let codingKey = self.codingPath.last
+                else { throw CoreDataEncoder.Error.noKey }
+            
+            return codingKey
+        }
+        
+        /// Get array of to-many relationship
+        private func collection() throws -> [NSManagedObject] {
+            
+            let key = try codingKey()
+            
+            if let value = container.value(forKey: key.stringValue) as! NSObject? {
+                
+                if let set = value as? Set<NSManagedObject> {
+                    
+                    return Array(set)
+                    
+                } else if let orderedSet = value as? NSOrderedSet {
+                    
+                    return orderedSet.array as! [NSManagedObject]
+                    
+                } else {
+                    
+                    throw CoreDataEncoder.Error.invalidType
+                }
+                
+            } else {
+                
+                return []
+            }
+        }
+        
+        private func write(_ managedObject: NSManagedObject) throws {
+            
+            let key = try codingKey()
+            
+            var managedObjects = try collection()
+            
+            managedObjects.append(managedObject)
+            
+            let set = NSSet(array: managedObjects)
+            
+            // set value
+            try encoder.set(set, forKey: key)
+        }
+        
+        private func invalidTypeError(for value: Any) -> Error {
+            
+            let context = EncodingError.Context(codingPath: codingPath,
+                                                debugDescription: "The expected value should be a relationship.",
+                                                underlyingError: CoreDataEncoder.Error.invalidType)
+            
+            let error = EncodingError.invalidValue(value, context)
+            
+            return error
         }
     }
 }
