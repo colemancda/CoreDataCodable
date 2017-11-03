@@ -63,7 +63,7 @@ final class CoreDataCodableTests: XCTestCase {
         }
     }
     
-    func testRelationships() {
+    func testFaultRelationship() {
         
         let parent = TestParent(identifier: TestParent.Identifier(rawValue: 100),
                                 child: TestChild.Identifier(rawValue: UUID()),
@@ -86,6 +86,44 @@ final class CoreDataCodableTests: XCTestCase {
                 XCTAssert(managedObject.child?.identifier == parent.child?.rawValue)
             }
             
+            catch { XCTFail("\(error)") }
+        }
+    }
+    
+    func testFulfilledRelationships() {
+        
+        let parentIdentifier = TestFullfilledParent.Identifier(rawValue: 100)
+        
+        let child = TestChild(identifier: TestChild.Identifier(rawValue: UUID()),
+                              parent: nil,
+                              parentToOne: parentIdentifier)
+        
+        let children = [
+            TestChild(identifier: TestChild.Identifier(rawValue: UUID()), parent: parentIdentifier, parentToOne: nil),
+            TestChild(identifier: TestChild.Identifier(rawValue: UUID()), parent: parentIdentifier, parentToOne: nil),
+            TestChild(identifier: TestChild.Identifier(rawValue: UUID()), parent: parentIdentifier, parentToOne: nil)
+        ]
+        
+        let parent = TestFullfilledParent(identifier: parentIdentifier,
+                                child: child,
+                                children: children)
+        
+        context {
+            
+            var encoder = CoreDataEncoder(managedObjectContext: $0)
+            encoder.log = { print($0) }
+            
+            do {
+                
+                let managedObject = try encoder.encode(parent)
+                
+                print(managedObject)
+                
+                XCTAssert(managedObject.identifier == parent.identifier.rawValue)
+                XCTAssert(Set(managedObject.children.map({ $0.identifier })) == Set(parent.children.map({ $0.identifier.rawValue })))
+                XCTAssert(managedObject.child?.identifier == parent.child?.identifier.rawValue)
+            }
+                
             catch { XCTFail("\(error)") }
         }
     }
@@ -144,5 +182,32 @@ extension CoreDataCodableTests {
                                                            options: nil)
         
         block(managedObjectContext)
+    }
+}
+
+extension NSManagedObjectContext {
+    
+    func findOrCreate<T: NSManagedObject>(identifier: NSObject, property: String, entityName: String) throws -> T {
+        
+        let fetchRequest = NSFetchRequest<T>(entityName: entityName)
+        fetchRequest.predicate = NSPredicate(format: "%K == %@", property, identifier)
+        fetchRequest.fetchLimit = 1
+        fetchRequest.includesSubentities = false
+        fetchRequest.returnsObjectsAsFaults = true
+        
+        if let existing = try self.fetch(fetchRequest).first {
+            
+            return existing
+            
+        } else {
+            
+            // create a new entity
+            let newManagedObject = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self) as! T
+            
+            // set resource ID
+            newManagedObject.setValue(identifier, forKey: property)
+            
+            return newManagedObject
+        }
     }
 }

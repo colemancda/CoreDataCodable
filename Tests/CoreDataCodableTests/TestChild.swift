@@ -23,8 +23,6 @@ extension TestChild {
     
     struct Identifier: Codable, RawRepresentable {
         
-        typealias CoreData = TestChild
-        
         var rawValue: UUID
         
         init(rawValue: UUID) {
@@ -62,26 +60,7 @@ extension TestChild: CoreDataCodable {
         
         let entityName = "TestChild"
         
-        let fetchRequest = NSFetchRequest<ManagedObject>(entityName: entityName)
-        fetchRequest.predicate = NSPredicate(format: "%K == %@", identifierProperty, identifier)
-        fetchRequest.fetchLimit = 1
-        fetchRequest.includesSubentities = false
-        fetchRequest.returnsObjectsAsFaults = true
-        
-        if let existing = try context.fetch(fetchRequest).first {
-            
-            return existing
-            
-        } else {
-            
-            // create a new entity
-            let newManagedObject = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! ManagedObject
-            
-            // set resource ID
-            newManagedObject.setValue(identifier, forKey: identifierProperty)
-            
-            return newManagedObject
-        }
+        return try context.findOrCreate(identifier: identifier, property: identifierProperty, entityName: entityName)
     }
 }
 

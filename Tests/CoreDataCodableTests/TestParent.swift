@@ -52,7 +52,7 @@ extension TestParent: CoreDataCodable {
     
     static var identifierKey: String { return "identifier" }
     
-    static func findOrCreate(_ identifier: TestParent.Identifier, in managedObjectContext: NSManagedObjectContext) throws -> TestParentManagedObject {
+    static func findOrCreate(_ identifier: TestParent.Identifier, in context: NSManagedObjectContext) throws -> TestParentManagedObject {
         
         let identifier = identifier.rawValue as NSNumber
         
@@ -60,26 +60,7 @@ extension TestParent: CoreDataCodable {
         
         let entityName = "TestParent"
         
-        let fetchRequest = NSFetchRequest<ManagedObject>(entityName: entityName)
-        fetchRequest.predicate = NSPredicate(format: "%K == %@", identifierProperty, identifier)
-        fetchRequest.fetchLimit = 1
-        fetchRequest.includesSubentities = false
-        fetchRequest.returnsObjectsAsFaults = true
-        
-        if let existing = try managedObjectContext.fetch(fetchRequest).first {
-            
-            return existing
-            
-        } else {
-            
-            // create a new entity
-            let newManagedObject = NSEntityDescription.insertNewObject(forEntityName: entityName, into: managedObjectContext) as! ManagedObject
-            
-            // set resource ID
-            newManagedObject.setValue(identifier, forKey: identifierProperty)
-            
-            return newManagedObject
-        }
+        return try context.findOrCreate(identifier: identifier, property: identifierProperty, entityName: entityName)
     }
 }
 
