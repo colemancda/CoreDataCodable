@@ -294,24 +294,18 @@ fileprivate extension CoreDataEncoder {
             // override for CoreData supported native types that also are Encodable
             // and don't use encodable implementation
             
-            func encodeGeneric() throws {
-                
-                // set coding key context
-                codingPath.append(key)
-                defer { codingPath.removeLast() }
-                
-                // get value
-                try value.encode(to: encoder)
-            }
-            
             // identifier or to-one relationship
             if let identifier = value as? CoreDataIdentifier {
                 
+                let encodable = encoder.encodable
+                
+                let identifierKey = type(of: encodable).identifierKey
+                
                 // identifier
-                if key.stringValue == type(of: encoder.encodable).identifierKey {
+                if key.stringValue == identifierKey {
                     
-                    // just write attribute value
-                    try encodeGeneric()
+                    // skip value since we assume managed object is already faulted
+                    assert(container.value(forKey: identifierKey) != nil, "No identifier set")
                     
                 } else {
                     
@@ -363,7 +357,12 @@ fileprivate extension CoreDataEncoder {
                 
             } else {
                 
-                try encodeGeneric()
+                // set coding key context
+                codingPath.append(key)
+                defer { codingPath.removeLast() }
+                
+                // get value
+                try value.encode(to: encoder)
             }
         }
         
@@ -409,28 +408,26 @@ fileprivate extension CoreDataEncoder {
             codingPath.append(key)
             defer { codingPath.removeLast() }
             
-            let encoder = self.encoder
-            
             let managedObjects = try encodables.map { (try $0.findOrCreate(in: encoder.managedObjectContext), $0) }
             
             try managedObjects.forEach {
                 
                 // create encoder for managed object
-                let encoder = Encoder(managedObjectContext: encoder.managedObjectContext,
+                let encoder = Encoder(managedObjectContext: self.encoder.managedObjectContext,
                                       managedObject: $0,
                                       encodable: $1,
-                                      codingPath: encoder.codingPath,
-                                      userInfo: encoder.userInfo,
-                                      log: encoder.log)
+                                      codingPath: self.encoder.codingPath,
+                                      userInfo: self.encoder.userInfo,
+                                      log: self.encoder.log)
                 
                 // encoder into container
                 try $1.encode(to: encoder)
             }
             
-            let set = NSSet(array: managedObjects)
+            let set = NSSet(array: managedObjects.map({ $0.0 }))
             
             // set value
-            try encoder.set(set, forKey: key)
+            try self.encoder.set(set, forKey: key)
         }
         
         private mutating func setRelationship(_ identifier: CoreDataIdentifier, forKey key: Key) throws {
@@ -455,7 +452,7 @@ fileprivate extension CoreDataEncoder {
             let managedObject = try encodable.findOrCreate(in: self.encoder.managedObjectContext)
             
             // create encoder for managed object
-            let encoder = Encoder(managedObjectContext: self.encoder.managedObjectContext,
+            let newEncoder = Encoder(managedObjectContext: self.encoder.managedObjectContext,
                                   managedObject: managedObject,
                                   encodable: encodable,
                                   codingPath: self.encoder.codingPath,
@@ -463,10 +460,10 @@ fileprivate extension CoreDataEncoder {
                                   log: self.encoder.log)
             
             // encoder into container
-            try encodable.encode(to: encoder)
+            try encodable.encode(to: newEncoder)
             
             // set value
-            try encoder.set(managedObject, forKey: key)
+            try self.encoder.set(managedObject, forKey: key)
         }
     }
 }
