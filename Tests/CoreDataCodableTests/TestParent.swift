@@ -21,16 +21,22 @@ struct TestParent: Codable {
 
 extension TestParent {
     
-    struct Identifier: Codable, CoreDataIdentifier {
+    struct Identifier: Codable, RawRepresentable {
         
-        typealias CoreData = TestParent
+        var rawValue: Int64
         
-        var rawValue: UUID
-        
-        init(rawValue: UUID) {
+        init(rawValue: Int64) {
             
             self.rawValue = rawValue
         }
+    }
+}
+
+extension TestParent.Identifier: CoreDataIdentifier {
+    
+    func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject {
+        
+        return try TestParent.findOrCreate(self, in: context)
     }
 }
 
@@ -46,9 +52,9 @@ extension TestParent: CoreDataCodable {
     
     static var identifierKey: String { return "identifier" }
     
-    func findOrCreate(in context: NSManagedObjectContext) throws -> TestParentManagedObject {
+    static func findOrCreate(_ identifier: TestParent.Identifier, in managedObjectContext: NSManagedObjectContext) throws -> TestParentManagedObject {
         
-        let identifier = self.identifier.rawValue as NSUUID
+        let identifier = identifier.rawValue as NSNumber
         
         let identifierProperty = "identifier"
         
@@ -60,14 +66,14 @@ extension TestParent: CoreDataCodable {
         fetchRequest.includesSubentities = false
         fetchRequest.returnsObjectsAsFaults = true
         
-        if let existing = try context.fetch(fetchRequest).first {
+        if let existing = try managedObjectContext.fetch(fetchRequest).first {
             
             return existing
             
         } else {
             
             // create a new entity
-            let newManagedObject = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! ManagedObject
+            let newManagedObject = NSEntityDescription.insertNewObject(forEntityName: entityName, into: managedObjectContext) as! ManagedObject
             
             // set resource ID
             newManagedObject.setValue(identifier, forKey: identifierProperty)
@@ -79,7 +85,7 @@ extension TestParent: CoreDataCodable {
 
 public final class TestParentManagedObject: NSManagedObject {
     
-    @NSManaged var identifier: UUID
+    @NSManaged var identifier: Int64
     
     @NSManaged var child: TestChildManagedObject?
     

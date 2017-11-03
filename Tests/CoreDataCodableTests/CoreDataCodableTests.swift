@@ -65,7 +65,7 @@ final class CoreDataCodableTests: XCTestCase {
     
     func testRelationships() {
         
-        let parent = TestParent(identifier: TestParent.Identifier(rawValue: UUID()),
+        let parent = TestParent(identifier: TestParent.Identifier(rawValue: 100),
                                 child: TestChild.Identifier(rawValue: UUID()),
                                 children: [TestChild.Identifier(rawValue: UUID()),
                                            TestChild.Identifier(rawValue: UUID())])

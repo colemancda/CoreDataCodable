@@ -230,17 +230,40 @@ fileprivate extension CoreDataEncoder {
         public mutating func encode(_ value: URL, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         public mutating func encode(_ value: Decimal, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         
-        public mutating func encode<Identifier: CoreDataIdentifier>(_ value: Identifier, forKey key: Key) throws {
-            
-            
-        }
         
         public mutating func encode<T: Swift.Encodable>(_ value: T, forKey key: Key) throws {
             
             // override for CoreData supported native types that also are Encodable
             // and don't use encodable implementation
             
-            if let value = value as? Data {
+            func encodeGeneric() throws {
+                
+                // set coding key context
+                codingPath.append(key)
+                defer { codingPath.removeLast() }
+                
+                // get value
+                try value.encode(to: encoder)
+            }
+            
+            // identifier or to-one relationship
+            if let identifier = value as? CoreDataIdentifier {
+                
+                if key.stringValue == Encodable.identifierKey {
+                    
+                    // just write attribute value
+                    try encodeGeneric()
+                    
+                } else {
+                    
+                    // set relationship value
+                    let managedObject = try identifier.findOrCreate(in: encoder.managedObjectContext)
+                    
+                    // set new value
+                    try write(managedObject, forKey: key)
+                }
+                
+            } else if let value = value as? Data {
                 
                 try encode(value, forKey: key)
                 
@@ -262,12 +285,7 @@ fileprivate extension CoreDataEncoder {
                 
             } else {
                 
-                // set coding key context
-                codingPath.append(key)
-                defer { codingPath.removeLast() }
-                
-                // get value
-                try value.encode(to: encoder)
+                try encodeGeneric()
             }
         }
         
@@ -484,6 +502,7 @@ fileprivate extension CoreDataEncoder.Encoder {
         
         mutating func encode<T>(_ value: T) throws where T : Swift.Encodable {
             
+            
         }
         
         mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> Swift.KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
@@ -496,7 +515,8 @@ fileprivate extension CoreDataEncoder.Encoder {
         }
         
         mutating func superEncoder() -> Swift.Encoder {
-            fatalError()
+            
+            return encoder
         }
     }
 }

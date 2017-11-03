@@ -24,7 +24,7 @@
         <relationship name="parentToOne" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestParent" inverseName="child" inverseEntity="TestParent" syncable="YES"/>
     </entity>
     <entity name="TestParent" representedClassName=".TestParentManagedObject" syncable="YES">
-        <attribute name="identifier" optional="YES" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="child" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestChild" inverseName="parentToOne" inverseEntity="TestChild" syncable="YES"/>
         <relationship name="children" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TestChild" inverseName="parent" inverseEntity="TestChild" syncable="YES"/>
     </entity>

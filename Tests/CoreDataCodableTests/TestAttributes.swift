@@ -45,16 +45,22 @@ struct TestAttributes: Codable {
 
 extension TestAttributes {
     
-    struct Identifier: Codable, CoreDataIdentifier {
-        
-        typealias CoreData = TestAttributes
-        
+    struct Identifier: Codable, RawRepresentable {
+                
         var rawValue: String
         
         init(rawValue: String) {
             
             self.rawValue = rawValue
         }
+    }
+}
+
+extension TestAttributes.Identifier: CoreDataIdentifier {
+    
+    func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject {
+        
+        return try TestAttributes.findOrCreate(self, in: context)
     }
 }
 
@@ -78,9 +84,9 @@ extension TestAttributes: CoreDataCodable {
     
     static var identifierKey: String { return "identifier" }
     
-    func findOrCreate(in context: NSManagedObjectContext) throws -> TestAttributesManagedObject {
+    static func findOrCreate(_ identifier: TestAttributes.Identifier, in context: NSManagedObjectContext) throws -> TestAttributesManagedObject {
         
-        let identifier = self.identifier.rawValue as NSString
+        let identifier = identifier.rawValue as NSString
         
         let identifierProperty = "identifier"
         

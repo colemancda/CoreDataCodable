@@ -21,10 +21,16 @@ public protocol CoreDataCodable: Codable {
     var identifier: Identifier { get }
     
     /// Find or create
-    func findOrCreate(in context: NSManagedObjectContext) throws -> ManagedObject
+    static func findOrCreate(_ identifier: Identifier, in managedObjectContext: NSManagedObjectContext) throws -> ManagedObject
 }
 
 extension CoreDataCodable {
+    
+    @inline(__always)
+    func findOrCreate(in managedObjectContext: NSManagedObjectContext) throws -> ManagedObject {
+        
+        return try Self.findOrCreate(self.identifier, in: managedObjectContext)
+    }
     
     func encode(to managedObjectContext: NSManagedObjectContext) throws -> ManagedObject {
         
@@ -54,9 +60,9 @@ public extension Collection where Iterator.Element: CoreDataCodable {
     }
 }
 
-public protocol CoreDataIdentifier: RawRepresentable, Equatable, Codable {
+public protocol CoreDataIdentifier: Codable {
     
-    associatedtype CoreData: CoreDataCodable
+    func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject
 }
 
 internal extension Sequence where Iterator.Element: CodingKey {

@@ -21,7 +21,7 @@ struct TestChild: Codable {
 
 extension TestChild {
     
-    struct Identifier: Codable, CoreDataIdentifier {
+    struct Identifier: Codable, RawRepresentable {
         
         typealias CoreData = TestChild
         
@@ -31,6 +31,14 @@ extension TestChild {
             
             self.rawValue = rawValue
         }
+    }
+}
+
+extension TestChild.Identifier: CoreDataIdentifier {
+    
+    func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject {
+        
+        return try TestChild.findOrCreate(self, in: context)
     }
 }
 
@@ -46,9 +54,9 @@ extension TestChild: CoreDataCodable {
     
     static var identifierKey: String { return "identifier" }
     
-    func findOrCreate(in context: NSManagedObjectContext) throws -> TestParentManagedObject {
+    static func findOrCreate(_ identifier: TestChild.Identifier, in context: NSManagedObjectContext) throws -> TestChildManagedObject {
         
-        let identifier = self.identifier.rawValue as NSUUID
+        let identifier = identifier.rawValue as NSUUID
         
         let identifierProperty = "identifier"
         
