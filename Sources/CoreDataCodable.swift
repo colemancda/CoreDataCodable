@@ -9,30 +9,25 @@
 import Foundation
 import CoreData
 
+// MARK: - CoreDataCodable
+
 /// Specifies how a type can be encoded to be stored with Core Data.
 public protocol CoreDataCodable: Codable {
     
-    associatedtype ManagedObject: NSManagedObject
-    
-    associatedtype Identifier: CoreDataIdentifier
-    
     static var identifierKey: String { get }
     
-    var identifier: Identifier { get }
-    
-    /// Find or create
-    static func findOrCreate(_ identifier: Identifier, in managedObjectContext: NSManagedObjectContext) throws -> ManagedObject
+    var coreDataIdentifier: CoreDataIdentifier { get }
 }
 
 extension CoreDataCodable {
     
     @inline(__always)
-    func findOrCreate(in managedObjectContext: NSManagedObjectContext) throws -> ManagedObject {
+    func findOrCreate(in managedObjectContext: NSManagedObjectContext) throws -> NSManagedObject {
         
-        return try Self.findOrCreate(self.identifier, in: managedObjectContext)
+        return try self.coreDataIdentifier.findOrCreate(in: managedObjectContext)
     }
     
-    func encode(to managedObjectContext: NSManagedObjectContext) throws -> ManagedObject {
+    func encode(to managedObjectContext: NSManagedObjectContext) throws -> NSManagedObject {
         
         let encoder = CoreDataEncoder(managedObjectContext: managedObjectContext)
         
@@ -44,9 +39,9 @@ extension CoreDataCodable {
 
 public extension Collection where Iterator.Element: CoreDataCodable {
     
-    func save(_ context: NSManagedObjectContext) throws -> Set<Self.Iterator.Element.ManagedObject> {
+    func save(_ context: NSManagedObjectContext) throws -> [NSManagedObject] {
         
-        var managedObjects = ContiguousArray<Iterator.Element.ManagedObject>()
+        var managedObjects = ContiguousArray<NSManagedObject>()
         managedObjects.reserveCapacity(numericCast(self.count))
         
         for element in self {
@@ -56,9 +51,11 @@ public extension Collection where Iterator.Element: CoreDataCodable {
             managedObjects.append(managedObject)
         }
         
-        return Set(managedObjects)
+        return Array(managedObjects)
     }
 }
+
+// MARK: - CoreDataIdentifier
 
 public protocol CoreDataIdentifier: Codable {
     

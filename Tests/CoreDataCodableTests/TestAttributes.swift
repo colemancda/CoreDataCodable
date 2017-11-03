@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import CoreDataCodable
 
-struct TestAttributes: Codable {
+struct TestAttributes: Codable, Unique {
     
     var identifier: Identifier
     

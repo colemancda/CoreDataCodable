@@ -38,7 +38,7 @@ final class CoreDataCodableTests: XCTestCase {
             
             do {
                 
-                let managedObject = try encoder.encode(value)
+                let managedObject = try encoder.encode(value) as! TestAttributesManagedObject
                 
                 print(managedObject)
                 
@@ -77,7 +77,7 @@ final class CoreDataCodableTests: XCTestCase {
             
             do {
                 
-                let managedObject = try encoder.encode(parent)
+                let managedObject = try encoder.encode(parent) as! TestParentManagedObject
                 
                 print(managedObject)
                 
@@ -115,7 +115,7 @@ final class CoreDataCodableTests: XCTestCase {
             
             do {
                 
-                let managedObject = try encoder.encode(parent)
+                let managedObject = try encoder.encode(parent) as! TestParentManagedObject
                 
                 print(managedObject)
                 
@@ -210,4 +210,18 @@ extension NSManagedObjectContext {
             return newManagedObject
         }
     }
+}
+
+protocol Unique {
+    
+    associatedtype Identifier: Codable, RawRepresentable
+    
+    var identifier: Identifier { get }
+}
+
+extension Unique where Self: CoreDataCodable, Self.Identifier: CoreDataIdentifier {
+    
+    static var identifierKey: String { return "identifier" }
+    
+    var coreDataIdentifier: CoreDataIdentifier { return self.identifier }
 }

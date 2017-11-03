@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import CoreDataCodable
 
-struct TestFullfilledParent: Codable {
+struct TestFullfilledParent: Codable, Unique {
     
     typealias Identifier = TestParent.Identifier
     
