@@ -62,20 +62,20 @@ public extension CoreDataEncoder {
     
     public enum Error: Swift.Error {
         
-        /// The managed object is missing from the context.
-        /// Most likely this is due to using the encoding a type that does not conform to `CoreDataEncodable`.
-        case noManagedObject
-        
-        /// No key for single value encoding. 
+        /// No key specified for container.
         case noKey
         
+        /// Invalid selector (property doesn't exist)
         case invalidSelector(Selector)
+        
+        /// The type for the specified key does not match the type being encoded.
+        case invalidType
     }
     
     public typealias Log = (String) -> ()
 }
 
-// MARK: - Encodable
+// MARK: - Encoder
 
 fileprivate extension CoreDataEncoder {
     
@@ -142,12 +142,12 @@ fileprivate extension CoreDataEncoder {
         fileprivate func set(_ value: NSObject?, forKey key: CodingKey) throws {
             
             // log
-            log?("\(CoreDataEncoder.self): Will set \(value?.description ?? "nil") for key \(codingPath.reduce("", { $0 + "\($0.isEmpty ? "" : ".")" + $1.stringValue }))")
+            log?("\(CoreDataEncoder.self): Will set \(value?.description ?? "nil") for key \"\(codingPath.reduce("", { $0 + "\($0.isEmpty ? "" : ".")" + $1.stringValue }))\"")
             
             // FIXME: test for valid property type
             
             let selector = Selector("set" + key.stringValue.capitalizingFirstLetter() + ":")
-             
+            
             let managedObject = self.managedObject
             
             // FIXME: Add option to throw or crash to improve performance
@@ -207,6 +207,7 @@ fileprivate extension CoreDataEncoder {
             try encoder.set(value, forKey: key)
         }
         
+        // Standard primitive types
         public mutating func encodeNil(forKey key: Key)               throws { try write(nil, forKey: key) }
         public mutating func encode(_ value: Bool, forKey key: Key)   throws { try write(encoder.box(value), forKey: key) }
         public mutating func encode(_ value: Int, forKey key: Key)    throws { try write(encoder.box(value), forKey: key) }
@@ -230,7 +231,7 @@ fileprivate extension CoreDataEncoder {
         public mutating func encode(_ value: URL, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         public mutating func encode(_ value: Decimal, forKey key: Key) throws { try write(encoder.box(value), forKey: key) }
         
-        
+        // Encodable
         public mutating func encode<T: Swift.Encodable>(_ value: T, forKey key: Key) throws {
             
             // override for CoreData supported native types that also are Encodable
@@ -310,6 +311,8 @@ fileprivate extension CoreDataEncoder {
         }
     }
 }
+
+// MARK: - SingleValueEncodingContainer
 
 fileprivate extension CoreDataEncoder.Encoder {
     
@@ -428,19 +431,74 @@ fileprivate extension CoreDataEncoder.Encoder {
     }
 }
 
+// MARK: - UnkeyedEncodingContainer
+
 fileprivate extension CoreDataEncoder.Encoder {
     
     fileprivate struct UnkeyedEncodingContainer<Encodable: CoreDataCodable>: Swift.UnkeyedEncodingContainer {
         
         fileprivate let encoder: CoreDataEncoder.Encoder<Encodable>
         
-        var codingPath: [CodingKey] { return [] }
+        /// A reference to the container we're writing to.
+        private var container: NSManagedObject {
+            
+            get { return encoder.managedObject }
+        }
         
-        var count: Int { return 0 }
+        var codingPath: [CodingKey] {
+            
+            get { return encoder.codingPath }
+        }
+        
+        var count: Int { return (try? collection().count) ?? 0 }
+        
+        private func codingKey() throws -> CodingKey {
+            
+            guard let codingKey = self.codingPath.last
+                else { throw CoreDataEncoder.Error.noKey }
+            
+            return codingKey
+        }
+        
+        private func collection() throws -> [NSManagedObject] {
+            
+            let key = try codingKey()
+            
+            if let value = container.value(forKey: key.stringValue) as! NSObject? {
+                
+                if let set = value as? NSSet {
+                    
+                    
+                } if let orderedSet = value as? NSOrderedSet {
+                    
+                    
+                } else {
+                    
+                    
+                }
+                
+            } else {
+                
+                
+            }
+            
+            
+        }
+        
+        @inline(__always)
+        private func write(_ managedObject: NSManagedObject) throws {
+            
+            
+            
+            let managedObjects = try collection()
+            
+            // set value
+            try encoder.set(value, forKey: codingKey)
+        }
         
         mutating func encodeNil() throws {
             
-            
+            // do nothing
         }
         
         mutating func encode(_ value: Bool) throws {
