@@ -31,6 +31,10 @@
 		6E7282F01FAC2BF7001856FA /* TestFullfilledParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282EF1FAC2BF7001856FA /* TestFullfilledParent.swift */; };
 		6E7282F11FAC2BF7001856FA /* TestFullfilledParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282EF1FAC2BF7001856FA /* TestFullfilledParent.swift */; };
 		6E7282F21FAC2BF7001856FA /* TestFullfilledParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282EF1FAC2BF7001856FA /* TestFullfilledParent.swift */; };
+		6E7282F41FAC4975001856FA /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282F31FAC4974001856FA /* Decoder.swift */; };
+		6E7282F51FAC4975001856FA /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282F31FAC4974001856FA /* Decoder.swift */; };
+		6E7282F61FAC4975001856FA /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282F31FAC4974001856FA /* Decoder.swift */; };
+		6E7282F71FAC4975001856FA /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7282F31FAC4974001856FA /* Decoder.swift */; };
 		8933C7851EB5B820000D00A4 /* CoreDataCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */; };
 		8933C7861EB5B820000D00A4 /* CoreDataCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */; };
 		8933C7871EB5B820000D00A4 /* CoreDataCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */; };
@@ -75,11 +79,11 @@
 		6E0BD4A71FAB8EE100498866 /* Encoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encoder.swift; sourceTree = "<group>"; };
 		6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAttributes.swift; sourceTree = "<group>"; };
 		6E7250DF1FAAD15700BCF637 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		6E7250E31FAB5BD200BCF637 /* JSONEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONEncoder.swift; sourceTree = "<group>"; };
 		6E7282E21FABC0EA001856FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		6E7282E71FABC4F1001856FA /* TestParent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestParent.swift; sourceTree = "<group>"; };
 		6E7282EB1FABC58D001856FA /* TestChild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChild.swift; sourceTree = "<group>"; };
 		6E7282EF1FAC2BF7001856FA /* TestFullfilledParent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFullfilledParent.swift; sourceTree = "<group>"; };
+		6E7282F31FAC4974001856FA /* Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
 		8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataCodable.swift; sourceTree = "<group>"; };
 		8933C7891EB5B82A000D00A4 /* CoreDataCodableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataCodableTests.swift; sourceTree = "<group>"; };
 		AD2FAA261CD0B6D800659CF4 /* CoreDataCodable.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CoreDataCodable.plist; sourceTree = "<group>"; };
@@ -182,7 +186,7 @@
 			children = (
 				8933C7841EB5B820000D00A4 /* CoreDataCodable.swift */,
 				6E0BD4A71FAB8EE100498866 /* Encoder.swift */,
-				6E7250E31FAB5BD200BCF637 /* JSONEncoder.swift */,
+				6E7282F31FAC4974001856FA /* Decoder.swift */,
 				6E7282E21FABC0EA001856FA /* Extensions.swift */,
 			);
 			path = Sources;
@@ -500,6 +504,7 @@
 			files = (
 				8933C7851EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
 				6E7282E31FABC0EA001856FA /* Extensions.swift in Sources */,
+				6E7282F41FAC4975001856FA /* Decoder.swift in Sources */,
 				6E0BD4A81FAB8EE100498866 /* Encoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -523,6 +528,7 @@
 			files = (
 				6E0BD4AA1FAB8EE100498866 /* Encoder.swift in Sources */,
 				6E7282E51FABC0EA001856FA /* Extensions.swift in Sources */,
+				6E7282F61FAC4975001856FA /* Decoder.swift in Sources */,
 				8933C7871EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -533,6 +539,7 @@
 			files = (
 				6E0BD4AB1FAB8EE100498866 /* Encoder.swift in Sources */,
 				6E7282E61FABC0EA001856FA /* Extensions.swift in Sources */,
+				6E7282F71FAC4975001856FA /* Decoder.swift in Sources */,
 				8933C7881EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -543,6 +550,7 @@
 			files = (
 				6E0BD4A91FAB8EE100498866 /* Encoder.swift in Sources */,
 				6E7282E41FABC0EA001856FA /* Extensions.swift in Sources */,
+				6E7282F51FAC4975001856FA /* Decoder.swift in Sources */,
 				8933C7861EB5B820000D00A4 /* CoreDataCodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
