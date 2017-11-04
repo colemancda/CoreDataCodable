@@ -225,7 +225,7 @@ fileprivate extension CoreDataDecoder {
             self.codingPath.append(key)
             defer { self.codingPath.removeLast() }
             
-            return try self.decoder.value(for: key) == nil
+            return try decoder.value(for: key) == nil
         }
         
         // Standard primitive types

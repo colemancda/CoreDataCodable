@@ -95,24 +95,35 @@ final class CoreDataCodableTests: XCTestCase {
                                 children: [TestChild.Identifier(rawValue: UUID()),
                                            TestChild.Identifier(rawValue: UUID())])
         
-        context {
+        XCTAssertNoThrow(try context {
             
             var encoder = CoreDataEncoder(managedObjectContext: $0)
             encoder.log = { print($0) }
             
-            do {
-                
-                let managedObject = try encoder.encode(parent) as! TestParentManagedObject
-                
-                print(managedObject)
-                
-                XCTAssert(managedObject.identifier == parent.identifier.rawValue)
-                XCTAssert(Set(managedObject.children.map({ $0.identifier })) == Set(parent.children.map({ $0.rawValue })))
-                XCTAssert(managedObject.child?.identifier == parent.child?.rawValue)
-            }
+            print("Will encode")
             
-            catch { XCTFail("\(error)") }
-        }
+            let managedObject = try encoder.encode(parent) as! TestParentManagedObject
+            
+            print("Did encode")
+            
+            print(managedObject)
+            
+            XCTAssert(managedObject.identifier == parent.identifier.rawValue)
+            XCTAssert(Set(managedObject.children.map({ $0.identifier })) == Set(parent.children.map({ $0.rawValue })))
+            XCTAssert(managedObject.child?.identifier == parent.child?.rawValue)
+            
+            var decoder = CoreDataDecoder(managedObjectContext: $0)
+            decoder.log = { print($0) }
+            
+            print("Will decode")
+            
+            let decoded = try decoder.decode(TestParent.self, with: parent.identifier)
+            
+            print("Did decode")
+            
+            XCTAssert(decoded.identifier == parent.identifier)
+            XCTAssert("\(decoded)" == "\(parent)")
+        })
     }
     
     func testFulfilledRelationships() {
