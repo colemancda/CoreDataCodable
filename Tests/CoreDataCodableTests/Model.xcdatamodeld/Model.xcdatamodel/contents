@@ -19,7 +19,7 @@
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="YES" syncable="YES"/>
     </entity>
     <entity name="TestChild" representedClassName=".TestChildManagedObject" syncable="YES">
-        <attribute name="identifier" optional="YES" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestParent" inverseName="children" inverseEntity="TestParent" syncable="YES"/>
         <relationship name="parentToOne" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestParent" inverseName="child" inverseEntity="TestParent" syncable="YES"/>
     </entity>

@@ -36,6 +36,12 @@ public struct CoreDataDecoder {
         // get managed object
         let managedObject = try identifier.findOrCreate(in: managedObjectContext)
         
+        // decode
+        return try decode(decodable, with: managedObject)
+    }
+    
+    public func decode<Decodable: CoreDataCodable>(_ decodable: Decodable.Type, with managedObject: NSManagedObject) throws -> Decodable {
+        
         // create encoder for managed object
         let decoder = Decoder(managedObjectContext: managedObjectContext,
                               managedObject: managedObject,
@@ -116,6 +122,8 @@ fileprivate extension CoreDataDecoder {
         
         func container<Key>(keyedBy type: Key.Type) throws -> Swift.KeyedDecodingContainer<Key> where Key : CodingKey {
             
+            log?("Requested container keyed by \(type) for path \"\(codingPathString)\"")
+            
             let container = CoreDataDecoder.KeyedDecodingContainer<Key>(decoder: self)
             
             return Swift.KeyedDecodingContainer<Key>(container)
@@ -123,10 +131,26 @@ fileprivate extension CoreDataDecoder {
         
         func unkeyedContainer() throws -> Swift.UnkeyedDecodingContainer {
             
-            fatalError()
+            log?("Requested unkeyed container for path \"\(codingPathString)\"")
+            
+            // crash on debug builds
+            assert(self.codingPath.last != nil)
+            
+            // throw if no key specified
+            guard let key = self.codingPath.last else {
+                
+                throw CoreDataDecoder.Error.noKey(DecodingError.Context(codingPath: codingPath, debugDescription: "No key specified for unkeyed container."))
+            }
+            
+            // get container for relationship
+            let managedObjects = try read(Set<NSManagedObject>.self, for: key)
+            
+            return UnkeyedDecodingContainer(decoder: self, container: Array(managedObjects))
         }
         
         func singleValueContainer() throws -> Swift.SingleValueDecodingContainer {
+            
+            log?("Requested single value container for path \"\(codingPathString)\"")
             
             // crash on debug builds
             assert(self.codingPath.last != nil)
@@ -144,15 +168,20 @@ fileprivate extension CoreDataDecoder {
 
 fileprivate extension CoreDataDecoder.Decoder {
     
+    var codingPathString: String {
+        
+        return codingPath.reduce("", { $0 + "\($0.isEmpty ? "" : ".")" + $1.stringValue })
+    }
+    
     /// Access actual value
     func value(for key: CodingKey) throws -> Any? {
         
         // log
-        log?("\(CoreDataEncoder.self): Will read value for key \"\(codingPath.reduce("", { $0 + "\($0.isEmpty ? "" : ".")" + $1.stringValue }))\"")
+        log?("Will read value for key \(key.stringValue) at path \"\(codingPathString)\"")
         
         // check schema / model contains property
         guard allKeys.contains(key.stringValue) else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
+            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.codingPath, debugDescription: "No value associated with key \(key.stringValue)."))
         }
         
         // get value
@@ -187,6 +216,7 @@ fileprivate extension CoreDataDecoder {
         
         typealias Key = K
         
+        /// A reference to the encoder we're reading from.
         fileprivate let decoder: CoreDataDecoder.Decoder
         
         /// A reference to the container we're writing to.
@@ -267,18 +297,6 @@ fileprivate extension CoreDataDecoder {
                     // set relationship value
                     return try relationship(identifierType, for: key) as! T
                 }
-                
-            } else if let type = type as? CoreDataCodable.Type {
-                
-                return try relationship(type, for: key) as! T
-                
-            } else if let type = type as? [CoreDataIdentifier].Type {
-                
-                return try relationship(type, for: key) as! T
-                
-            } else if let type = type as? [CoreDataCodable].Type {
-                
-                return try relationship(type, for: key) as! T
                 
             } else if let type = type as? Data.Type {
                 
@@ -400,6 +418,7 @@ fileprivate extension CoreDataDecoder {
     
     fileprivate struct SingleValueDecodingContainer: Swift.SingleValueDecodingContainer {
         
+        /// A reference to the encoder we're reading from.
         fileprivate let decoder: CoreDataDecoder.Decoder
         
         fileprivate let key: CodingKey
@@ -443,6 +462,151 @@ fileprivate extension CoreDataDecoder {
         func decode <T : Decodable> (_ type: T.Type) throws -> T {
             
             return try type.init(from: decoder)
+        }
+    }
+}
+
+fileprivate extension CoreDataDecoder {
+    
+    fileprivate struct UnkeyedDecodingContainer: Swift.UnkeyedDecodingContainer {
+        
+        /// A reference to the encoder we're reading from.
+        fileprivate let decoder: CoreDataDecoder.Decoder
+        
+        /// A reference to the container we're reading from.
+        fileprivate let container: [NSManagedObject]
+        
+        fileprivate init(decoder: CoreDataDecoder.Decoder, container: [NSManagedObject]) {
+            
+            self.decoder = decoder
+            self.container = container
+        }
+        
+        public private(set) var codingPath: [CodingKey] {
+            
+            @inline(__always)
+            get { return decoder.codingPath }
+            
+            @inline(__always)
+            mutating set { decoder.codingPath = newValue }
+        }
+        
+        public var count: Int? {
+            return _count
+        }
+        
+        public var _count: Int {
+            return container.count
+        }
+        
+        public var isAtEnd: Bool {
+            return currentIndex >= _count
+        }
+        
+        public private(set) var currentIndex: Int = 0
+        
+        mutating func decodeNil() throws -> Bool {
+            
+            throw DecodingError.valueNotFound(Any?.self, DecodingError.Context(codingPath: codingPath, debugDescription: "Cannot decode nil from managed objects."))
+        }
+        
+        mutating func decode(_ type: Bool.Type) throws -> Bool {
+            
+            throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: codingPath, debugDescription: "Cannot decode \(type) from managed objects."))
+        }
+        
+        mutating func decode(_ type: Int.Type) throws -> Int { return try read(type) }
+        mutating func decode(_ type: Int8.Type) throws -> Int8 { return try read(type) }
+        mutating func decode(_ type: Int16.Type) throws -> Int16 { return try read(type) }
+        mutating func decode(_ type: Int32.Type) throws -> Int32 { return try read(type) }
+        mutating func decode(_ type: Int64.Type) throws -> Int64 { return try read(type) }
+        mutating func decode(_ type: UInt.Type) throws -> UInt { return try read(type) }
+        mutating func decode(_ type: UInt8.Type) throws -> UInt8 { return try read(type) }
+        mutating func decode(_ type: UInt16.Type) throws -> UInt16 { return try read(type) }
+        mutating func decode(_ type: UInt32.Type) throws -> UInt32 { return try read(type) }
+        mutating func decode(_ type: UInt64.Type) throws -> UInt64 { return try read(type) }
+        mutating func decode(_ type: Float.Type) throws -> Float { return try read(type) }
+        mutating func decode(_ type: Double.Type) throws -> Double { return try read(type) }
+        mutating func decode(_ type: String.Type) throws -> String { return try read(type) }
+        
+        mutating func decode <T : Decodable> (_ type: T.Type) throws -> T {
+            
+            return try type.init(from: decoder)
+        }
+        
+        mutating func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> Swift.KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
+            
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: codingPath, debugDescription: "Cannot decode \(type) from managed objects."))
+        }
+        
+        mutating func nestedUnkeyedContainer() throws -> Swift.UnkeyedDecodingContainer {
+            
+            throw DecodingError.typeMismatch([Any].self, DecodingError.Context(codingPath: codingPath, debugDescription: "Cannot decode unkeyed container from managed objects."))
+        }
+        
+        mutating func superDecoder() throws -> Swift.Decoder {
+            
+            return decoder
+        }
+        
+        private mutating func read <T> (_ type: T.Type) throws -> T {
+            
+            // set coding key context
+            self.codingPath.append(Index(intValue: currentIndex))
+            defer { self.codingPath.removeLast() }
+            
+            // check for end of array
+            guard isAtEnd == false else {
+                
+                throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: codingPath, debugDescription: "Unkeyed container is at end."))
+            }
+            
+            // get stored managed object
+            let managedObject = container[currentIndex]
+            guard let decodableManagedObject = managedObject as? DecodableManagedObject else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: codingPath, debugDescription: "Cannot decode \(type) from managed object \(managedObject.objectID.uriRepresentation()). Please conform to \(DecodableManagedObject.self)"))
+            }
+            
+            // decode value from managed object
+            let identifier = decodableManagedObject.decodedIdentifier
+            
+            // try to get expected value type
+            guard let expected = identifier as? T else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(T.self) value but found \(identifier) instead."))
+            }
+            
+            // increment counter
+            self.currentIndex += 1
+            
+            return expected
+        }
+    }
+}
+
+private extension CoreDataDecoder.UnkeyedDecodingContainer {
+    
+    struct Index: CodingKey {
+        
+        public let index: Int
+        
+        public init(intValue: Int) {
+            
+            self.index = intValue
+        }
+        
+        init?(stringValue: String) {
+            
+            return nil
+        }
+        
+        public var intValue: Int? {
+            return index
+        }
+        
+        public var stringValue: String {
+            return "\(index)"
         }
     }
 }

@@ -23,9 +23,9 @@ extension TestChild {
     
     struct Identifier: Codable, RawRepresentable {
         
-        var rawValue: UUID
+        var rawValue: String
         
-        init(rawValue: UUID) {
+        init(rawValue: String) {
             
             self.rawValue = rawValue
         }
@@ -62,7 +62,7 @@ extension TestChild: CoreDataCodable {
     
     static func findOrCreate(_ identifier: TestChild.Identifier, in context: NSManagedObjectContext) throws -> TestChildManagedObject {
         
-        let identifier = identifier.rawValue as NSUUID
+        let identifier = identifier.rawValue as NSString
         
         let identifierProperty = "identifier"
         
@@ -74,7 +74,7 @@ extension TestChild: CoreDataCodable {
 
 public final class TestChildManagedObject: NSManagedObject {
     
-    @NSManaged var identifier: UUID
+    @NSManaged var identifier: String
     
     @NSManaged var parent: TestParentManagedObject?
     

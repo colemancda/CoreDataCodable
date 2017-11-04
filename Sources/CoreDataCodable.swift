@@ -66,6 +66,11 @@ public protocol CoreDataIdentifier: Codable {
     init?(managedObject: NSManagedObject)
 }
 
+public protocol DecodableManagedObject: class {
+    
+    var decodedIdentifier: Any { get }
+}
+
 public extension Sequence where Iterator.Element: CoreDataIdentifier {
     
     @inline(__always)

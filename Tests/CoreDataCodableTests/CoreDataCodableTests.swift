@@ -91,9 +91,9 @@ final class CoreDataCodableTests: XCTestCase {
     func testFaultRelationship() {
         
         let parent = TestParent(identifier: TestParent.Identifier(rawValue: 100),
-                                child: TestChild.Identifier(rawValue: UUID()),
-                                children: [TestChild.Identifier(rawValue: UUID()),
-                                           TestChild.Identifier(rawValue: UUID())])
+                                child: TestChild.Identifier(rawValue: "child01"),
+                                children: [TestChild.Identifier(rawValue: "children01"),
+                                           TestChild.Identifier(rawValue: "children02")])
         
         XCTAssertNoThrow(try context {
             
@@ -130,14 +130,14 @@ final class CoreDataCodableTests: XCTestCase {
         
         let parentIdentifier = TestFullfilledParent.Identifier(rawValue: 100)
         
-        let child = TestChild(identifier: TestChild.Identifier(rawValue: UUID()),
+        let child = TestChild(identifier: TestChild.Identifier(rawValue: "child01"),
                               parent: nil,
                               parentToOne: parentIdentifier)
         
         let children = [
-            TestChild(identifier: TestChild.Identifier(rawValue: UUID()), parent: parentIdentifier, parentToOne: nil),
-            TestChild(identifier: TestChild.Identifier(rawValue: UUID()), parent: parentIdentifier, parentToOne: nil),
-            TestChild(identifier: TestChild.Identifier(rawValue: UUID()), parent: parentIdentifier, parentToOne: nil)
+            TestChild(identifier: TestChild.Identifier(rawValue: "children01"), parent: parentIdentifier, parentToOne: nil),
+            TestChild(identifier: TestChild.Identifier(rawValue: "children02"), parent: parentIdentifier, parentToOne: nil),
+            TestChild(identifier: TestChild.Identifier(rawValue: "children03"), parent: parentIdentifier, parentToOne: nil)
         ]
         
         let parent = TestFullfilledParent(identifier: parentIdentifier,
