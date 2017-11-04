@@ -40,9 +40,8 @@ public struct CoreDataDecoder {
         let decoder = Decoder(managedObjectContext: managedObjectContext,
                               managedObject: managedObject,
                               codingPath: [],
-                              decodable: decodable,
-                              identifier: identifier,
                               userInfo: userInfo,
+                              decodable: decodable,
                               log: log)
         
         // decode from container
@@ -94,8 +93,6 @@ fileprivate extension CoreDataDecoder {
         
         public let decodable: CoreDataCodable.Type
         
-        public let identifier: CoreDataIdentifier
-        
         /// cached keys
         fileprivate lazy var allKeys: [String] = self.managedObject.entity.allKeys
         
@@ -106,7 +103,6 @@ fileprivate extension CoreDataDecoder {
                          codingPath: [CodingKey],
                          userInfo: [CodingUserInfoKey : Any],
                          decodable: CoreDataCodable.Type,
-                         identifier: CoreDataIdentifier,
                          log: Log?) {
             
             self.managedObjectContext = managedObjectContext
@@ -114,7 +110,6 @@ fileprivate extension CoreDataDecoder {
             self.codingPath = codingPath
             self.userInfo = userInfo
             self.decodable = decodable
-            self.identifier = identifier
             self.log = log
         }
         
@@ -160,7 +155,7 @@ fileprivate extension CoreDataDecoder.Decoder {
 
 fileprivate extension CoreDataDecoder {
     
-    fileprivate struct KeyedDecodingContainer<K : CodingKey>: KeyedDecodingContainerProtocol {
+    fileprivate struct KeyedDecodingContainer<K : Swift.CodingKey>: Swift.KeyedDecodingContainerProtocol {
         
         typealias Key = K
         
@@ -196,7 +191,7 @@ fileprivate extension CoreDataDecoder {
             return container.value(forKey: key.stringValue) != nil
         }
         
-        mutating func decodeNil(forKey key: Key) throws -> Bool {
+        func decodeNil(forKey key: Key) throws -> Bool {
             
             // set coding key context
             self.codingPath.append(key)
@@ -206,23 +201,23 @@ fileprivate extension CoreDataDecoder {
         }
         
         // Standard primitive types
-        mutating func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool { return try read(type, for: key) }
-        mutating func decode(_ type: Int.Type, forKey key: Key) throws -> Int { return try read(type, for: key) }
-        mutating func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 { return try read(type, for: key) }
-        mutating func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 { return try read(type, for: key) }
-        mutating func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 { return try read(type, for: key) }
-        mutating func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 { return try read(type, for: key) }
-        mutating func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt { return try read(type, for: key) }
-        mutating func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 { return try read(type, for: key) }
-        mutating func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 { return try read(type, for: key) }
-        mutating func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 { return try read(type, for: key) }
-        mutating func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 { return try read(type, for: key) }
-        mutating func decode(_ type: Float.Type, forKey key: Key) throws -> Float { return try read(type, for: key) }
-        mutating func decode(_ type: Double.Type, forKey key: Key) throws -> Double { return try read(type, for: key) }
-        mutating func decode(_ type: String.Type, forKey key: Key) throws -> String { return try read(type, for: key) }
+        func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool { return try read(type, for: key) }
+        func decode(_ type: Int.Type, forKey key: Key) throws -> Int { return try read(type, for: key) }
+        func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 { return try read(type, for: key) }
+        func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 { return try read(type, for: key) }
+        func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 { return try read(type, for: key) }
+        func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 { return try read(type, for: key) }
+        func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt { return try read(type, for: key) }
+        func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 { return try read(type, for: key) }
+        func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 { return try read(type, for: key) }
+        func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 { return try read(type, for: key) }
+        func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 { return try read(type, for: key) }
+        func decode(_ type: Float.Type, forKey key: Key) throws -> Float { return try read(type, for: key) }
+        func decode(_ type: Double.Type, forKey key: Key) throws -> Double { return try read(type, for: key) }
+        func decode(_ type: String.Type, forKey key: Key) throws -> String { return try read(type, for: key) }
         
         // Decodable
-        mutating func decode <T : Decodable> (_ type: T.Type, forKey key: Key) throws -> T {
+        func decode <T : Decodable> (_ type: T.Type, forKey key: Key) throws -> T {
             
             // override for CoreData supported native types that also are Decodable
             // and don't use Decodable implementation
@@ -237,35 +232,25 @@ fileprivate extension CoreDataDecoder {
                 // identifier
                 if key.stringValue == identifierKey {
                     
-                    return try self.identifier(identifierType, from: container, for: key) as! T
+                    return try identifier(identifierType, from: container, for: key) as! T
                     
                 } else {
                     
                     // set relationship value
-                    return try self.relationship(identifierType, for: key) as! T
+                    return try relationship(identifierType, for: key) as! T
                 }
                 
-            } else if let encodable = value as? CoreDataCodable {
+            } else if let type = type as? CoreDataCodable.Type {
                 
-                try setRelationship(encodable, forKey: key)
+                return try relationship(type, for: key) as! T
                 
-            } else if let array = value as? [CoreDataIdentifier] {
+            } else if let type = type as? [CoreDataIdentifier].Type {
                 
-                try setRelationship(array, forKey: key)
+                return try relationship(type, for: key) as! T
                 
-            } else if let set = value as? Set<AnyHashable>,
-                let array = Array(set) as? [CoreDataIdentifier] {
+            } else if let type = type as? [CoreDataCodable].Type {
                 
-                try setRelationship(array, forKey: key)
-                
-            } else if let array = value as? [CoreDataCodable] {
-                
-                try setRelationship(array, forKey: key)
-                
-            } else if let set = value as? Set<AnyHashable>,
-                let array = Array(set) as? [CoreDataCodable] {
-                
-                try setRelationship(array, forKey: key)
+                return try relationship(type, for: key) as! T
                 
             } else if let type = type as? Data.Type {
                 
@@ -294,7 +279,7 @@ fileprivate extension CoreDataDecoder {
                 defer { codingPath.removeLast() }
                 
                 // get value
-                return try T.init(from: self.decoder)
+                return try T.init(from: decoder)
             }
         }
         
@@ -318,7 +303,7 @@ fileprivate extension CoreDataDecoder {
             return decoder
         }
         
-        private mutating func read <T> (_ type: T.Type, for key: Key) throws -> T {
+        private func read <T> (_ type: T.Type, for key: Key) throws -> T {
             
             // set coding key context
             self.codingPath.append(key)
@@ -339,8 +324,27 @@ fileprivate extension CoreDataDecoder {
             return expected
         }
         
+        /// Get an identifier from a managed object
+        private func identifier (_ type: CoreDataIdentifier.Type, from managedObject: NSManagedObject, for key: Key) throws -> CoreDataIdentifier {
+            
+            // get managed object
+            let managedObject = try read(NSManagedObject.self, for: key)
+            
+            // create identifier from managed object
+            guard let identifier = type.init(managedObject: managedObject) else {
+                
+                // set coding key context for error
+                self.codingPath.append(key)
+                defer { self.codingPath.removeLast() }
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Could not create identifier from managed object \(managedObject.objectID.uriRepresentation()) instead."))
+            }
+            
+            return identifier
+        }
+        
         /// attempt to read from to-one relationship
-        private mutating func relationship (_ type: CoreDataIdentifier.Type, for key: Key) throws -> CoreDataIdentifier {
+        private func relationship (_ type: CoreDataIdentifier.Type, for key: Key) throws -> CoreDataIdentifier {
             
             // get managed object
             let managedObject = try read(NSManagedObject.self, for: key)
@@ -348,23 +352,30 @@ fileprivate extension CoreDataDecoder {
             return try identifier(type, from: managedObject, for: key)
         }
         
-        /// Get an identifier from a managed object
-        private mutating func identifier (_ type: CoreDataIdentifier.Type, from managedObject: NSManagedObject, for key: Key) throws -> CoreDataIdentifier {
+        /// attempt to read from to-many relationship
+        private func relationship (_ type: [CoreDataIdentifier].Type, for key: Key) throws -> [CoreDataIdentifier] {
+            
+            // get managed objects
+            let managedObject = try read(Set<NSManagedObject>.self, for: key)
+            
+            // get identifiers from managed objects
+            return try managedObject.map { try identifier(type.Element.self as! CoreDataIdentifier.Type, from: $0, for: key) }
+        }
+        
+        private func relationship (_ type: CoreDataCodable.Type, for key: Key) throws -> CoreDataCodable {
             
             // get managed object
             let managedObject = try read(NSManagedObject.self, for: key)
             
-            // set coding key context
-            self.codingPath.append(key)
-            defer { self.codingPath.removeLast() }
             
-            // create identifier from managed object
-            guard let identifier = type.init(managedObject: managedObject) else {
-                
-                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Could not create identifier from managed object \(managedObject.objectID.uriRepresentation()) instead."))
-            }
+        }
+        
+        private func relationship (_ type: [CoreDataCodable].Type, for key: Key) throws -> [CoreDataCodable] {
             
-            return identifier
+            // get managed objects
+            let managedObject = try read(Set<NSManagedObject>.self, for: key)
+            
+            
         }
     }
 }
