@@ -68,6 +68,8 @@ public protocol CoreDataIdentifier: Codable {
 
 public protocol DecodableManagedObject: class {
     
+    var decodable: CoreDataCodable.Type { get }
+    
     var decodedIdentifier: Any { get }
 }
 

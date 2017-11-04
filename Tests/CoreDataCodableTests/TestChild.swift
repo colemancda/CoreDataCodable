@@ -72,11 +72,18 @@ extension TestChild: CoreDataCodable {
     }
 }
 
-public final class TestChildManagedObject: NSManagedObject {
+final class TestChildManagedObject: NSManagedObject {
     
     @NSManaged var identifier: String
     
     @NSManaged var parent: TestParentManagedObject?
     
     @NSManaged var parentToOne: TestParentManagedObject?
+}
+
+extension TestChildManagedObject: DecodableManagedObject {
+    
+    var decodable: CoreDataCodable.Type { return TestChild.self }
+    
+    var decodedIdentifier: Any { return identifier }
 }

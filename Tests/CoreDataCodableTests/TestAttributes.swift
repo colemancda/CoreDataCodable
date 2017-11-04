@@ -104,7 +104,7 @@ extension TestAttributes: CoreDataCodable {
     }
 }
 
-public final class TestAttributesManagedObject: NSManagedObject {
+final class TestAttributesManagedObject: NSManagedObject {
     
     @NSManaged var identifier: String
     
@@ -135,4 +135,11 @@ public final class TestAttributesManagedObject: NSManagedObject {
     @NSManaged var enumValue: String
     
     @NSManaged var optional: String?
+}
+
+extension TestAttributesManagedObject: DecodableManagedObject {
+    
+    var decodable: CoreDataCodable.Type { return TestAttributes.self }
+    
+    var decodedIdentifier: Any { return identifier }
 }
