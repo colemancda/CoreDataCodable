@@ -254,16 +254,6 @@ fileprivate extension CoreDataEncoder {
             mutating set { encoder.codingPath = newValue }
         }
         
-        private mutating func write(_ value: NSObject?, forKey key: Key) throws {
-            
-            // set coding key context
-            codingPath.append(key)
-            defer { codingPath.removeLast() }
-            
-            // set value
-            try encoder.set(value, forKey: key)
-        }
-        
         // Standard primitive types
         public mutating func encodeNil(forKey key: Key)               throws { try write(nil, forKey: key) }
         public mutating func encode(_ value: Bool, forKey key: Key)   throws { try write(box(value), forKey: key) }
@@ -386,11 +376,17 @@ fileprivate extension CoreDataEncoder {
             fatalError()
         }
         
-        private mutating func setRelationship(_ identifiers: [CoreDataIdentifier], forKey key: Key) throws {
+        private mutating func write(_ value: NSObject?, forKey key: Key) throws {
             
             // set coding key context
             codingPath.append(key)
             defer { codingPath.removeLast() }
+            
+            // set value
+            try encoder.set(value, forKey: key)
+        }
+        
+        private mutating func setRelationship(_ identifiers: [CoreDataIdentifier], forKey key: Key) throws {
             
             let managedObjectContext = encoder.managedObjectContext
             
@@ -399,14 +395,10 @@ fileprivate extension CoreDataEncoder {
             let set = NSSet(array: managedObjects)
             
             // set value
-            try encoder.set(set, forKey: key)
+            try write(set, forKey: key)
         }
         
         private mutating func setRelationship(_ encodables: [CoreDataCodable], forKey key: Key) throws {
-            
-            // set coding key context
-            codingPath.append(key)
-            defer { codingPath.removeLast() }
             
             let managedObjects = try encodables.map { (try $0.findOrCreate(in: encoder.managedObjectContext), $0) }
             
@@ -427,27 +419,19 @@ fileprivate extension CoreDataEncoder {
             let set = NSSet(array: managedObjects.map({ $0.0 }))
             
             // set value
-            try self.encoder.set(set, forKey: key)
+            try write(set, forKey: key)
         }
         
         private mutating func setRelationship(_ identifier: CoreDataIdentifier, forKey key: Key) throws {
             
-            // set coding key context
-            codingPath.append(key)
-            defer { codingPath.removeLast() }
-            
             // get managed object fault
             let managedObject = try identifier.findOrCreate(in: encoder.managedObjectContext)
             
-            // set new value
+            // set value
             try write(managedObject, forKey: key)
         }
         
         private mutating func setRelationship(_ encodable: CoreDataCodable, forKey key: Key) throws {
-            
-            // set coding key context
-            codingPath.append(key)
-            defer { codingPath.removeLast() }
             
             let managedObject = try encodable.findOrCreate(in: self.encoder.managedObjectContext)
             
@@ -463,7 +447,7 @@ fileprivate extension CoreDataEncoder {
             try encodable.encode(to: newEncoder)
             
             // set value
-            try self.encoder.set(managedObject, forKey: key)
+            try write(managedObject, forKey: key)
         }
     }
 }
