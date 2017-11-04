@@ -221,13 +221,6 @@ fileprivate extension CoreDataDecoder {
         mutating func decode(_ type: Double.Type, forKey key: Key) throws -> Double { return try read(type, for: key) }
         mutating func decode(_ type: String.Type, forKey key: Key) throws -> String { return try read(type, for: key) }
         
-        // Custom
-        mutating func decode(_ type: Data.Type, forKey key: Key) throws -> Data { return try read(type, for: key) }
-        mutating func decode(_ type: Date.Type, forKey key: Key) throws -> Date { return try read(type, for: key) }
-        mutating func decode(_ type: UUID.Type, forKey key: Key) throws -> UUID { return try read(type, for: key) }
-        mutating func decode(_ type: URL.Type, forKey key: Key) throws -> URL { return try read(type, for: key) }
-        mutating func decode(_ type: Decimal.Type, forKey key: Key) throws -> Decimal { return try read(type, for: key) }
-        
         // Decodable
         mutating func decode <T : Decodable> (_ type: T.Type, forKey key: Key) throws -> T {
             
@@ -244,7 +237,12 @@ fileprivate extension CoreDataDecoder {
                 // identifier
                 if key.stringValue == identifierKey {
                     
-                    return decoder.identifier as! T
+                    // set coding key context
+                    codingPath.append(key)
+                    defer { codingPath.removeLast() }
+                    
+                    // get value
+                    return try T.init(from: self.decoder)
                     
                 } else {
                     
@@ -344,6 +342,15 @@ fileprivate extension CoreDataDecoder {
             }
             
             return expected
+        }
+        
+        private mutating func readRelationship <T: CoreDataIdentifier> (_ type: T.Type, forKey key: Key) throws {
+            
+            // get managed object fault
+            let managedObject = try T.findOrCreate(in: encoder.managedObjectContext)
+            
+            // set new value
+            try write(managedObject, forKey: key)
         }
     }
 }
