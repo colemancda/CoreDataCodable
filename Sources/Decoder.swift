@@ -228,7 +228,7 @@ fileprivate extension CoreDataDecoder {
             // and don't use Decodable implementation
             
             // identifier or to-one relationship
-            if let identifierType = type as? CoreDataIdentifier.Type {
+            if let identifierType = type is CoreDataIdentifier.Type {
                 
                 let decodable = decoder.decodable
                 
@@ -237,17 +237,25 @@ fileprivate extension CoreDataDecoder {
                 // identifier
                 if key.stringValue == identifierKey {
                     
-                    // set coding key context
-                    codingPath.append(key)
-                    defer { codingPath.removeLast() }
+                    // get managed object
+                    let managedObject = decoder.managedObject
                     
-                    // get value
-                    return try T.init(from: self.decoder)
+                    // set coding key context
+                    self.codingPath.append(key)
+                    defer { self.codingPath.removeLast() }
+                    
+                    // create identifier from managed object
+                    guard let identifier = identifierType.init(managedObject: managedObject) else {
+                        
+                        throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found null instead."))
+                    }
+                    
+                    return identifier
                     
                 } else {
                     
                     // set relationship value
-                    try setRelationship(identifier, forKey: key)
+                    try relationship(T.self, forKey: key)
                 }
                 
             } else if let encodable = value as? CoreDataCodable {
@@ -338,19 +346,29 @@ fileprivate extension CoreDataDecoder {
             // convert
             guard let expected = value as? T else {
                 
-                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found null instead."))
             }
             
             return expected
         }
         
-        private mutating func readRelationship <T: CoreDataIdentifier> (_ type: T.Type, forKey key: Key) throws {
+        /// attempt to read from to-one relationship
+        private mutating func relationship <T: CoreDataIdentifier> (_ type: T.Type, forKey key: Key) throws -> T {
             
-            // get managed object fault
-            let managedObject = try T.findOrCreate(in: encoder.managedObjectContext)
+            // get managed object
+            let managedObject = try read(NSManagedObject.self, for: key)
             
-            // set new value
-            try write(managedObject, forKey: key)
+            // set coding key context
+            self.codingPath.append(key)
+            defer { self.codingPath.removeLast() }
+            
+            // create identifier from managed object
+            guard let identifier = T.init(managedObject: managedObject) else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found null instead."))
+            }
+            
+            return identifier
         }
     }
 }

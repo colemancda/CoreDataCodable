@@ -59,7 +59,11 @@ public extension Collection where Iterator.Element: CoreDataCodable {
 
 public protocol CoreDataIdentifier: Codable {
     
+    /// Find or create managed object from identifier in the specified managed object.
     func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject
+    
+    /// Failible initializer to create identifier from managed object.
+    init?(managedObject: NSManagedObject)
 }
 
 public extension Sequence where Iterator.Element: CoreDataIdentifier {
