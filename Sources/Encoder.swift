@@ -290,7 +290,7 @@ fileprivate extension CoreDataEncoder {
         
         // Encodable
         public mutating func encode<T: Swift.Encodable>(_ value: T, forKey key: Key) throws {
-            print("Key:", key)
+            
             // override for CoreData supported native types that also are Encodable
             // and don't use encodable implementation
             
