@@ -134,7 +134,7 @@ fileprivate extension CoreDataEncoder {
         
         public func singleValueContainer() -> Swift.SingleValueEncodingContainer {
             
-            //precondition(self.codingPath.last != nil)
+            assert(self.codingPath.last != nil)
             
             return SingleValueEncodingContainer(encoder: self)
         }
@@ -471,24 +471,6 @@ fileprivate extension CoreDataEncoder.Encoder {
             get { return encoder.codingPath }
         }
         
-        @inline(__always)
-        private func write(_ value: NSObject?) throws {
-            
-            guard let codingKey = self.codingPath.last else {
-            
-                let context = EncodingError.Context(codingPath: codingPath,
-                                                    debugDescription: "No key was provided for single value container.",
-                                                    underlyingError: CoreDataEncoder.Error.noKey)
-                
-                let error = EncodingError.invalidValue(value as Any, context)
-                
-                throw error
-            }
-            
-            // set value
-            try encoder.set(value, forKey: codingKey)
-        }
-        
         public func encodeNil() throws {
             
             try write(nil)
@@ -567,6 +549,23 @@ fileprivate extension CoreDataEncoder.Encoder {
         public func encode<T : Swift.Encodable>(_ value: T) throws {
             
             try value.encode(to: encoder)
+        }
+        
+        private func write(_ value: NSObject?) throws {
+            
+            guard let codingKey = self.codingPath.last else {
+                
+                let context = EncodingError.Context(codingPath: codingPath,
+                                                    debugDescription: "No key was provided for single value container.",
+                                                    underlyingError: CoreDataEncoder.Error.noKey)
+                
+                let error = EncodingError.invalidValue(value as Any, context)
+                
+                throw error
+            }
+            
+            // set value
+            try encoder.set(value, forKey: codingKey)
         }
     }
 }

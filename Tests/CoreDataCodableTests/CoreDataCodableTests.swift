@@ -31,36 +31,61 @@ final class CoreDataCodableTests: XCTestCase {
                                    enumValue: .three,
                                    optional: nil)
         
-        context {
+        XCTAssertNoThrow(try context {
             
             var encoder = CoreDataEncoder(managedObjectContext: $0)
             encoder.log = { print($0) }
             
-            do {
-                
-                let managedObject = try encoder.encode(value) as! TestAttributesManagedObject
-                
-                print(managedObject)
-                
-                XCTAssert(managedObject.identifier == value.identifier.rawValue)
-                XCTAssert(managedObject.boolean == value.boolean)
-                XCTAssert(managedObject.data == value.data)
-                XCTAssert(managedObject.date == value.date)
-                XCTAssert(managedObject.decimal.description == value.decimal.description) // NSDecimal bug?
-                XCTAssert(managedObject.double == value.double)
-                XCTAssert(managedObject.float == value.float)
-                XCTAssert(managedObject.int16 == value.int16)
-                XCTAssert(managedObject.int32 == value.int32)
-                XCTAssert(managedObject.int64 == value.int64)
-                XCTAssert(managedObject.string == value.string)
-                XCTAssert(managedObject.uri == value.uri)
-                XCTAssert(managedObject.uuid == value.uuid)
-                XCTAssert(managedObject.enumValue == value.enumValue.rawValue)
-                XCTAssertNil(managedObject.optional)
-            }
+            print("Will encode")
             
-            catch { XCTFail("\(error)") }
-        }
+            let managedObject = try encoder.encode(value) as! TestAttributesManagedObject
+            
+            print("Did encode")
+            
+            print(managedObject)
+            
+            XCTAssert(managedObject.identifier == value.identifier.rawValue)
+            XCTAssert(managedObject.boolean == value.boolean)
+            XCTAssert(managedObject.data == value.data)
+            XCTAssert(managedObject.date == value.date)
+            XCTAssert(managedObject.decimal.description == value.decimal.description) // NSDecimal bug?
+            XCTAssert(managedObject.double == value.double)
+            XCTAssert(managedObject.float == value.float)
+            XCTAssert(managedObject.int16 == value.int16)
+            XCTAssert(managedObject.int32 == value.int32)
+            XCTAssert(managedObject.int64 == value.int64)
+            XCTAssert(managedObject.string == value.string)
+            XCTAssert(managedObject.uri == value.uri)
+            XCTAssert(managedObject.uuid == value.uuid)
+            XCTAssert(managedObject.enumValue == value.enumValue.rawValue)
+            XCTAssertNil(managedObject.optional)
+            
+            var decoder = CoreDataDecoder(managedObjectContext: $0)
+            decoder.log = { print($0) }
+            
+            print("Will decode")
+            
+            let decoded = try decoder.decode(TestAttributes.self, with: value.identifier)
+            
+            print("Did decode")
+            
+            XCTAssert(decoded.identifier == value.identifier)
+            XCTAssert(decoded.boolean == value.boolean)
+            XCTAssert(decoded.data == value.data)
+            XCTAssert(decoded.date == value.date)
+            XCTAssert(decoded.decimal == value.decimal)
+            XCTAssert(decoded.double == value.double)
+            XCTAssert(decoded.float == value.float)
+            XCTAssert(decoded.int16 == value.int16)
+            XCTAssert(decoded.int32 == value.int32)
+            XCTAssert(decoded.int64 == value.int64)
+            XCTAssert(decoded.string == value.string)
+            XCTAssert(decoded.uri == value.uri)
+            XCTAssert(decoded.uuid == value.uuid)
+            XCTAssert(decoded.enumValue == value.enumValue)
+            XCTAssertNil(decoded.optional)
+            XCTAssert("\(decoded)" == "\(value)")
+        })
     }
     
     func testFaultRelationship() {
@@ -108,24 +133,23 @@ final class CoreDataCodableTests: XCTestCase {
                                 child: child,
                                 children: children)
         
-        context {
+         XCTAssertNoThrow(try context {
             
             var encoder = CoreDataEncoder(managedObjectContext: $0)
             encoder.log = { print($0) }
             
-            do {
-                
-                let managedObject = try encoder.encode(parent) as! TestParentManagedObject
-                
-                print(managedObject)
-                
-                XCTAssert(managedObject.identifier == parent.identifier.rawValue)
-                XCTAssert(Set(managedObject.children.map({ $0.identifier })) == Set(parent.children.map({ $0.identifier.rawValue })))
-                XCTAssert(managedObject.child?.identifier == parent.child?.identifier.rawValue)
-            }
-                
-            catch { XCTFail("\(error)") }
-        }
+            let managedObject = try encoder.encode(parent) as! TestParentManagedObject
+            
+            print(managedObject)
+            
+            XCTAssert(managedObject.identifier == parent.identifier.rawValue)
+            XCTAssert(Set(managedObject.children.map({ $0.identifier })) == Set(parent.children.map({ $0.identifier.rawValue })))
+            XCTAssert(managedObject.child?.identifier == parent.child?.identifier.rawValue)
+            
+            //var decoder = CoreDataDecoder(managedObjectContext: $0)
+            //decoder.log = { print($0) }
+            
+        })
     }
 }
 
@@ -164,7 +188,7 @@ extension CoreDataCodableTests {
         return fileURL
     }
     
-    func context(_ block: (NSManagedObjectContext) -> ()) {
+    func context <Result> (_ block: (NSManagedObjectContext) throws -> Result) rethrows -> Result {
         
         let fileURL = testSQLiteURL()
         
@@ -181,7 +205,7 @@ extension CoreDataCodableTests {
                                                            at: fileURL,
                                                            options: nil)
         
-        block(managedObjectContext)
+        return try block(managedObjectContext)
     }
 }
 

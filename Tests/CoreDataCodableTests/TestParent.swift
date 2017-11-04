@@ -34,6 +34,14 @@ extension TestParent {
 
 extension TestParent.Identifier: CoreDataIdentifier {
     
+    init?(managedObject: NSManagedObject) {
+        
+        guard let managedObject = managedObject as? TestParentManagedObject
+            else { return nil }
+        
+        self.rawValue = managedObject.identifier
+    }
+    
     func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject {
         
         return try TestParent.findOrCreate(self, in: context)

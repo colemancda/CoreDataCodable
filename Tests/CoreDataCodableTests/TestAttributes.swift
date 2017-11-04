@@ -58,6 +58,14 @@ extension TestAttributes {
 
 extension TestAttributes.Identifier: CoreDataIdentifier {
     
+    init?(managedObject: NSManagedObject) {
+        
+        guard let managedObject = managedObject as? TestAttributesManagedObject
+            else { return nil }
+        
+        self.rawValue = managedObject.identifier
+    }
+    
     func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject {
         
         return try TestAttributes.findOrCreate(self, in: context)
