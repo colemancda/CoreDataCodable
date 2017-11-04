@@ -228,7 +228,7 @@ fileprivate extension CoreDataDecoder {
             // and don't use Decodable implementation
             
             // identifier or to-one relationship
-            if let identifierType = type is CoreDataIdentifier.Type {
+            if let identifierType = type as? CoreDataIdentifier.Type {
                 
                 let decodable = decoder.decodable
                 
@@ -237,25 +237,12 @@ fileprivate extension CoreDataDecoder {
                 // identifier
                 if key.stringValue == identifierKey {
                     
-                    // get managed object
-                    let managedObject = decoder.managedObject
-                    
-                    // set coding key context
-                    self.codingPath.append(key)
-                    defer { self.codingPath.removeLast() }
-                    
-                    // create identifier from managed object
-                    guard let identifier = identifierType.init(managedObject: managedObject) else {
-                        
-                        throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found null instead."))
-                    }
-                    
-                    return identifier
+                    return try self.identifier(type as! CoreDataIdentifier.Type, from: decoder.managedObject, for: key) as! T
                     
                 } else {
                     
                     // set relationship value
-                    try relationship(T.self, forKey: key)
+                    return try self.relationship(identifierType, for: key) as! T
                 }
                 
             } else if let encodable = value as? CoreDataCodable {
@@ -353,7 +340,15 @@ fileprivate extension CoreDataDecoder {
         }
         
         /// attempt to read from to-one relationship
-        private mutating func relationship <T: CoreDataIdentifier> (_ type: T.Type, forKey key: Key) throws -> T {
+        private mutating func relationship <T: CoreDataIdentifier> (_ type: T.Type, for key: Key) throws -> T {
+            
+            // get managed object
+            let managedObject = try read(NSManagedObject.self, for: key)
+            
+            return try identifier(type, from: managedObject, for: key)
+        }
+        
+        private mutating func identifier <T: CoreDataIdentifier> (_ type: T.Type, from managedObject: NSManagedObject, for key: Key) throws -> T {
             
             // get managed object
             let managedObject = try read(NSManagedObject.self, for: key)
@@ -365,11 +360,10 @@ fileprivate extension CoreDataDecoder {
             // create identifier from managed object
             guard let identifier = T.init(managedObject: managedObject) else {
                 
-                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found null instead."))
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Could not create identifier from managed object \(managedObject.objectID.uriRepresentation()) instead."))
             }
             
             return identifier
         }
     }
 }
-
