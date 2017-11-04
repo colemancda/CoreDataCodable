@@ -207,29 +207,29 @@ fileprivate extension CoreDataDecoder {
         
         // Standard primitive types
         mutating func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool { return try read(type, for: key) }
-        mutating func decode(_ type: Int.Type, forKey key: K) throws -> Int { return try read(type, for: key) }
-        mutating func decode(_ type: Int8.Type, forKey key: K) throws -> Int8 { return try read(type, for: key) }
-        mutating func decode(_ type: Int16.Type, forKey key: K) throws -> Int16 { return try read(type, for: key) }
-        mutating func decode(_ type: Int32.Type, forKey key: K) throws -> Int32 { return try read(type, for: key) }
-        mutating func decode(_ type: Int64.Type, forKey key: K) throws -> Int64 { return try read(type, for: key) }
-        mutating func decode(_ type: UInt.Type, forKey key: K) throws -> UInt { return try read(type, for: key) }
-        mutating func decode(_ type: UInt8.Type, forKey key: K) throws -> UInt8 { return try read(type, for: key) }
-        mutating func decode(_ type: UInt16.Type, forKey key: K) throws -> UInt16 { return try read(type, for: key) }
-        mutating func decode(_ type: UInt32.Type, forKey key: K) throws -> UInt32 { return try read(type, for: key) }
-        mutating func decode(_ type: UInt64.Type, forKey key: K) throws -> UInt64 { return try read(type, for: key) }
-        mutating func decode(_ type: Float.Type, forKey key: K) throws -> Float { return try read(type, for: key) }
-        mutating func decode(_ type: Double.Type, forKey key: K) throws -> Double { return try read(type, for: key) }
-        mutating func decode(_ type: String.Type, forKey key: K) throws -> String { return try read(type, for: key) }
+        mutating func decode(_ type: Int.Type, forKey key: Key) throws -> Int { return try read(type, for: key) }
+        mutating func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 { return try read(type, for: key) }
+        mutating func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 { return try read(type, for: key) }
+        mutating func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 { return try read(type, for: key) }
+        mutating func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 { return try read(type, for: key) }
+        mutating func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt { return try read(type, for: key) }
+        mutating func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 { return try read(type, for: key) }
+        mutating func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 { return try read(type, for: key) }
+        mutating func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 { return try read(type, for: key) }
+        mutating func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 { return try read(type, for: key) }
+        mutating func decode(_ type: Float.Type, forKey key: Key) throws -> Float { return try read(type, for: key) }
+        mutating func decode(_ type: Double.Type, forKey key: Key) throws -> Double { return try read(type, for: key) }
+        mutating func decode(_ type: String.Type, forKey key: Key) throws -> String { return try read(type, for: key) }
         
         // Custom
-        mutating func decode(_ type: Data.Type, forKey key: K) throws -> Data { return try read(type, for: key) }
-        mutating func decode(_ type: Date.Type, forKey key: K) throws -> Date { return try read(type, for: key) }
-        mutating func decode(_ type: UUID.Type, forKey key: K) throws -> UUID { return try read(type, for: key) }
-        mutating func decode(_ type: URL.Type, forKey key: K) throws -> URL { return try read(type, for: key) }
-        mutating func decode(_ type: Decimal.Type, forKey key: K) throws -> Decimal { return try read(type, for: key) }
+        mutating func decode(_ type: Data.Type, forKey key: Key) throws -> Data { return try read(type, for: key) }
+        mutating func decode(_ type: Date.Type, forKey key: Key) throws -> Date { return try read(type, for: key) }
+        mutating func decode(_ type: UUID.Type, forKey key: Key) throws -> UUID { return try read(type, for: key) }
+        mutating func decode(_ type: URL.Type, forKey key: Key) throws -> URL { return try read(type, for: key) }
+        mutating func decode(_ type: Decimal.Type, forKey key: Key) throws -> Decimal { return try read(type, for: key) }
         
         // Decodable
-        mutating func decode <T : Decodable> (_ type: T.Type, forKey key: K) throws -> T {
+        mutating func decode <T : Decodable> (_ type: T.Type, forKey key: Key) throws -> T {
             
             // override for CoreData supported native types that also are Decodable
             // and don't use Decodable implementation
@@ -276,7 +276,7 @@ fileprivate extension CoreDataDecoder {
                 
             } else if let type = type as? Data.Type {
                 
-                return try decode(type, forKey: key) as! T // WTF compiler?
+                return try read(T.self, for: key)
                 
             } else if let type = type as? Date.Type {
                 
@@ -288,11 +288,11 @@ fileprivate extension CoreDataDecoder {
                 
             } else if let type = type as? URL.Type {
                 
-                return try decode(type, forKey: key) as! T
+                return try read(T.self, for: key)
                 
             } else if let type = type as? Decimal.Type {
                 
-                return try decode(type, forKey: key) as! T
+                return try read(T.self, for: key)
                 
             } else {
                 
@@ -305,12 +305,12 @@ fileprivate extension CoreDataDecoder {
             }
         }
         
-        func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> Swift.KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
+        func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> Swift.KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
             
             fatalError()
         }
         
-        func nestedUnkeyedContainer(forKey key: K) throws -> Swift.UnkeyedDecodingContainer {
+        func nestedUnkeyedContainer(forKey key: Key) throws -> Swift.UnkeyedDecodingContainer {
             
             fatalError()
         }
@@ -320,7 +320,7 @@ fileprivate extension CoreDataDecoder {
             return decoder
         }
         
-        func superDecoder(forKey key: K) throws -> Swift.Decoder {
+        func superDecoder(forKey key: Key) throws -> Swift.Decoder {
             
             return decoder
         }
