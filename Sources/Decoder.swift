@@ -237,7 +237,7 @@ fileprivate extension CoreDataDecoder {
                 // identifier
                 if key.stringValue == identifierKey {
                     
-                    return try self.identifier(type as! CoreDataIdentifier.Type, from: decoder.managedObject, for: key) as! T
+                    return try self.identifier(identifierType, from: container, for: key) as! T
                     
                 } else {
                     
@@ -340,7 +340,7 @@ fileprivate extension CoreDataDecoder {
         }
         
         /// attempt to read from to-one relationship
-        private mutating func relationship <T: CoreDataIdentifier> (_ type: T.Type, for key: Key) throws -> T {
+        private mutating func relationship (_ type: CoreDataIdentifier.Type, for key: Key) throws -> CoreDataIdentifier {
             
             // get managed object
             let managedObject = try read(NSManagedObject.self, for: key)
@@ -348,7 +348,8 @@ fileprivate extension CoreDataDecoder {
             return try identifier(type, from: managedObject, for: key)
         }
         
-        private mutating func identifier <T: CoreDataIdentifier> (_ type: T.Type, from managedObject: NSManagedObject, for key: Key) throws -> T {
+        /// Get an identifier from a managed object
+        private mutating func identifier (_ type: CoreDataIdentifier.Type, from managedObject: NSManagedObject, for key: Key) throws -> CoreDataIdentifier {
             
             // get managed object
             let managedObject = try read(NSManagedObject.self, for: key)
@@ -358,7 +359,7 @@ fileprivate extension CoreDataDecoder {
             defer { self.codingPath.removeLast() }
             
             // create identifier from managed object
-            guard let identifier = T.init(managedObject: managedObject) else {
+            guard let identifier = type.init(managedObject: managedObject) else {
                 
                 throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Could not create identifier from managed object \(managedObject.objectID.uriRepresentation()) instead."))
             }
