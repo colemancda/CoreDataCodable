@@ -70,7 +70,7 @@ public extension CoreDataDecoder {
     
     public struct Options {
         
-        public var nonNativeIntegerDecodingStrategy: NonNativeIntegerDecodingStrategy = .throw
+        public var nonNativeIntegerDecodingStrategy: NonNativeIntegerDecodingStrategy = .exactly
     }
     
     /// How to decode integers that arent supported by CoreData (e.g. Int8, UInt16).
@@ -79,11 +79,11 @@ public extension CoreDataDecoder {
         /// Always throw for unsupported integer types.
         case `throw`
         
-        /// Truncate number, use `init(truncating number: NSNumber)`.
-        case truncating
-        
         /// Attempt to cast and throw if it cannot safely fit, use `init?(exactly number: NSNumber)`.
         case exactly
+        
+        /// Truncate number, use `init(truncating number: NSNumber)`.
+        case truncating
     }
 }
 
@@ -237,24 +237,188 @@ fileprivate extension CoreDataDecoder.Decoder {
         return expected
     }
     
-    /*
-    /// Attempt to convert non native numeric type to native type
-    func unboxNonNativeInteger <T, N, Key: CodingKey> (_ nativeValue: N, as type: T.Type, from , forKey key: Key) throws -> T where N: Numeric, T: Numeric {
+    /// Attempt to convert non native numeric type to native type.
+    func unbox(_ number: NSNumber) throws -> Int {
         
-     
+        let type = Int.self
         
-        guard let expected = T.init(exactly: nativeValue) else {
+        switch options.nonNativeIntegerDecodingStrategy {
             
+        case .throw:
             
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            
+        case .exactly:
+            
+            guard let value = type.init(exactly: number) else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            }
+            
+            return value
+            
+        case .truncating:
+            
+            return type.init(truncating: number)
         }
-    }*/
+    }
+    
+    
+    
+    /// Attempt to convert non native numeric type to native type.
+    func unbox(_ number: NSNumber) throws -> UInt {
+        
+        let type = UInt.self
+        
+        switch options.nonNativeIntegerDecodingStrategy {
+            
+        case .throw:
+            
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            
+        case .exactly:
+            
+            guard let value = type.init(exactly: number) else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            }
+            
+            return value
+            
+        case .truncating:
+            
+            return type.init(truncating: number)
+        }
+    }
     
     /// Attempt to convert non native numeric type to native type
     func unbox(_ number: NSNumber) throws -> Int8 {
         
-        // FIXME: Add multiple options for handling non-native integers
+        let type = Int8.self
         
-        return Int8.init(truncating: value)
+        switch options.nonNativeIntegerDecodingStrategy {
+            
+        case .throw:
+            
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            
+        case .exactly:
+            
+            guard let value = type.init(exactly: number) else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            }
+            
+            return value
+            
+        case .truncating:
+            
+            return type.init(truncating: number)
+        }
+    }
+    
+    /// Attempt to convert non native numeric type to native type
+    func unbox(_ number: NSNumber) throws -> UInt8 {
+        
+        let type = UInt8.self
+        
+        switch options.nonNativeIntegerDecodingStrategy {
+            
+        case .throw:
+            
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            
+        case .exactly:
+            
+            guard let value = type.init(exactly: number) else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            }
+            
+            return value
+            
+        case .truncating:
+            
+            return type.init(truncating: number)
+        }
+    }
+    
+    /// Attempt to convert non native numeric type to native type
+    func unbox(_ number: NSNumber) throws -> UInt16 {
+        
+        let type = UInt16.self
+        
+        switch options.nonNativeIntegerDecodingStrategy {
+            
+        case .throw:
+            
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            
+        case .exactly:
+            
+            guard let value = type.init(exactly: number) else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            }
+            
+            return value
+            
+        case .truncating:
+            
+            return type.init(truncating: number)
+        }
+    }
+    
+    /// Attempt to convert non native numeric type to native type
+    func unbox(_ number: NSNumber) throws -> UInt32 {
+        
+        let type = UInt32.self
+        
+        switch options.nonNativeIntegerDecodingStrategy {
+            
+        case .throw:
+            
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            
+        case .exactly:
+            
+            guard let value = type.init(exactly: number) else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            }
+            
+            return value
+            
+        case .truncating:
+            
+            return type.init(truncating: number)
+        }
+    }
+    
+    /// Attempt to convert non native numeric type to native type
+    func unbox(_ number: NSNumber) throws -> UInt64 {
+        
+        let type = UInt64.self
+        
+        switch options.nonNativeIntegerDecodingStrategy {
+            
+        case .throw:
+            
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            
+        case .exactly:
+            
+            guard let value = type.init(exactly: number) else {
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(number.objCType) instead."))
+            }
+            
+            return value
+            
+        case .truncating:
+            
+            return type.init(truncating: number)
+        }
     }
 }
 
@@ -321,14 +485,12 @@ fileprivate extension CoreDataDecoder {
         
         func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
             
-            return try _decode(type, forKey: key)
+            return try _decode(NSNumber.self, forKey: key) { try decoder.unbox($0) }
         }
         
         func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
             
-            let value = try _decode(Int16.self, forKey: key)
-            
-            return
+            return try _decode(NSNumber.self, forKey: key) { try decoder.unbox($0) }
         }
         
         func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
@@ -337,47 +499,89 @@ fileprivate extension CoreDataDecoder {
         }
         
         func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
-            <#code#>
+            
+            return try _decode(type, forKey: key)
         }
         
         func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
-            <#code#>
+            
+            return try _decode(type, forKey: key)
         }
         
         func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
-            <#code#>
+            
+            return try _decode(NSNumber.self, forKey: key) { try decoder.unbox($0) }
         }
         
         func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
-            <#code#>
+            
+            return try _decode(NSNumber.self, forKey: key) { try decoder.unbox($0) }
         }
         
         func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
-            <#code#>
+            
+            return try _decode(NSNumber.self, forKey: key) { try decoder.unbox($0) }
         }
         
         func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
-            <#code#>
+            
+            return try _decode(NSNumber.self, forKey: key) { try decoder.unbox($0) }
         }
         
         func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
-            <#code#>
+            
+            return try _decode(NSNumber.self, forKey: key) { try decoder.unbox($0) }
         }
         
         func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
-            <#code#>
+            
+            return try _decode(type, forKey: key)
         }
         
         func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
-            <#code#>
+            
+            return try _decode(type, forKey: key)
         }
         
         func decode(_ type: String.Type, forKey key: Key) throws -> String {
-            <#code#>
+            
+            return try _decode(type, forKey: key)
         }
         
         func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
-            <#code#>
+            
+            // override for CoreData supported native types that also are Decodable
+            // and don't use Decodable implementation
+            
+            if let type = type as? Data.Type {
+                
+                return try _decode(type, forKey: key) as! T
+                
+            } else if let type = type as? Date.Type {
+                
+                return try _decode(type, forKey: key) as! T
+                
+            } else if let type = type as? UUID.Type {
+                
+                return try _decode(type, forKey: key) as! T
+                
+            } else if let type = type as? URL.Type {
+                
+                return try _decode(type, forKey: key) as! T
+                
+            } else if let type = type as? Decimal.Type {
+                
+                return try _decode(type, forKey: key) as! T
+                
+            } else {
+                
+                // set coding key context
+                self.decoder.codingPath.append(key)
+                defer { self.decoder.codingPath.removeLast() }
+                
+                // get value
+                return try T.init(from: decoder)
+            }
         }
         
         func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
@@ -398,15 +602,8 @@ fileprivate extension CoreDataDecoder {
         
         // MARK: Private Methods
         
-        func _decodeNonNativeInteger <T, N> (_ type: T.Type, from nativeType: N.Type, forKey key: Key) throws -> T where N: Numeric, T: Numeric {
-            
-            return try _decode(nativeType, forKey: key) {
-                try self.decoder.unboxNonNativeInteger(type, from: nativeType, forKey: key)
-            }
-        }
-        
         /// Decode native value type and map to
-        func _decode <T, Result> (_ type: T.Type, forKey key: Key, map: (T) throws -> (Result)) throws -> Result {
+        private func _decode <T, Result> (_ type: T.Type, forKey key: Key, map: (T) throws -> (Result)) throws -> Result {
             
             self.decoder.codingPath.append(key)
             defer { self.decoder.codingPath.removeLast() }
@@ -419,6 +616,12 @@ fileprivate extension CoreDataDecoder {
             let value = try self.decoder.unbox(entry, as: type)
             
             return try map(value)
+        }
+        
+        @inline(__always)
+        private func _decode <T> (_ type: T.Type, forKey key: Key) throws -> T {
+            
+            return try _decode(type, forKey: key) { $0 }
         }
         
         /// Access actual value
