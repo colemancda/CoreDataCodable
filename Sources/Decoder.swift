@@ -168,8 +168,14 @@ fileprivate extension CoreDataDecoder {
             case let .value(value):
                 
                 return AttributeSingleValueDecodingContainer(referencing: self, wrapping: value)
+            
+            // get single value container for to-one relationship managed object
+            // decodes to CoreDataIdentifier
+            case let .managedObject(managedObject):
                 
-            case .relationship, .managedObject:
+                return RelationshipSingleValueDecodingContainer(referencing: self, wrapping: managedObject)
+                
+            case .relationship:
                 
                 throw DecodingError.typeMismatch(SingleValueDecodingContainer.self, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Cannot get single value decoding container, invalid top container \(container)."))
             }
@@ -851,6 +857,8 @@ fileprivate extension CoreDataDecoder {
     }
 }
 
+
+
 // MARK: UnkeyedDecodingContainer
 
 fileprivate extension CoreDataDecoder {
@@ -1041,3 +1049,129 @@ fileprivate extension CoreDataDecoder.RelationshipUnkeyedDecodingContainer {
         }
     }
 }
+
+
+fileprivate extension CoreDataDecoder {
+    
+    fileprivate struct RelationshipSingleValueDecodingContainer: Swift.SingleValueDecodingContainer {
+        
+        // MARK: Properties
+        
+        /// A reference to the encoder we're reading from.
+        private let decoder: CoreDataDecoder.Decoder
+        
+        /// A reference to the container we're reading from.
+        private let container: NSManagedObject
+        
+        /// The path of coding keys taken to get to this point in decoding.
+        public let codingPath: [CodingKey]
+        
+        // MARK: Initialization
+        
+        /// Initializes `self` by referencing the given decoder and container.
+        fileprivate init(referencing decoder: CoreDataDecoder.Decoder, wrapping container: NSManagedObject) {
+            
+            self.decoder = decoder
+            self.container = container
+            self.codingPath = decoder.codingPath
+        }
+        
+        // MARK: SingleValueDecodingContainer
+        
+        func decodeNil() -> Bool {
+            
+            return false
+        }
+        
+        func decode(_ type: Bool.Type) throws -> Bool {
+            
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) value but found \(container.objectID.uriRepresentation()) instead."))
+        }
+        
+        func decode(_ type: Int.Type) throws -> Int {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: Int8.Type) throws -> Int8 {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: Int16.Type) throws -> Int16 {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: Int32.Type) throws -> Int32 {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: Int64.Type) throws -> Int64 {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: UInt.Type) throws -> UInt {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: UInt8.Type) throws -> UInt8 {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: UInt16.Type) throws -> UInt16 {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: UInt32.Type) throws -> UInt32 {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: UInt64.Type) throws -> UInt64 {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: Float.Type) throws -> Float {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: Double.Type) throws -> Double {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode(_ type: String.Type) throws -> String {
+            
+            return try self.decoder.unbox(try decodedIdentifier(), as: type)
+        }
+        
+        func decode<T : Decodable>(_ type: T.Type) throws -> T {
+            
+            return try self.decoder.unboxDecodable(container, as: type)
+        }
+        
+        // MARK: Private Methods
+        
+        @inline(__always)
+        private func decodedIdentifier() throws -> Any {
+            
+            guard let managedObject = container as? DecodableManagedObject else {
+                
+                let type = DecodableManagedObject.self
+                
+                throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Cannot decode \(type) from managed object \(container.objectID.uriRepresentation()). Please conform to \(type)"))
+            }
+            
+            return managedObject.decodedIdentifier
+        }
+    }
+}
+

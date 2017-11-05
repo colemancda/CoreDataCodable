@@ -85,6 +85,8 @@ final class CoreDataCodableTests: XCTestCase {
             XCTAssert(decoded.enumValue == value.enumValue)
             XCTAssertNil(decoded.optional)
             XCTAssert("\(decoded)" == "\(value)")
+            
+            try $0.save()
         })
     }
     
@@ -122,7 +124,10 @@ final class CoreDataCodableTests: XCTestCase {
             print("Did decode")
             
             XCTAssert(decoded.identifier == parent.identifier)
-            XCTAssert("\(decoded)" == "\(parent)")
+            XCTAssert(decoded.child?.rawValue == parent.child?.rawValue)
+            XCTAssert(Set(decoded.children.map({ $0.rawValue })) == Set(parent.children.map({ $0.rawValue })))
+            
+            try $0.save()
         })
     }
     
@@ -167,7 +172,10 @@ final class CoreDataCodableTests: XCTestCase {
             print("Did decode")
             
             XCTAssert(decoded.identifier == parent.identifier)
-            XCTAssert("\(decoded)" == "\(parent)")
+            XCTAssert("\(decoded.child)" == "\(parent.child)")
+            XCTAssert(Set(decoded.children.map({ "\($0)" })) == Set(parent.children.map({ "\($0)" })))
+            
+            try $0.save()
         })
     }
 }
@@ -179,7 +187,7 @@ extension CoreDataCodableTests {
         return NSManagedObjectModel.mergedModel(from: Bundle.allBundles)!
     }
     
-    func testSQLiteURL() -> URL {
+    func testSQLiteURL(_ function: String = #function) -> URL {
         
         let fileManager = FileManager.default
         
@@ -191,8 +199,7 @@ extension CoreDataCodableTests {
                                             create: false)
         
         // get app folder
-        let bundleIdentifier = "\(self)" //Bundle.main.bundleIdentifier!
-        let folderURL = cacheURL.appendingPathComponent(bundleIdentifier, isDirectory: true)
+        let folderURL = cacheURL.appendingPathComponent("CoreDataCodableTests", isDirectory: true)
         
         // create folder if doesnt exist
         var folderExists: ObjCBool = false
@@ -202,14 +209,16 @@ extension CoreDataCodableTests {
             try! fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true)
         }
         
-        let fileURL = folderURL.appendingPathComponent("data" + UUID().uuidString + ".sqlite", isDirectory: false)
+        let fileURL = folderURL.appendingPathComponent(function + "." + UUID().uuidString + ".sqlite", isDirectory: false)
+        
+        print("Created SQLite file at \(fileURL)")
         
         return fileURL
     }
     
-    func context <Result> (_ block: (NSManagedObjectContext) throws -> Result) rethrows -> Result {
+    func context <Result> (_ function: String = #function, _ block: (NSManagedObjectContext) throws -> Result) rethrows -> Result {
         
-        let fileURL = testSQLiteURL()
+        let fileURL = testSQLiteURL(function)
         
         let managedObjectModel = self.model
         
