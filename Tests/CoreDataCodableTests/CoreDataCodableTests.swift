@@ -157,9 +157,17 @@ final class CoreDataCodableTests: XCTestCase {
             XCTAssert(Set(managedObject.children.map({ $0.identifier })) == Set(parent.children.map({ $0.identifier.rawValue })))
             XCTAssert(managedObject.child?.identifier == parent.child?.identifier.rawValue)
             
-            //var decoder = CoreDataDecoder(managedObjectContext: $0)
-            //decoder.log = { print($0) }
+            var decoder = CoreDataDecoder(managedObjectContext: $0)
+            decoder.log = { print($0) }
             
+            print("Will decode")
+            
+            let decoded = try decoder.decode(TestFullfilledParent.self, with: parent.identifier)
+            
+            print("Did decode")
+            
+            XCTAssert(decoded.identifier == parent.identifier)
+            XCTAssert("\(decoded)" == "\(parent)")
         })
     }
 }

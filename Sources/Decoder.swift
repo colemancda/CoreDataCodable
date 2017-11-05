@@ -78,7 +78,7 @@ public extension CoreDataDecoder {
     public typealias Log = (String) -> ()
 }
 
-// MARK: - Encoder
+// MARK: - Decoder
 
 fileprivate extension CoreDataDecoder {
     
@@ -125,6 +125,8 @@ fileprivate extension CoreDataDecoder {
             
             log?("Requested container keyed by \(type) for path \"\(codingPathString)\"")
             
+            assert(codingPath.isEmpty, "Should only request keyed container for managed object")
+            
             let container = CoreDataDecoder.KeyedDecodingContainer<Key>(decoder: self)
             
             return Swift.KeyedDecodingContainer<Key>(container)
@@ -169,7 +171,15 @@ fileprivate extension CoreDataDecoder {
                 throw CoreDataDecoder.Error.noKey(DecodingError.Context(codingPath: codingPath, debugDescription: "No key specified for single value container."))
             }
             
-            return SingleValueDecodingContainer(decoder: self, key: key)
+            /// Index in a to-many relationship
+            if let index = key as? UnkeyedDecodingContainer.Index {
+                
+                return SingleValueDecodingContainer(decoder: self, key: key)
+                
+            } else {
+                
+                return SingleValueDecodingContainer(decoder: self, key: key)
+            }
         }
     }
 }
@@ -189,6 +199,7 @@ fileprivate extension CoreDataDecoder.Decoder {
         
         // check schema / model contains property
         guard allKeys.contains(key.stringValue) else {
+            
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.codingPath, debugDescription: "No value associated with key \(key.stringValue)."))
         }
         
@@ -213,6 +224,14 @@ fileprivate extension CoreDataDecoder.Decoder {
         
         // get value
         return expected
+    }
+}
+
+fileprivate extension CoreDataDecoder {
+    
+    struct Stack {
+        
+        private(set) var containers: [Any]
     }
 }
 
@@ -302,7 +321,7 @@ fileprivate extension CoreDataDecoder {
                     
                 } else {
                     
-                    // set relationship value
+                    // read relationship value
                     return try relationship(identifierType, for: key) as! T
                 }
                 
@@ -473,7 +492,61 @@ fileprivate extension CoreDataDecoder {
         }
     }
 }
+/*
+// MARK: - SingleValueDecodingContainer
 
+fileprivate extension CoreDataDecoder {
+    
+    fileprivate struct SingleValueDecodingContainer: Swift.SingleValueDecodingContainer {
+        
+        /// A reference to the encoder we're reading from.
+        fileprivate let decoder: CoreDataDecoder.Decoder
+        
+        fileprivate let key: CodingKey
+        
+        /// A reference to the container we're reading from.
+        private var container: NSManagedObject & DecodableManagedObject {
+            
+            @inline(__always)
+            get { return decoder.managedObject }
+        }
+        
+        public private(set) var codingPath: [CodingKey] {
+            
+            @inline(__always)
+            get { return decoder.codingPath }
+            
+            @inline(__always)
+            nonmutating set { decoder.codingPath = newValue }
+        }
+        
+        func decodeNil() -> Bool {
+            
+            return (try? self.decoder.value(for: key)) == nil
+        }
+        
+        func decode(_ type: Bool.Type) throws -> Bool { return try decoder.read(type, for: key) }
+        func decode(_ type: Int.Type) throws -> Int { return try decoder.read(type, for: key) }
+        func decode(_ type: Int8.Type) throws -> Int8 { return try decoder.read(type, for: key) }
+        func decode(_ type: Int16.Type) throws -> Int16 { return try decoder.read(type, for: key) }
+        func decode(_ type: Int32.Type) throws -> Int32 { return try decoder.read(type, for: key) }
+        func decode(_ type: Int64.Type) throws -> Int64 { return try decoder.read(type, for: key) }
+        func decode(_ type: UInt.Type) throws -> UInt { return try decoder.read(type, for: key) }
+        func decode(_ type: UInt8.Type) throws -> UInt8 { return try decoder.read(type, for: key) }
+        func decode(_ type: UInt16.Type) throws -> UInt16 { return try decoder.read(type, for: key) }
+        func decode(_ type: UInt32.Type) throws -> UInt32 { return try decoder.read(type, for: key) }
+        func decode(_ type: UInt64.Type) throws -> UInt64 { return try decoder.read(type, for: key) }
+        func decode(_ type: Float.Type) throws -> Float { return try decoder.read(type, for: key) }
+        func decode(_ type: Double.Type) throws -> Double { return try decoder.read(type, for: key) }
+        func decode(_ type: String.Type) throws -> String { return try decoder.read(type, for: key) }
+        
+        func decode <T : Decodable> (_ type: T.Type) throws -> T {
+            
+            return try type.init(from: decoder)
+        }
+    }
+}
+*/
 fileprivate extension CoreDataDecoder {
     
     fileprivate struct UnkeyedDecodingContainer: Swift.UnkeyedDecodingContainer {
