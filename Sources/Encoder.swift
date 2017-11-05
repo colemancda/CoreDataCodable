@@ -150,12 +150,12 @@ fileprivate extension CoreDataEncoder.Encoder {
         
         // FIXME: test for valid property type
         
-        let selector = Selector("set" + key.stringValue.capitalizingFirstLetter() + ":")
-        
         let managedObject = self.managedObject
         
         // FIXME: Add option to throw or crash to improve performance
         
+        let selector = Selector("set" + key.stringValue.capitalizingFirstLetter() + ":")
+
         guard managedObject.responds(to: selector) else {
             
             let context = EncodingError.Context(codingPath: codingPath,
@@ -418,8 +418,10 @@ fileprivate extension CoreDataEncoder {
                 try $1.encode(to: encoder)
             }
             
-            let set = NSSet(array: managedObjects.map({ $0.0 }))
+            let isOrdered = self.encoder.managedObject.entity.relationshipsByName[key.stringValue]?.isOrdered ?? false
             
+            let set: NSObject = isOrdered ? NSOrderedSet(array: managedObjects.map({ $0.0 })) : NSSet(array: managedObjects.map({ $0.0 }))
+                        
             // set value
             try write(set, forKey: key)
         }

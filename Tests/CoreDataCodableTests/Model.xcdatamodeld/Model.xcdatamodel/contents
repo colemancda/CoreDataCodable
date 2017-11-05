@@ -25,20 +25,20 @@
     </entity>
     <entity name="TestNested" representedClassName=".TestNestedManagedObject" syncable="YES">
         <attribute name="identifier" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="rawValue" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="children" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="TestNested" inverseName="parent" inverseEntity="TestNested" syncable="YES"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestNested" inverseName="children" inverseEntity="TestNested" syncable="YES"/>
     </entity>
     <entity name="TestParent" representedClassName=".TestParentManagedObject" syncable="YES">
         <attribute name="identifier" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="rawValue" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="value" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="child" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestChild" inverseName="parentToOne" inverseEntity="TestChild" syncable="YES"/>
         <relationship name="children" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TestChild" inverseName="parent" inverseEntity="TestChild" syncable="YES"/>
     </entity>
     <elements>
         <element name="TestAttributes" positionX="-45" positionY="108" width="128" height="285"/>
         <element name="TestChild" positionX="-54" positionY="90" width="128" height="90"/>
-        <element name="TestNested" positionX="-54" positionY="135" width="128" height="90"/>
-        <element name="TestParent" positionX="-63" positionY="-18" width="128" height="120"/>
+        <element name="TestNested" positionX="-54" positionY="135" width="128" height="120"/>
+        <element name="TestParent" positionX="-63" positionY="-18" width="128" height="90"/>
     </elements>
 </model>

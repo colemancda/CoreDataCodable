@@ -198,7 +198,11 @@ final class CoreDataCodableTests: XCTestCase {
             var encoder = CoreDataEncoder(managedObjectContext: $0)
             encoder.log = { print($0) }
             
-            let managedObject = try encoder.encode(parent) as! TestParentManagedObject
+            print("Will encode")
+            
+            let managedObject = try encoder.encode(parent) as! TestNestedManagedObject
+            
+            print("Did encode")
             
             print(managedObject)
             
