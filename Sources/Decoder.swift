@@ -215,7 +215,7 @@ fileprivate extension CoreDataDecoder {
     }
 }
 
-// MARK: - Unboxing extensions
+// MARK: - Unboxing Values
 
 fileprivate extension CoreDataDecoder.Decoder {
     
@@ -226,6 +226,19 @@ fileprivate extension CoreDataDecoder.Decoder {
     
     /// Attempt to cast non optional value to expected native type.
     func unbox <T> (_ value: Any, as type: T.Type) throws -> T {
+        
+        // convert
+        guard let expected = value as? T else {
+            
+            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(T.self) value but found \(value) instead."))
+        }
+        
+        // get value
+        return expected
+    }
+    
+    /// Attempt to decode to expected native type.
+    func unbox <T: Decodable> (_ value: Any, as type: T.Type) throws -> T {
         
         // convert
         guard let expected = value as? T else {
@@ -553,51 +566,60 @@ fileprivate extension CoreDataDecoder {
             // override for CoreData supported native types that also are Decodable
             // and don't use Decodable implementation
             
-            if let type = type as? Data.Type {
+            if let _ = type as? Data.Type {
                 
-                return try _decode(type, forKey: key) as! T
+                return try _decode(type, forKey: key)
                 
-            } else if let type = type as? Date.Type {
+            } else if let _ = type as? Date.Type {
                 
-                return try _decode(type, forKey: key) as! T
+                return try _decode(type, forKey: key)
                 
-            } else if let type = type as? UUID.Type {
+            } else if let _ = type as? UUID.Type {
                 
-                return try _decode(type, forKey: key) as! T
+                return try _decode(type, forKey: key)
                 
-            } else if let type = type as? URL.Type {
+            } else if let _ = type as? URL.Type {
                 
-                return try _decode(type, forKey: key) as! T
+                return try _decode(type, forKey: key)
                 
-            } else if let type = type as? Decimal.Type {
+            } else if let _ = type as? Decimal.Type {
                 
-                return try _decode(type, forKey: key) as! T
+                return try _decode(type, forKey: key)
                 
             } else {
                 
-                // set coding key context
                 self.decoder.codingPath.append(key)
                 defer { self.decoder.codingPath.removeLast() }
                 
-                // get value
-                return try T.init(from: decoder)
+                guard let entry = try self.value(for: key) else {
+                    
+                    throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
+                }
+                
+                let value = try self.decoder.unbox(entry, as: type)
+                
+                return value
             }
         }
         
         func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
-            <#code#>
+            
+            
         }
         
         func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
-            <#code#>
+            
+            
         }
         
         func superDecoder() throws -> Swift.Decoder {
-            <#code#>
+            
+            
         }
         
         func superDecoder(forKey key: Key) throws -> Swift.Decoder {
-            <#code#>
+            
+            
         }
         
         // MARK: Private Methods
