@@ -220,12 +220,13 @@ fileprivate extension CoreDataDecoder {
 
 fileprivate extension CoreDataDecoder.Decoder {
     
+    /// KVC path string for current coding path.
     var codingPathString: String {
         
         return codingPath.reduce("", { $0 + "\($0.isEmpty ? "" : ".")" + $1.stringValue })
     }
     
-    /// Attempt to cast non optional value to expected native type.
+    /// Attempt to cast non optional native value to expected type.
     func unbox <T> (_ value: Any, as type: T.Type) throws -> T {
         
         // convert
@@ -238,7 +239,7 @@ fileprivate extension CoreDataDecoder.Decoder {
         return expected
     }
     
-    /// Attempt to decode to expected native type.
+    /// Attempt to decode native value to expected type.
     func unboxDecodable <T: Decodable> (_ value: Any, as type: T.Type) throws -> T {
         
         // override for CoreData supported native types that also are Decodable
@@ -270,22 +271,27 @@ fileprivate extension CoreDataDecoder.Decoder {
             
             if let managedObject = value as? NSManagedObject {
                 
+                // Single value container for relationship
                 container = .managedObject(managedObject)
                 
             } else if let managedObjects = value as? Set<NSManagedObject> {
                 
+                // Unkeyed container for relationship
                 container = .relationship(Array(managedObjects))
                 
             } else if let orderedSet = value as? NSOrderedSet,
                 let managedObjects = orderedSet.array as? [NSManagedObject] {
                 
-                container = .relationship(Array(managedObjects))
+                // Unkeyed container for relationship
+                container = .relationship(managedObjects)
                 
             } else {
                 
+                /// single value container for attributes
                 container = .value(value)
             }
             
+            // push container to stack and decode using Decodable implementation
             stack.push(container)
             let decoded = try T(from: self)
             stack.pop()
@@ -506,6 +512,7 @@ fileprivate extension CoreDataDecoder {
         /// The path of coding keys taken to get to this point in decoding.
         public let codingPath: [CodingKey]
         
+        /// All the keys the Decoder has for this container.
         public let allKeys: [Key]
         
         // MARK: Initialization
@@ -625,29 +632,29 @@ fileprivate extension CoreDataDecoder {
             
             // override for CoreData supported native types that also are Decodable
             // and don't use Decodable implementation
-            let value = try self.decoder.unbox(entry, as: type)
+            let value = try self.decoder.unboxDecodable(entry, as: type)
             
             return value
         }
         
         func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
             
-            
+            fatalError()
         }
         
         func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
             
-            
+            fatalError()
         }
         
         func superDecoder() throws -> Swift.Decoder {
             
-            
+            fatalError()
         }
         
         func superDecoder(forKey key: Key) throws -> Swift.Decoder {
             
-            
+            fatalError()
         }
         
         // MARK: Private Methods
@@ -692,6 +699,133 @@ fileprivate extension CoreDataDecoder {
     }
 }
 
+// MARK: - SingleValueDecodingContainer
+
+fileprivate extension CoreDataDecoder {
+    
+    fileprivate struct AttributeSingleValueDecodingContainer: Swift.SingleValueDecodingContainer {
+        
+        // MARK: Properties
+        
+        /// A reference to the encoder we're reading from.
+        private let decoder: CoreDataDecoder.Decoder
+        
+        /// A reference to the container we're reading from.
+        private let container: Any
+        
+        /// The path of coding keys taken to get to this point in decoding.
+        public let codingPath: [CodingKey]
+        
+        // MARK: Initialization
+        
+        /// Initializes `self` by referencing the given decoder and container.
+        fileprivate init(referencing decoder: CoreDataDecoder.Decoder, wrapping container: Any) {
+            
+            self.decoder = decoder
+            self.container = container
+            self.codingPath = decoder.codingPath
+        }
+        
+        // MARK: SingleValueDecodingContainer
+        
+        func decodeNil() -> Bool {
+            
+            assert((container as Any?) != nil, "Value is never nil")
+            
+            // should never hit this path
+            return false
+        }
+        
+        func decode(_ type: Bool.Type) throws -> Bool {
+            
+            return try self.decoder.unbox(container, as: type)
+        }
+        
+        func decode(_ type: Int.Type) throws -> Int {
+            
+            let nativeValue = try self.decoder.unbox(container, as: NSNumber.self)
+            
+            return try self.decoder.unbox(nativeValue)
+        }
+        
+        func decode(_ type: Int8.Type) throws -> Int8 {
+            
+            let nativeValue = try self.decoder.unbox(container, as: NSNumber.self)
+            
+            return try self.decoder.unbox(nativeValue)
+        }
+        
+        func decode(_ type: Int16.Type) throws -> Int16 {
+            
+            return try self.decoder.unbox(container, as: type)
+        }
+        
+        func decode(_ type: Int32.Type) throws -> Int32 {
+            
+            return try self.decoder.unbox(container, as: type)
+        }
+        
+        func decode(_ type: Int64.Type) throws -> Int64 {
+            
+            return try self.decoder.unbox(container, as: type)
+        }
+        
+        func decode(_ type: UInt.Type) throws -> UInt {
+            
+            let nativeValue = try self.decoder.unbox(container, as: NSNumber.self)
+            
+            return try self.decoder.unbox(nativeValue)
+        }
+        
+        func decode(_ type: UInt8.Type) throws -> UInt8 {
+            
+            let nativeValue = try self.decoder.unbox(container, as: NSNumber.self)
+            
+            return try self.decoder.unbox(nativeValue)
+        }
+        
+        func decode(_ type: UInt16.Type) throws -> UInt16 {
+            
+            let nativeValue = try self.decoder.unbox(container, as: NSNumber.self)
+            
+            return try self.decoder.unbox(nativeValue)
+        }
+        
+        func decode(_ type: UInt32.Type) throws -> UInt32 {
+            
+            let nativeValue = try self.decoder.unbox(container, as: NSNumber.self)
+            
+            return try self.decoder.unbox(nativeValue)
+        }
+        
+        func decode(_ type: UInt64.Type) throws -> UInt64 {
+            
+            let nativeValue = try self.decoder.unbox(container, as: NSNumber.self)
+            
+            return try self.decoder.unbox(nativeValue)
+        }
+        
+        func decode(_ type: Float.Type) throws -> Float {
+            
+            return try self.decoder.unbox(container, as: type)
+        }
+        
+        func decode(_ type: Double.Type) throws -> Double {
+            
+            return try self.decoder.unbox(container, as: type)
+        }
+        
+        func decode(_ type: String.Type) throws -> String {
+            
+            return try self.decoder.unbox(container, as: type)
+        }
+        
+        func decode<T : Decodable>(_ type: T.Type) throws -> T {
+            
+            return try self.decoder.unboxDecodable(container, as: type)
+        }
+    }
+}
 
 // MARK: - OLD
 
