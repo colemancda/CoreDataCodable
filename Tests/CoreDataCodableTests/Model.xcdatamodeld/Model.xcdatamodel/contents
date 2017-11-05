@@ -8,7 +8,7 @@
         <attribute name="double" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="enumValue" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="float" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="identifier" attributeType="String" syncable="YES"/>
         <attribute name="int16" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="int32" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="int64" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -19,12 +19,12 @@
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="YES" syncable="YES"/>
     </entity>
     <entity name="TestChild" representedClassName=".TestChildManagedObject" syncable="YES">
-        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="identifier" attributeType="String" syncable="YES"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestParent" inverseName="children" inverseEntity="TestParent" syncable="YES"/>
         <relationship name="parentToOne" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestParent" inverseName="child" inverseEntity="TestParent" syncable="YES"/>
     </entity>
     <entity name="TestParent" representedClassName=".TestParentManagedObject" syncable="YES">
-        <attribute name="identifier" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="identifier" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="child" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestChild" inverseName="parentToOne" inverseEntity="TestChild" syncable="YES"/>
         <relationship name="children" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TestChild" inverseName="parent" inverseEntity="TestChild" syncable="YES"/>
     </entity>

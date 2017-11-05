@@ -25,7 +25,8 @@ public enum CoreDataValue {
 
 public enum CoreDataReference {
     
-    case reference( )
+    case identifier(CoreDataIdentifier)
+    case nested(CoreDataObject)
 }
 
 public extension CoreDataValue {
@@ -55,8 +56,8 @@ public extension CoreDataValue {
     /// Core Data Relationship
     public enum Relationship {
         
-        case toOne(CoreDataIdentifier)
-        case toMany([CoreDataIdentifier])
+        case toOne(CoreDataReference)
+        case toMany([CoreDataReference])
     }
 }
 /*
