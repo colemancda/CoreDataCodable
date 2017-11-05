@@ -392,7 +392,9 @@ fileprivate extension CoreDataEncoder {
             
             let managedObjects = try identifiers.map { try $0.findOrCreate(in: managedObjectContext) }
             
-            let set = NSSet(array: managedObjects)
+            let isOrdered = self.encoder.managedObject.entity.relationshipsByName[key.stringValue]?.isOrdered ?? false
+            
+            let set: NSObject = isOrdered ? NSOrderedSet(array: managedObjects) : NSSet(array: managedObjects)
             
             // set value
             try write(set, forKey: key)

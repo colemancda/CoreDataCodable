@@ -172,8 +172,49 @@ final class CoreDataCodableTests: XCTestCase {
             print("Did decode")
             
             XCTAssert(decoded.identifier == parent.identifier)
-            XCTAssert("\(decoded.child)" == "\(parent.child)")
+            XCTAssert(String(describing: decoded.child) == String(describing: parent.child))
             XCTAssert(Set(decoded.children.map({ "\($0)" })) == Set(parent.children.map({ "\($0)" })))
+            
+            try $0.save()
+        })
+    }
+    
+    func testNested() {
+        
+        let parent = TestNested(identifier: 1, children: [
+            TestNested(identifier: 21),
+            TestNested(identifier: 22, children: [
+                TestNested(identifier: 31, children: [
+                    TestNested(identifier: 41, children: []),
+                    ]),
+                TestNested(identifier: 32, children: [
+                    TestNested(identifier: 42)
+                    ])
+                ])
+            ])
+        
+        XCTAssertNoThrow(try context {
+            
+            var encoder = CoreDataEncoder(managedObjectContext: $0)
+            encoder.log = { print($0) }
+            
+            let managedObject = try encoder.encode(parent) as! TestParentManagedObject
+            
+            print(managedObject)
+            
+            XCTAssert(managedObject.identifier == parent.identifier.rawValue)
+            
+            var decoder = CoreDataDecoder(managedObjectContext: $0)
+            decoder.log = { print($0) }
+            
+            print("Will decode")
+            
+            let decoded = try decoder.decode(TestNested.self, with: parent.identifier)
+            
+            print("Did decode")
+            
+            XCTAssert(decoded.identifier == parent.identifier)
+            XCTAssert(String(describing: decoded) == String(describing: parent))
             
             try $0.save()
         })
