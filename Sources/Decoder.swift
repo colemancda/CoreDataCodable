@@ -182,7 +182,7 @@ fileprivate extension CoreDataDecoder {
             
             case managedObject(NSManagedObject)
             case relationship([NSManagedObject])
-            case value(Any?)
+            case value(Any)
         }
         
         private(set) var containers = [Container]()
@@ -205,6 +205,7 @@ fileprivate extension CoreDataDecoder {
             containers.append(container)
         }
         
+        @discardableResult
         mutating func pop() -> Container {
             
             guard let container = containers.popLast()
@@ -238,7 +239,58 @@ fileprivate extension CoreDataDecoder.Decoder {
     }
     
     /// Attempt to decode to expected native type.
-    func unbox <T: Decodable> (_ value: Any, as type: T.Type) throws -> T {
+    func unboxDecodable <T: Decodable> (_ value: Any, as type: T.Type) throws -> T {
+        
+        // override for CoreData supported native types that also are Decodable
+        // and don't use Decodable implementation
+        
+        if type is Data.Type {
+            
+            return try unbox(value, as: type)
+            
+        } else if type is Date.Type {
+            
+            return try unbox(value, as: type)
+            
+        } else if type is UUID.Type {
+            
+            return try unbox(value, as: type)
+            
+        } else if type is URL.Type {
+            
+            return try unbox(value, as: type)
+            
+        } else if type is Decimal.Type {
+            
+            return (try unbox(value, as: NSDecimalNumber.self) as Decimal) as! T
+            
+        } else {
+            
+            let container: CoreDataDecoder.Stack.Container
+            
+            if let managedObject = value as? NSManagedObject {
+                
+                container = .managedObject(managedObject)
+                
+            } else if let managedObjects = value as? Set<NSManagedObject> {
+                
+                container = .relationship(Array(managedObjects))
+                
+            } else if let orderedSet = value as? NSOrderedSet,
+                let managedObjects = orderedSet.array as? [NSManagedObject] {
+                
+                container = .relationship(Array(managedObjects))
+                
+            } else {
+                
+                container = .value(value)
+            }
+            
+            stack.push(container)
+            let decoded = try T(from: self)
+            stack.pop()
+            return decoded
+        }
         
         // convert
         guard let expected = value as? T else {
@@ -561,45 +613,21 @@ fileprivate extension CoreDataDecoder {
             return try _decode(type, forKey: key)
         }
         
-        func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
+        func decode<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T {
+            
+            self.decoder.codingPath.append(key)
+            defer { self.decoder.codingPath.removeLast() }
+            
+            guard let entry = try self.value(for: key) else {
+                
+                throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
+            }
             
             // override for CoreData supported native types that also are Decodable
             // and don't use Decodable implementation
+            let value = try self.decoder.unbox(entry, as: type)
             
-            if let _ = type as? Data.Type {
-                
-                return try _decode(type, forKey: key)
-                
-            } else if let _ = type as? Date.Type {
-                
-                return try _decode(type, forKey: key)
-                
-            } else if let _ = type as? UUID.Type {
-                
-                return try _decode(type, forKey: key)
-                
-            } else if let _ = type as? URL.Type {
-                
-                return try _decode(type, forKey: key)
-                
-            } else if let _ = type as? Decimal.Type {
-                
-                return try _decode(type, forKey: key)
-                
-            } else {
-                
-                self.decoder.codingPath.append(key)
-                defer { self.decoder.codingPath.removeLast() }
-                
-                guard let entry = try self.value(for: key) else {
-                    
-                    throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
-                }
-                
-                let value = try self.decoder.unbox(entry, as: type)
-                
-                return value
-            }
+            return value
         }
         
         func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
