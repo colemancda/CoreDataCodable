@@ -223,6 +223,28 @@ final class CoreDataCodableTests: XCTestCase {
             try $0.save()
         })
     }
+    
+    func testSummit() {
+        
+        let jsonDecoder = JSONDecoder()
+        
+        let filename = "Summit7"
+        
+        let testBundle = Bundle(for: type(of: self))
+        
+        let resourcePath = testBundle.path(forResource: filename, ofType: "json", inDirectory: nil, forLocalization: nil)!
+        
+        let jsonData = try! Data(contentsOf: URL(fileURLWithPath: resourcePath))
+        
+        do {
+            
+            let summit = try jsonDecoder.decode(SummitResponse.Summit.self, from: jsonData)
+            
+        } catch {
+            
+            XCTFail("\(error)")
+        }
+    }
 }
 
 extension CoreDataCodableTests {

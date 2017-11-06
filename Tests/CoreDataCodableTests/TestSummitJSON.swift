@@ -10,10 +10,17 @@ import Foundation
 import CoreData
 import CoreDataCodable
 
+// MARK: - JSON
+
 /// [OpenStack Summit](https://github.com/OpenStack-mobile/summit-app-ios)
-public struct SummitResponse {
+public struct SummitResponse: Codable, RawRepresentable {
     
-    public var summit: Summit
+    public var rawValue: Summit
+    
+    public init(rawValue: Summit) {
+        
+        self.rawValue = rawValue
+    }
     
     public struct Summit: Codable {
         
@@ -88,7 +95,7 @@ public struct SummitResponse {
         
         public var schedule: [Event]
         
-        public var wirelessNetworks: [WirelessNetwork]
+        public var wirelessNetworks: [WirelessNetwork]?
     }
     
     public struct TimeZone: Codable {
@@ -334,12 +341,39 @@ public struct SummitResponse {
             }
         }
         
+        public enum ClassName: String, Codable {
+            
+            case SummitVenue, SummitExternalLocation, SummitHotel, SummitAirport, SummitVenueRoom
+        }
+        
+        private enum CodingKeys: String, CodingKey {
+            
+            case type = "class_name"
+        }
+        
         case venue(Venue)
         case room(VenueRoom)
         
         public init(from decoder: Decoder) throws {
             
+            let container = try decoder.container(keyedBy: CodingKeys.self)
             
+            let type = try container.decode(ClassName.self, forKey: .type)
+            
+            switch type {
+                
+            case .SummitVenue, .SummitExternalLocation, .SummitHotel, .SummitAirport:
+                
+                let venue = try Venue(from: decoder)
+                
+                self = .venue(venue)
+                
+            case .SummitVenueRoom:
+                
+                let room = try VenueRoom(from: decoder)
+                
+                self = .room(room)
+            }
         }
         
         public func encode(to encoder: Encoder) throws {
@@ -360,6 +394,10 @@ public struct SummitResponse {
             }
         }
         
+        public typealias LocationType = Model.Venue.LocationType
+        
+        public typealias ClassName = Model.Venue.ClassName
+        
         private enum CodingKeys: String, CodingKey {
             
             case identifier = "id"
@@ -377,16 +415,6 @@ public struct SummitResponse {
             case locationType = "location_type"
             case descriptionText = "description"
             case type = "class_name"
-        }
-        
-        public enum LocationType: String, Codable {
-            
-            case Internal, External, None
-        }
-        
-        public enum ClassName: String, Codable {
-            
-            case SummitVenue, SummitExternalLocation, SummitHotel, SummitAirport
         }
         
         public let identifier: Identifier
@@ -417,7 +445,7 @@ public struct SummitResponse {
         
         public var images: [Image]
         
-        public var floors: [VenueFloor]
+        public var floors: [VenueFloor]?
     }
     
     public struct VenueFloor: Codable {
@@ -455,7 +483,7 @@ public struct SummitResponse {
         
         public var venue: Image.Identifier
         
-        public var rooms: [VenueRoom.Identifier]
+        public var rooms: [VenueRoom.Identifier]?
     }
     
     public struct VenueRoom: Codable {
@@ -604,7 +632,7 @@ public struct SummitResponse {
             
             case identifier = "id"
             case summit = "summit_id"
-            case title
+            case name = "title"
             case descriptionText = "description"
             case socialDescription = "social_description"
             case start = "start_date"
@@ -613,18 +641,21 @@ public struct SummitResponse {
             case averageFeedback = "avg_feedback_rate"
             case type = "type_id"
             case sponsors
-            case speakers
             case location = "location_id"
             case tags
             case track = "track_id"
             case videos
             case rsvp = "rsvp_link"
-            case groups
             case externalRSVP = "rsvp_external"
             case willRecord = "to_record"
             case attachment
             case slides
             case links
+            
+            // presentation
+            case level
+            case moderator = "moderator_speaker_id"
+            case speakers
         }
         
         public let identifier: Identifier
@@ -651,9 +682,9 @@ public struct SummitResponse {
         
         public var rsvp: String?
         
-        public var externalRSVP: Bool = false
+        public var externalRSVP: Bool?
         
-        public var willRecord: Bool = false
+        public var willRecord: Bool?
         
         public var attachment: URL?
         
@@ -663,32 +694,25 @@ public struct SummitResponse {
         
         public var location: Location.Identifier?
         
-        public var presentation: Presentation
+        // Not really a different entity
+        //public var presentation: Presentation
         
-        public var videos: [Video]
+        public var videos: [Video]?
         
-        public var slides: [Slide]
+        public var slides: [Slide]?
         
-        public var links: [Link]
+        public var links: [Link]?
         
         // Never comes from this JSON
         //public var groups: [Group]
         
         // Presentation values
         
-        public var level: Level?
+        public var level: Model.Level?
         
         public var moderator: Speaker.Identifier?
         
-        public var speakers: [Speaker.Identifier]
-    }
-    
-    public enum Level: String, Codable {
-        
-        case beginner = "Beginner"
-        case intermediate = "Intermediate"
-        case advanced = "Advanced"
-        case notApplicable = "N/A"
+        public var speakers: [Speaker.Identifier]?
     }
     
     public struct Link: Codable {
@@ -717,7 +741,121 @@ public struct SummitResponse {
         
         public let identifier: Identifier
         
+        public var name: String?
+        
+        public var descriptionText: String?
+        
+        public var displayOnSite: Bool
+        
+        public var featured: Bool
+        
+        public var order: Int64
+        
+        public var link: String // not always valid URL
+        
+        public var event: Event.Identifier
+    }
+    
+    public struct Tag: Codable {
+        
+        public struct Identifier: Codable, RawRepresentable {
+            
+            public var rawValue: Int64
+            
+            public init(rawValue: Int64) {
+                
+                self.rawValue = rawValue
+            }
+        }
+        
+        private enum CodingKeys: String, CodingKey {
+            
+            case identifier = "id"
+            case name = "tag"
+        }
+        
+        public let identifier: Identifier
+        
         public var name: String
+    }
+    
+    public struct Video: Codable {
+        
+        public struct Identifier: Codable, RawRepresentable {
+            
+            public var rawValue: Int64
+            
+            public init(rawValue: Int64) {
+                
+                self.rawValue = rawValue
+            }
+        }
+        
+        private enum CodingKeys: String, CodingKey {
+            
+            case identifier = "id"
+            case name
+            case descriptionText = "description"
+            case displayOnSite = "display_on_site"
+            case featured
+            case event = "presentation_id"
+            case youtube = "youtube_id"
+            case dataUploaded = "data_uploaded"
+            case highlighted
+            case views
+            case order
+        }
+        
+        public let identifier: Identifier
+        
+        public var name: String
+        
+        public var descriptionText: String?
+        
+        public var displayOnSite: Bool
+        
+        public var featured: Bool
+        
+        public var highlighted: Bool
+        
+        public var youtube: String
+        
+        public var dataUploaded: Date
+        
+        public var order: Int64
+        
+        public var views: Int64
+        
+        public var event: Event.Identifier
+    }
+    
+    public struct Slide: Codable {
+        
+        public struct Identifier: Codable, RawRepresentable {
+            
+            public var rawValue: Int64
+            
+            public init(rawValue: Int64) {
+                
+                self.rawValue = rawValue
+            }
+        }
+        
+        private enum CodingKeys: String, CodingKey {
+            
+            case identifier = "id"
+            case name
+            case descriptionText = "description"
+            case displayOnSite = "display_on_site"
+            case featured
+            case order
+            case event = "presentation_id"
+            case link
+        }
+        
+        public let identifier: Identifier
+        
+        public var name: String?
         
         public var descriptionText: String?
         
@@ -729,7 +867,6 @@ public struct SummitResponse {
         
         public var link: URL
         
-        public var event: Event.Identifier
+        public var event: Identifier
     }
 }
-
