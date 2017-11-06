@@ -92,7 +92,7 @@ final class CoreDataCodableTests: XCTestCase {
     
     func testFaultRelationship() {
         
-        let parent = TestParent(identifier: TestParent.Identifier(rawValue: 100),
+        let parent = TestParent(identifier: "parent01",
                                 child: TestChild.Identifier(rawValue: "child01"),
                                 children: [TestChild.Identifier(rawValue: "children01"),
                                            TestChild.Identifier(rawValue: "children02")])
@@ -133,7 +133,7 @@ final class CoreDataCodableTests: XCTestCase {
     
     func testFulfilledRelationships() {
         
-        let parentIdentifier = TestFullfilledParent.Identifier(rawValue: 100)
+        let parentIdentifier: TestFullfilledParent.Identifier = "parent01"
         
         let child = TestChild(identifier: TestChild.Identifier(rawValue: "child01"),
                               parent: nil,

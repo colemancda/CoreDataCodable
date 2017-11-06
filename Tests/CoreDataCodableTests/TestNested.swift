@@ -32,9 +32,9 @@ extension TestNested {
     
     struct Identifier: Codable, RawRepresentable {
         
-        var rawValue: Int64
+        var rawValue: String
         
-        init(rawValue: Int64) {
+        init(rawValue: String) {
             
             self.rawValue = rawValue
         }
@@ -46,9 +46,9 @@ extension TestNested {
     }
 }
 
-extension TestNested.Identifier: ExpressibleByIntegerLiteral {
+extension TestNested.Identifier: ExpressibleByStringLiteral {
     
-    public init(integerLiteral value: RawValue) {
+    public init(stringLiteral value: String) {
         
         self.rawValue = value
     }
@@ -82,7 +82,7 @@ extension TestNested: CoreDataCodable {
     
     static func findOrCreate(_ identifier: TestNested.Identifier, in context: NSManagedObjectContext) throws -> TestNestedManagedObject {
         
-        let identifier = identifier.rawValue as NSNumber
+        let identifier = identifier.rawValue as NSString
         
         let identifierProperty = CodingKeys.identifier.stringValue
         
@@ -94,7 +94,7 @@ extension TestNested: CoreDataCodable {
 
 final class TestNestedManagedObject: NSManagedObject {
     
-    @NSManaged var identifier: Int64
+    @NSManaged var identifier: String
     
     @NSManaged var parent: TestNestedManagedObject?
     

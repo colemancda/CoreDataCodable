@@ -332,15 +332,6 @@ fileprivate extension CoreDataDecoder.Decoder {
             stack.pop()
             return decoded
         }
-        
-        // convert
-        guard let expected = value as? T else {
-            
-            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(T.self) value but found \(value) instead."))
-        }
-        
-        // get value
-        return expected
     }
     
     /// Attempt to convert non native numeric type to native type.

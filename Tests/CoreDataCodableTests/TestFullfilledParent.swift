@@ -27,7 +27,7 @@ extension TestFullfilledParent: CoreDataCodable {
     
     static func findOrCreate(_ identifier: TestFullfilledParent.Identifier, in context: NSManagedObjectContext) throws -> TestParentManagedObject {
         
-        let identifier = identifier.rawValue as NSNumber
+        let identifier = identifier.rawValue as NSString
         
         let identifierProperty = "identifier"
         

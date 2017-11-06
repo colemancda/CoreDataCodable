@@ -23,12 +23,20 @@ extension TestParent {
     
     struct Identifier: Codable, RawRepresentable {
         
-        var rawValue: Int64
+        var rawValue: String
         
-        init(rawValue: Int64) {
+        init(rawValue: String) {
             
             self.rawValue = rawValue
         }
+    }
+}
+
+extension TestParent.Identifier: ExpressibleByStringLiteral {
+    
+    public init(stringLiteral value: RawValue) {
+        
+        self.rawValue = value
     }
 }
 
@@ -62,7 +70,7 @@ extension TestParent: CoreDataCodable {
     
     static func findOrCreate(_ identifier: TestParent.Identifier, in context: NSManagedObjectContext) throws -> TestParentManagedObject {
         
-        let identifier = identifier.rawValue as NSNumber
+        let identifier = identifier.rawValue as NSString
         
         let identifierProperty = "identifier"
         
@@ -74,7 +82,7 @@ extension TestParent: CoreDataCodable {
 
 final class TestParentManagedObject: NSManagedObject {
     
-    @NSManaged var identifier: Int64
+    @NSManaged var identifier: String
     
     @NSManaged var child: TestChildManagedObject?
     
