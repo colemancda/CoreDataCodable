@@ -14,7 +14,7 @@ import CoreData
 /// Specifies how a type can be encoded to be stored with Core Data.
 public protocol CoreDataCodable: Codable {
     
-    static var identifierKey: String { get }
+    static var identifierKey: CodingKey { get }
     
     var coreDataIdentifier: CoreDataIdentifier { get }
 }

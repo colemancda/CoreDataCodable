@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import CoreDataCodable
 
 public struct Model {
     
@@ -62,21 +63,6 @@ public struct Model {
         public var schedule: [Event]
         
         public var wirelessNetworks: [WirelessNetwork]
-    }
-    
-    public struct TimeZone: Codable {
-        
-        public var name: String
-        
-        public var countryCode: String
-        
-        public var latitude: Double
-        
-        public var longitude: Double
-        
-        public var comments: String
-        
-        public var offset: Int
     }
     
     public struct WirelessNetwork: Codable {
@@ -331,7 +317,7 @@ public struct Model {
         
         public var images: [Image]
         
-        public var floors: [VenueFloor]?
+        public var floors: [VenueFloor]
     }
     
     public struct VenueFloor: Codable {
@@ -369,7 +355,7 @@ public struct Model {
         
         public var venue: Image.Identifier
         
-        public var rooms: [VenueRoom.Identifier]?
+        public var rooms: [VenueRoom.Identifier]
     }
     
     public struct VenueRoom: Codable {
@@ -453,15 +439,6 @@ public struct Model {
             }
         }
         
-        private enum CodingKeys: String, CodingKey {
-            
-            case identifier = "id"
-            case name
-            case descriptionText = "description"
-            case color
-            case tracks
-        }
-        
         public let identifier: Identifier
         
         public var name: String
@@ -483,14 +460,6 @@ public struct Model {
                 
                 self.rawValue = rawValue
             }
-        }
-        
-        private enum CodingKeys: String, CodingKey {
-            
-            case identifier = "id"
-            case name
-            case color
-            case blackOutTimes = "black_out_times"
         }
         
         public let identifier: Identifier
@@ -550,11 +519,11 @@ public struct Model {
         
         public var location: Location.Identifier?
         
-        public var videos: [Video]?
+        public var videos: [Video]
         
-        public var slides: [Slide]?
+        public var slides: [Slide]
         
-        public var links: [Link]?
+        public var links: [Link]
         
         // Never comes from this JSON
         //public var groups: [Group]
@@ -635,12 +604,6 @@ public struct Model {
             }
         }
         
-        private enum CodingKeys: String, CodingKey {
-            
-            case identifier = "id"
-            case name = "tag"
-        }
-        
         public let identifier: Identifier
         
         public var name: String
@@ -656,21 +619,6 @@ public struct Model {
                 
                 self.rawValue = rawValue
             }
-        }
-        
-        private enum CodingKeys: String, CodingKey {
-            
-            case identifier = "id"
-            case name
-            case descriptionText = "description"
-            case displayOnSite = "display_on_site"
-            case featured
-            case event = "presentation_id"
-            case youtube = "youtube_id"
-            case dataUploaded = "data_uploaded"
-            case highlighted
-            case views
-            case order
         }
         
         public let identifier: Identifier
@@ -708,18 +656,6 @@ public struct Model {
             }
         }
         
-        private enum CodingKeys: String, CodingKey {
-            
-            case identifier = "id"
-            case name
-            case descriptionText = "description"
-            case displayOnSite = "display_on_site"
-            case featured
-            case order
-            case event = "presentation_id"
-            case link
-        }
-        
         public let identifier: Identifier
         
         public var name: String?
@@ -737,3 +673,64 @@ public struct Model {
         public var event: Identifier
     }
 }
+
+// MARK: - SummitUnique
+
+public protocol SummitUnique {
+    
+    associatedtype Identifier: Codable, RawRepresentable
+    
+    var identifier: Identifier { get }
+}
+
+extension SummitUnique where Self: CoreDataCodable, Self.Identifier: CoreDataIdentifier {
+    
+    // All identifier properties should be same as summit
+    public static var identifierKey: CodingKey { return Model.Summit.identifierKey }
+    
+    public var coreDataIdentifier: CoreDataIdentifier { return identifier }
+}
+
+extension Model.Summit: SummitUnique { }
+//extension Model.Summit: SummitUnique { }
+//extension Model.Summit: SummitUnique { }
+//extension Model.Summit: SummitUnique { }
+
+public protocol SummitCoreDataIdentifier: CoreDataIdentifier {
+    
+    associatedtype ManagedObject: Entity
+}
+
+extension SummitCoreDataIdentifier where Self: RawRepresentable, Self.RawValue == Int64 {
+    
+    public func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject {
+        
+        return try context.findOrCreate(identifier: self.rawValue as NSNumber,
+                                        property: "identifier",
+                                        entityName: self.entityName)
+    }
+    
+    public init?(managedObject: NSManagedObject) {
+        
+        guard let managedObject = managedObject as? ManagedObject
+            else { return }
+        
+        self.rawValue = managedObject.identifier
+    }
+}
+
+// MARK: - CoreDataCodable
+
+extension Model.Summit: CoreDataCodable {
+    
+    public static var identifierKey: CodingKey { return CodingKeys.identifier }
+}
+
+// MARK: - CoreDataIdentifier
+
+extension Model.Summit.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SummitManagedObject
+}
+
+extension Model.Summit: CoreDataCodable { }

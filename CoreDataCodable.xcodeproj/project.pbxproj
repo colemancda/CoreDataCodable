@@ -27,6 +27,9 @@
 		6E5C6DB81FB0C6760081FD21 /* TestSummitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5C6DB71FB0C6760081FD21 /* TestSummitModel.swift */; };
 		6E5C6DB91FB0C6760081FD21 /* TestSummitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5C6DB71FB0C6760081FD21 /* TestSummitModel.swift */; };
 		6E5C6DBA1FB0C6760081FD21 /* TestSummitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5C6DB71FB0C6760081FD21 /* TestSummitModel.swift */; };
+		6E5C6DBC1FB0D0910081FD21 /* TestSummitManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5C6DBB1FB0D0910081FD21 /* TestSummitManagedObject.swift */; };
+		6E5C6DBD1FB0D0910081FD21 /* TestSummitManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5C6DBB1FB0D0910081FD21 /* TestSummitManagedObject.swift */; };
+		6E5C6DBE1FB0D0910081FD21 /* TestSummitManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5C6DBB1FB0D0910081FD21 /* TestSummitManagedObject.swift */; };
 		6E7250E01FAAD15700BCF637 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */; };
 		6E7250E11FAAD15700BCF637 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */; };
 		6E7250E21FAAD15700BCF637 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */; };
@@ -98,6 +101,7 @@
 		6E5C6DAF1FB0332A0081FD21 /* TestSummitJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSummitJSON.swift; sourceTree = "<group>"; };
 		6E5C6DB31FB033BF0081FD21 /* Summit7.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Summit7.json; sourceTree = "<group>"; };
 		6E5C6DB71FB0C6760081FD21 /* TestSummitModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSummitModel.swift; sourceTree = "<group>"; };
+		6E5C6DBB1FB0D0910081FD21 /* TestSummitManagedObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSummitManagedObject.swift; sourceTree = "<group>"; };
 		6E7250DF1FAAD15700BCF637 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		6E7282E21FABC0EA001856FA /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
 		6E7282E71FABC4F1001856FA /* TestParent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestParent.swift; sourceTree = "<group>"; };
@@ -225,6 +229,7 @@
 				6E5C6DAB1FB0253E0081FD21 /* TestNested.swift */,
 				6E5C6DAF1FB0332A0081FD21 /* TestSummitJSON.swift */,
 				6E5C6DB71FB0C6760081FD21 /* TestSummitModel.swift */,
+				6E5C6DBB1FB0D0910081FD21 /* TestSummitManagedObject.swift */,
 				6E5C6DB31FB033BF0081FD21 /* Summit7.json */,
 				6E7250DE1FAAD15700BCF637 /* Model.xcdatamodeld */,
 			);
@@ -546,6 +551,7 @@
 				8933C7901EB5B82D000D00A4 /* CoreDataCodableTests.swift in Sources */,
 				6E7282EC1FABC58D001856FA /* TestChild.swift in Sources */,
 				6E5C6DB01FB0332A0081FD21 /* TestSummitJSON.swift in Sources */,
+				6E5C6DBC1FB0D0910081FD21 /* TestSummitManagedObject.swift in Sources */,
 				6E7282E81FABC4F1001856FA /* TestParent.swift in Sources */,
 				6E0BD4AD1FABB7C300498866 /* TestAttributes.swift in Sources */,
 				6E7282F01FAC2BF7001856FA /* TestFullfilledParent.swift in Sources */,
@@ -598,6 +604,7 @@
 				8933C78F1EB5B82C000D00A4 /* CoreDataCodableTests.swift in Sources */,
 				6E7282ED1FABC58D001856FA /* TestChild.swift in Sources */,
 				6E5C6DB11FB0332A0081FD21 /* TestSummitJSON.swift in Sources */,
+				6E5C6DBD1FB0D0910081FD21 /* TestSummitManagedObject.swift in Sources */,
 				6E7282E91FABC4F1001856FA /* TestParent.swift in Sources */,
 				6E7250E11FAAD15700BCF637 /* Model.xcdatamodeld in Sources */,
 				6E7282F11FAC2BF7001856FA /* TestFullfilledParent.swift in Sources */,
@@ -614,6 +621,7 @@
 				8933C78E1EB5B82C000D00A4 /* CoreDataCodableTests.swift in Sources */,
 				6E7282EE1FABC58D001856FA /* TestChild.swift in Sources */,
 				6E5C6DB21FB0332A0081FD21 /* TestSummitJSON.swift in Sources */,
+				6E5C6DBE1FB0D0910081FD21 /* TestSummitManagedObject.swift in Sources */,
 				6E7282EA1FABC4F1001856FA /* TestParent.swift in Sources */,
 				6E7250E21FAAD15700BCF637 /* Model.xcdatamodeld in Sources */,
 				6E7282F21FAC2BF7001856FA /* TestFullfilledParent.swift in Sources */,

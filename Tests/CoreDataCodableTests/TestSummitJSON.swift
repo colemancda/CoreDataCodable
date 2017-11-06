@@ -24,15 +24,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Summit: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Summit.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -125,15 +117,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct WirelessNetwork: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.WirelessNetwork.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -157,15 +141,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Company: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Company.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -180,15 +156,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Speaker: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Speaker.Identifier
         
         public enum CodingKeys: String, CodingKey {
             
@@ -224,15 +192,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Affiliation: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Affiliation.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -259,15 +219,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct AffiliationOrganization: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.AffiliationOrganization.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -282,15 +234,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct TicketType: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.TicketType.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -308,15 +252,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Image: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Image.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -331,15 +267,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public enum Location: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Location.Identifier
         
         public enum ClassName: String, Codable {
             
@@ -384,15 +312,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Venue: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Venue.Identifier
         
         public typealias LocationType = Model.Venue.LocationType
         
@@ -450,15 +370,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct VenueFloor: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.VenueFloor.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -488,15 +400,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct VenueRoom: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.VenueRoom.Identifier
         
         public enum ClassName: String, Codable {
             
@@ -531,15 +435,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Track: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Track.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -557,15 +453,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct TrackGroup: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.TrackGroup.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -589,15 +477,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct EventType: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.EventType.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -618,15 +498,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Event: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Event.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -717,15 +589,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Link: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Link.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -758,15 +622,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Tag: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Tag.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -781,15 +637,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Video: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Video.Identifier
         
         private enum CodingKeys: String, CodingKey {
             
@@ -831,15 +679,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Slide: Codable {
         
-        public struct Identifier: Codable, RawRepresentable {
-            
-            public var rawValue: Int64
-            
-            public init(rawValue: Int64) {
-                
-                self.rawValue = rawValue
-            }
-        }
+        public typealias Identifier = Model.Slide.Identifier
         
         private enum CodingKeys: String, CodingKey {
             

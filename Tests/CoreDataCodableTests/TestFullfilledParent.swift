@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import CoreDataCodable
 
-struct TestFullfilledParent: Codable, Unique {
+struct TestFullfilledParent: Codable, TestUnique {
     
     typealias Identifier = TestParent.Identifier
     
@@ -23,7 +23,7 @@ struct TestFullfilledParent: Codable, Unique {
 
 extension TestFullfilledParent: CoreDataCodable {
     
-    static var identifierKey: String { return "identifier" }
+    static var identifierKey: CodingKey { return CodingKeys.identifier }
     
     static func findOrCreate(_ identifier: TestFullfilledParent.Identifier, in context: NSManagedObjectContext) throws -> TestParentManagedObject {
         

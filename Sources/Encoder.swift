@@ -289,7 +289,7 @@ fileprivate extension CoreDataEncoder {
                 
                 let encodable = encoder.encodable
                 
-                let identifierKey = type(of: encodable).identifierKey
+                let identifierKey = type(of: encodable).identifierKey.stringValue
                 
                 // identifier
                 if key.stringValue == identifierKey {

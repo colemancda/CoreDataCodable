@@ -331,14 +331,26 @@ extension NSManagedObjectContext {
     }
 }
 
-protocol Unique {
+public extension NSManagedObjectModel {
+    
+    subscript(managedObjectType: NSManagedObject.Type) -> NSEntityDescription? {
+        
+        // search for entity with class name
+        
+        let className = NSStringFromClass(managedObjectType)
+        
+        return self.entities.first { $0.managedObjectClassName == className }
+    }
+}
+
+protocol TestUnique {
     
     associatedtype Identifier: Codable, RawRepresentable
     
     var identifier: Identifier { get }
 }
 
-extension Unique where Self: CoreDataCodable, Self.Identifier: CoreDataIdentifier {
+extension TestUnique where Self: CoreDataCodable, Self.Identifier: CoreDataIdentifier {
     
     static var identifierKey: String { return "identifier" }
     

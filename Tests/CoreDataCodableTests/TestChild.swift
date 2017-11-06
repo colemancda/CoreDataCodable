@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import CoreDataCodable
 
-struct TestChild: Codable, Unique {
+struct TestChild: Codable, TestUnique {
     
     var identifier: Identifier
     
@@ -58,7 +58,7 @@ extension TestChild.Identifier: Equatable {
 
 extension TestChild: CoreDataCodable {
     
-    static var identifierKey: String { return "identifier" }
+    static var identifierKey: CodingKey { return CodingKeys.identifier }
     
     static func findOrCreate(_ identifier: TestChild.Identifier, in context: NSManagedObjectContext) throws -> TestChildManagedObject {
         
