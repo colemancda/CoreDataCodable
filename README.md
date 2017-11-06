@@ -7,7 +7,7 @@
 For `Codable` types you will need to implement a couple protocols to provide the necesary information for CoreData serialization. 
 
 - `CoreDataIdentifier`: In order for the encoder and decoder to fetch `NSManagedObject` for a to-one or to-many relationship, create a custom value type that conforms to `CoreDataIdentifier` and implement its methods. An identifier can be ay attribute value except `Bool`.
-- `CoreDataCodable`: The value type (e.g. `struct`) that represents your entity should implement this protocol, as well as any to-one or to-one relationships that come as nested values.
+- `CoreDataCodable`: The value type (e.g. `struct`) that represents your entity should implement this protocol, as well as any to-one or to-many relationships that come as nested values.
 
 # Properties
 
