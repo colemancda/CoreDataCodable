@@ -56,14 +56,6 @@ extension TestAttributes {
     }
 }
 
-extension TestAttributes.Identifier: ExpressibleByStringLiteral {
-    
-    public init(stringLiteral value: RawValue) {
-        
-        self.rawValue = value
-    }
-}
-
 extension TestAttributes.Identifier: CoreDataIdentifier {
     
     init?(managedObject: NSManagedObject) {

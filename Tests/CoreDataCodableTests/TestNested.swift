@@ -78,13 +78,15 @@ extension TestNested.Identifier: Equatable {
     }
 }
 
-extension TestNested: CoreDataCodable {
+extension TestNested: CoreDataCodable { }
+
+extension TestNested {
     
     static func findOrCreate(_ identifier: TestNested.Identifier, in context: NSManagedObjectContext) throws -> TestNestedManagedObject {
         
         let identifier = identifier.rawValue as NSString
         
-        let identifierProperty = CodingKeys.identifier.stringValue
+        let identifierProperty = "identifier"
         
         let entityName = "TestNested"
         
@@ -99,11 +101,4 @@ final class TestNestedManagedObject: NSManagedObject {
     @NSManaged var parent: TestNestedManagedObject?
     
     @NSManaged var children: Set<TestNestedManagedObject>
-}
-
-extension TestNestedManagedObject: DecodableManagedObject {
-    
-    var decodable: CoreDataCodable.Type { return TestNested.self }
-    
-    var decodedIdentifier: Any { return identifier }
 }

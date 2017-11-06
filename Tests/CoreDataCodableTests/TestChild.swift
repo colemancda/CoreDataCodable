@@ -32,14 +32,6 @@ extension TestChild {
     }
 }
 
-extension TestChild.Identifier: ExpressibleByStringLiteral {
-    
-    public init(stringLiteral value: RawValue) {
-        
-        self.rawValue = value
-    }
-}
-
 extension TestChild.Identifier: CoreDataIdentifier {
     
     init?(managedObject: NSManagedObject) {
