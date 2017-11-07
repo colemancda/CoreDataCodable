@@ -51,6 +51,20 @@ public extension Entity {
         
         return entity
     }
+    
+    
+}
+
+extension NSManagedObjectModel {
+    
+    subscript(managedObjectType: NSManagedObject.Type) -> NSEntityDescription? {
+        
+        // search for entity with class name
+        
+        let className = NSStringFromClass(managedObjectType)
+        
+        return self.entities.first { $0.managedObjectClassName == className }
+    }
 }
 
 public final class SummitManagedObject: Entity {

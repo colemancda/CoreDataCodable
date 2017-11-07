@@ -331,18 +331,6 @@ extension NSManagedObjectContext {
     }
 }
 
-public extension NSManagedObjectModel {
-    
-    subscript(managedObjectType: NSManagedObject.Type) -> NSEntityDescription? {
-        
-        // search for entity with class name
-        
-        let className = NSStringFromClass(managedObjectType)
-        
-        return self.entities.first { $0.managedObjectClassName == className }
-    }
-}
-
 protocol TestUnique {
     
     associatedtype Identifier: Codable, RawRepresentable

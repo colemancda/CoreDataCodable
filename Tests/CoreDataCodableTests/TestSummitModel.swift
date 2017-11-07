@@ -696,6 +696,8 @@ extension Model.Summit: SummitUnique { }
 //extension Model.Summit: SummitUnique { }
 //extension Model.Summit: SummitUnique { }
 
+// MARK: - CoreDataIdentifier
+
 public protocol SummitCoreDataIdentifier: CoreDataIdentifier {
     
     associatedtype ManagedObject: Entity
@@ -705,9 +707,11 @@ extension SummitCoreDataIdentifier where Self: RawRepresentable, Self.RawValue =
     
     public func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject {
         
+        let entityName = ManagedObject.entity(in: context).name!
+        
         return try context.findOrCreate(identifier: self.rawValue as NSNumber,
                                         property: "identifier",
-                                        entityName: self.entityName)
+                                        entityName: entityName)
     }
     
     public init?(managedObject: NSManagedObject) {
@@ -715,8 +719,48 @@ extension SummitCoreDataIdentifier where Self: RawRepresentable, Self.RawValue =
         guard let managedObject = managedObject as? ManagedObject
             else { return }
         
-        self.rawValue = managedObject.identifier
+        self.init(rawValue: managedObject.identifier)
     }
+}
+
+extension Model.Summit.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SummitManagedObject
+}
+
+extension Model.WirelessNetwork.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SummitManagedObject
+}
+
+extension Model.Company.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SummitManagedObject
+}
+
+extension Model.Speaker.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SummitManagedObject
+}
+
+extension Model.Affiliation.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SummitManagedObject
+}
+
+extension Model.AffiliationOrganization.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SummitManagedObject
+}
+
+extension Model.TicketType.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SummitManagedObject
+}
+
+extension Model.Image.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SummitManagedObject
 }
 
 // MARK: - CoreDataCodable
@@ -726,11 +770,10 @@ extension Model.Summit: CoreDataCodable {
     public static var identifierKey: CodingKey { return CodingKeys.identifier }
 }
 
-// MARK: - CoreDataIdentifier
+extension Model.WirelessNetwork: CoreDataCodable { }
+extension Model.Company: CoreDataCodable { }
+extension Model.Speaker: CoreDataCodable { }
+extension Model.WirelessNetwork: CoreDataCodable { }
+extension Model.WirelessNetwork: CoreDataCodable { }
 
-extension Model.Summit.Identifier: SummitCoreDataIdentifier {
-    
-    public typealias ManagedObject = SummitManagedObject
-}
 
-extension Model.Summit: CoreDataCodable { }
