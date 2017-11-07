@@ -150,7 +150,7 @@ public struct Model {
         
         public let identifier: Identifier
         
-        public var member: Speaker.Identifier
+        public var member: Model.Member.Identifier
         
         public var start: Date?
         
@@ -672,6 +672,118 @@ public struct Model {
         
         public var event: Identifier
     }
+    
+    public struct Member: Codable {
+        
+        public struct Identifier: Codable, RawRepresentable {
+            
+            public var rawValue: Int64
+            
+            public init(rawValue: Int64) {
+                
+                self.rawValue = rawValue
+            }
+        }
+        
+        public let identifier: Identifier
+        
+        public let firstName: String
+        
+        public let lastName: String
+        
+        public let gender: String?
+        
+        public let picture: URL
+        
+        public let twitter: String?
+        
+        public let linkedIn: String?
+        
+        public let irc: String?
+        
+        public let biography: String?
+        
+        public let speakerRole: Speaker?
+        
+        public let attendeeRole: Attendee?
+        
+        public var schedule: [Event.Identifier]
+        
+        public let groupEvents: [Event.Identifier]
+        
+        public let favoriteEvents: [Event.Identifier]
+        
+        public let groups: [Group]
+        
+        public let feedback: [Feedback.Identifier]
+        
+        public let affiliations: [Affiliation]
+    }
+    
+    public struct Attendee: Codable {
+        
+        public struct Identifier: Codable, RawRepresentable {
+            
+            public var rawValue: Int64
+            
+            public init(rawValue: Int64) {
+                
+                self.rawValue = rawValue
+            }
+        }
+        
+        public let identifier: Identifier
+        
+        public var member: Member.Identifier
+        
+        public var tickets: [TicketType.Identifier]
+    }
+    
+    public struct Group: Codable {
+        
+        public struct Identifier: Codable, RawRepresentable {
+            
+            public var rawValue: Int64
+            
+            public init(rawValue: Int64) {
+                
+                self.rawValue = rawValue
+            }
+        }
+        
+        public let identifier: Identifier
+        
+        public var title: String
+        
+        public var descriptionText: String?
+        
+        public var code: String
+    }
+    
+    public struct Feedback: Codable {
+        
+        public struct Identifier: Codable, RawRepresentable {
+            
+            public var rawValue: Int64
+            
+            public init(rawValue: Int64) {
+                
+                self.rawValue = rawValue
+            }
+        }
+        
+        public let identifier: Identifier
+        
+        public let rate: Int
+        
+        public let review: String
+        
+        public let date: Date
+        
+        public let event: Event.Identifier
+        
+        public let member: Member
+    }
 }
 
 // MARK: - SummitUnique
@@ -682,8 +794,6 @@ public protocol SummitUnique {
     
     var identifier: Identifier { get }
 }
-
-// MARK: - Protocols
 
 extension SummitUnique where Self: CoreDataCodable, Self.Identifier: CoreDataIdentifier {
     
@@ -745,23 +855,6 @@ extension SummitCoreDataIdentifier where Self: RawRepresentable, Self.RawValue =
 extension Model.Summit.Identifier: SummitCoreDataIdentifier {
     
     public typealias ManagedObject = SummitManagedObject
-    
-    public func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject {
-        
-        let entityName = ManagedObject.entity(in: context).name!
-        
-        return try context.findOrCreate(identifier: self.rawValue as NSNumber,
-                                        property: "identifier",
-                                        entityName: entityName)
-    }
-    
-    public init?(managedObject: NSManagedObject) {
-        
-        guard let managedObject = managedObject as? ManagedObject
-            else { return nil }
-        
-        self.init(rawValue: managedObject.identifier)
-    }
 }
 
 extension Model.WirelessNetwork.Identifier: SummitCoreDataIdentifier {

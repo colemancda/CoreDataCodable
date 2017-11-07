@@ -206,7 +206,7 @@ public struct SummitResponse: Codable, RawRepresentable {
         
         public let identifier: Identifier
         
-        public var member: Identifier
+        public var member: Member.Identifier
         
         public var start: Date?
         
@@ -544,13 +544,13 @@ public struct SummitResponse: Codable, RawRepresentable {
         
         public var end: Date
         
-        public var track: Identifier?
+        public var track: Track.Identifier?
         
         public var allowFeedback: Bool
         
         public var averageFeedback: Double
         
-        public var type: Identifier
+        public var type: EventType.Identifier
         
         public var rsvp: String?
         
@@ -710,3 +710,242 @@ public struct SummitResponse: Codable, RawRepresentable {
         public var event: Identifier
     }
 }
+
+// MARK: - Model Conversion
+
+public protocol SummitJSONDecodable {
+    
+    associatedtype JSONDecodable: Swift.Decodable
+    
+    init(jsonDecodable: JSONDecodable)
+}
+
+public extension Collection where Self.Iterator.Element: SummitJSONDecodable {
+    
+    static func from(_ jsonDecodables: [Self.Iterator.Element.JSONDecodable]?) -> [Self.Iterator.Element] {
+        
+        return jsonDecodables?.map { Self.Iterator.Element.init(jsonDecodable: $0) } ?? []
+    }
+}
+
+extension Model.Summit: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Summit) {
+        
+        self.identifier = json.identifier
+        self.name = json.name
+        self.timeZone = json.timeZone.name
+        self.datesLabel = json.datesLabel
+        self.start = json.start
+        self.end = json.end
+        self.defaultStart = json.defaultStart
+        self.active = json.active
+        self.webpage = json.webpage
+        self.startShowingVenues = json.startShowingVenues
+        self.sponsors = .from(json.sponsors)
+        self.speakers = .from(json.speakers)
+        self.ticketTypes = .from(json.ticketTypes)
+        self.locations = .from(json.locations)
+        self.tracks = .from(json.tracks)
+        self.trackGroups = .from(json.trackGroups)
+        self.eventTypes = .from(json.eventTypes)
+        self.schedule = .from(json.schedule)
+        self.wirelessNetworks = .from(json.wirelessNetworks)
+    }
+}
+
+extension Model.Company: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Company) {
+        
+        self.identifier = json.identifier
+        self.name = json.name
+    }
+}
+
+extension Model.Speaker: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Speaker) {
+        
+        self.identifier = json.identifier
+        self.firstName = json.firstName
+        self.lastName = json.lastName
+        self.title = json.title
+        self.picture = json.picture
+        self.twitter = json.twitter
+        self.irc = json.irc
+        self.biography = json.biography
+        self.affiliations = .from(json.affiliations)
+    }
+}
+
+extension Model.WirelessNetwork: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.WirelessNetwork) {
+        
+        self.identifier = json.identifier
+        self.name = json.name
+        self.password = json.password
+        self.descriptionText = json.descriptionText
+        self.summit = json.summit
+    }
+}
+
+extension Model.Affiliation: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Affiliation) {
+        
+        self.identifier = json.identifier
+        self.member = json.member
+        self.start = json.start
+        self.end = json.end
+        self.isCurrent = json.isCurrent
+        self.organization = .init(jsonDecodable: json.organization)
+    }
+}
+
+extension Model.AffiliationOrganization: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.AffiliationOrganization) {
+        
+        self.identifier = json.identifier
+        self.name = json.name
+    }
+}
+
+extension Model.TicketType: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.TicketType) {
+        
+        self.identifier = json.identifier
+        self.name = json.name
+        self.descriptionText = json.descriptionText
+    }
+}
+
+extension Model.Image: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Image) {
+        
+        self.identifier = json.identifier
+        self.url = json.url
+    }
+}
+
+extension Model.Location: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Location) {
+        
+        switch json {
+        case let .venue(jsonLocation):
+            self = .venue(.init(jsonDecodable: jsonLocation))
+        case let .room(jsonLocation):
+            self = .room(.init(jsonDecodable: jsonLocation))
+        }
+    }
+}
+
+extension Model.Venue: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Venue) {
+        
+        self.identifier = json.identifier
+        self.type = json.type
+        self.name = json.name
+        self.descriptionText = json.descriptionText
+        self.locationType = json.locationType
+        self.country = json.country
+        self.address = json.address
+        self.city = json.city
+        self.zipCode = json.zipCode
+    }
+}
+
+extension Model.VenueRoom: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.VenueRoom) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.VenueFloor: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.VenueFloor) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.Track: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Track) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.TrackGroup: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.TrackGroup) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.Event: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Event) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.EventType: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.EventType) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.Presentation: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Event) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.Link: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Link) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.Tag: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Tag) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.Video: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Video) {
+        
+        self.identifier = json.identifier
+    }
+}
+
+extension Model.Slide: SummitJSONDecodable {
+    
+    public init(jsonDecodable json: SummitResponse.Slide) {
+        
+        self.identifier = json.identifier
+    }
+}
+
