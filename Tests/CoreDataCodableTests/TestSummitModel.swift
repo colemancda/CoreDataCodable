@@ -683,6 +683,8 @@ public protocol SummitUnique {
     var identifier: Identifier { get }
 }
 
+// MARK: - Protocols
+
 extension SummitUnique where Self: CoreDataCodable, Self.Identifier: CoreDataIdentifier {
     
     // All identifier properties should be same as summit
@@ -692,9 +694,26 @@ extension SummitUnique where Self: CoreDataCodable, Self.Identifier: CoreDataIde
 }
 
 extension Model.Summit: SummitUnique { }
-//extension Model.Summit: SummitUnique { }
-//extension Model.Summit: SummitUnique { }
-//extension Model.Summit: SummitUnique { }
+extension Model.WirelessNetwork: SummitUnique { }
+extension Model.Company: SummitUnique { }
+extension Model.Speaker: SummitUnique { }
+extension Model.Affiliation: SummitUnique { }
+extension Model.AffiliationOrganization: SummitUnique { }
+extension Model.TicketType: SummitUnique { }
+extension Model.Image: SummitUnique { }
+extension Model.Location: SummitUnique { }
+extension Model.Venue: SummitUnique { }
+extension Model.VenueRoom: SummitUnique { }
+extension Model.VenueFloor: SummitUnique { }
+extension Model.Track: SummitUnique { }
+extension Model.TrackGroup: SummitUnique { }
+extension Model.Event: SummitUnique { }
+extension Model.EventType: SummitUnique { }
+extension Model.Presentation: SummitUnique { }
+extension Model.Link: SummitUnique { }
+extension Model.Tag: SummitUnique { }
+extension Model.Video: SummitUnique { }
+extension Model.Slide: SummitUnique { }
 
 // MARK: - CoreDataIdentifier
 
@@ -717,7 +736,7 @@ extension SummitCoreDataIdentifier where Self: RawRepresentable, Self.RawValue =
     public init?(managedObject: NSManagedObject) {
         
         guard let managedObject = managedObject as? ManagedObject
-            else { return }
+            else { return nil }
         
         self.init(rawValue: managedObject.identifier)
     }
@@ -726,41 +745,123 @@ extension SummitCoreDataIdentifier where Self: RawRepresentable, Self.RawValue =
 extension Model.Summit.Identifier: SummitCoreDataIdentifier {
     
     public typealias ManagedObject = SummitManagedObject
+    
+    public func findOrCreate(in context: NSManagedObjectContext) throws -> NSManagedObject {
+        
+        let entityName = ManagedObject.entity(in: context).name!
+        
+        return try context.findOrCreate(identifier: self.rawValue as NSNumber,
+                                        property: "identifier",
+                                        entityName: entityName)
+    }
+    
+    public init?(managedObject: NSManagedObject) {
+        
+        guard let managedObject = managedObject as? ManagedObject
+            else { return nil }
+        
+        self.init(rawValue: managedObject.identifier)
+    }
 }
 
 extension Model.WirelessNetwork.Identifier: SummitCoreDataIdentifier {
     
-    public typealias ManagedObject = SummitManagedObject
+    public typealias ManagedObject = WirelessNetworkManagedObject
 }
 
 extension Model.Company.Identifier: SummitCoreDataIdentifier {
     
-    public typealias ManagedObject = SummitManagedObject
+    public typealias ManagedObject = CompanyManagedObject
 }
 
 extension Model.Speaker.Identifier: SummitCoreDataIdentifier {
     
-    public typealias ManagedObject = SummitManagedObject
+    public typealias ManagedObject = SpeakerManagedObject
 }
 
 extension Model.Affiliation.Identifier: SummitCoreDataIdentifier {
     
-    public typealias ManagedObject = SummitManagedObject
+    public typealias ManagedObject = AffiliationManagedObject
 }
 
 extension Model.AffiliationOrganization.Identifier: SummitCoreDataIdentifier {
     
-    public typealias ManagedObject = SummitManagedObject
+    public typealias ManagedObject = AffiliationOrganizationManagedObject
 }
 
 extension Model.TicketType.Identifier: SummitCoreDataIdentifier {
     
-    public typealias ManagedObject = SummitManagedObject
+    public typealias ManagedObject = TicketTypeManagedObject
 }
 
 extension Model.Image.Identifier: SummitCoreDataIdentifier {
     
-    public typealias ManagedObject = SummitManagedObject
+    public typealias ManagedObject = ImageManagedObject
+}
+
+extension Model.Location.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = LocationManagedObject
+}
+
+extension Model.Venue.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = VenueManagedObject
+}
+
+extension Model.VenueRoom.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = VenueRoomManagedObject
+}
+
+extension Model.VenueFloor.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = VenueFloorManagedObject
+}
+
+extension Model.Track.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = TrackManagedObject
+}
+
+extension Model.TrackGroup.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = TrackGroupManagedObject
+}
+
+extension Model.Event.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = EventManagedObject
+}
+
+extension Model.EventType.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = EventTypeManagedObject
+}
+
+extension Model.Presentation.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = PresentationManagedObject
+}
+
+extension Model.Link.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = LinkManagedObject
+}
+
+extension Model.Tag.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = TagManagedObject
+}
+
+extension Model.Video.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = VideoManagedObject
+}
+
+extension Model.Slide.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = SlideManagedObject
 }
 
 // MARK: - CoreDataCodable
@@ -773,7 +874,21 @@ extension Model.Summit: CoreDataCodable {
 extension Model.WirelessNetwork: CoreDataCodable { }
 extension Model.Company: CoreDataCodable { }
 extension Model.Speaker: CoreDataCodable { }
-extension Model.WirelessNetwork: CoreDataCodable { }
-extension Model.WirelessNetwork: CoreDataCodable { }
-
+extension Model.Affiliation: CoreDataCodable { }
+extension Model.AffiliationOrganization: CoreDataCodable { }
+extension Model.TicketType: CoreDataCodable { }
+extension Model.Image: CoreDataCodable { }
+extension Model.Location: CoreDataCodable { }
+extension Model.Venue: CoreDataCodable { }
+extension Model.VenueRoom: CoreDataCodable { }
+extension Model.VenueFloor: CoreDataCodable { }
+extension Model.Track: CoreDataCodable { }
+extension Model.TrackGroup: CoreDataCodable { }
+extension Model.Event: CoreDataCodable { }
+extension Model.EventType: CoreDataCodable { }
+extension Model.Presentation: CoreDataCodable { }
+extension Model.Link: CoreDataCodable { }
+extension Model.Tag: CoreDataCodable { }
+extension Model.Video: CoreDataCodable { }
+extension Model.Slide: CoreDataCodable { }
 
