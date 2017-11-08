@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import CoreDataCodable
 
-struct TestNested: Codable, Unique {
+struct TestNested: Codable, TestUnique {
     
     var identifier: TestNested.Identifier
         
@@ -78,7 +78,10 @@ extension TestNested.Identifier: Equatable {
     }
 }
 
-extension TestNested: CoreDataCodable { }
+extension TestNested: CoreDataCodable {
+    
+    static var identifierKey: CodingKey { return CodingKeys.identifier }
+}
 
 extension TestNested {
     

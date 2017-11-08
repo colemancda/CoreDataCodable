@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import CoreDataCodable
 
-struct TestAttributes: Codable, Unique {
+struct TestAttributes: Codable, TestUnique {
     
     var identifier: Identifier
     
@@ -37,6 +37,10 @@ struct TestAttributes: Codable, Unique {
     var uri: URL
     
     var uuid: UUID
+    
+    //var urlValue: URL
+    
+    //var uuidValue: UUID
     
     var enumValue: TestEnum
     
@@ -90,7 +94,7 @@ extension TestAttributes {
 
 extension TestAttributes: CoreDataCodable {
     
-    static var identifierKey: String { return "identifier" }
+    static var identifierKey: CodingKey { return CodingKeys.identifier }
     
     static func findOrCreate(_ identifier: TestAttributes.Identifier, in context: NSManagedObjectContext) throws -> TestAttributesManagedObject {
         
@@ -131,6 +135,10 @@ final class TestAttributesManagedObject: NSManagedObject {
     @NSManaged var uri: URL
     
     @NSManaged var uuid: UUID
+    
+    @NSManaged var urlValue: String
+    
+    @NSManaged var uuidValue: String
     
     @NSManaged var enumValue: String
     

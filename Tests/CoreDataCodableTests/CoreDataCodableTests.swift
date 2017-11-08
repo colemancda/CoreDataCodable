@@ -11,6 +11,8 @@ import XCTest
 import CoreData
 import CoreDataCodable
 
+let SummitJSONIdentifiers = [6, 7, 22]
+
 final class CoreDataCodableTests: XCTestCase {
     
     func testAttributes() {
@@ -28,6 +30,8 @@ final class CoreDataCodableTests: XCTestCase {
                                    string: "test",
                                    uri: URL(string: "https://swift.org")!,
                                    uuid: UUID(),
+                                   //urlValue: URL(string: "https://apple.com")!,
+                                   //uuidValue: UUID(),
                                    enumValue: .three,
                                    optional: nil)
         
@@ -57,6 +61,8 @@ final class CoreDataCodableTests: XCTestCase {
             XCTAssert(managedObject.string == value.string)
             XCTAssert(managedObject.uri == value.uri)
             XCTAssert(managedObject.uuid == value.uuid)
+            //XCTAssert(managedObject.urlValue == value.urlValue.absoluteString)
+            //XCTAssert(managedObject.uuidValue == value.uuidValue.uuidString)
             XCTAssert(managedObject.enumValue == value.enumValue.rawValue)
             XCTAssertNil(managedObject.optional)
             
@@ -223,6 +229,55 @@ final class CoreDataCodableTests: XCTestCase {
             try $0.save()
         })
     }
+    
+    func testSummit() {
+        
+        let jsonDecoder = JSONDecoder()
+        
+        for jsonIdentifier in SummitJSONIdentifiers {
+            
+            let filename = "Summit\(jsonIdentifier)"
+            
+            let testBundle = Bundle(for: type(of: self))
+            
+            let resourcePath = testBundle.path(forResource: filename, ofType: "json", inDirectory: nil, forLocalization: nil)!
+            
+            let jsonData = try! Data(contentsOf: URL(fileURLWithPath: resourcePath))
+            
+            XCTAssertNoThrow(try context {
+                
+                let summitJSON = try jsonDecoder.decode(SummitResponse.Summit.self, from: jsonData)
+                
+                let summit = Model.Summit(jsonDecodable: summitJSON)
+                
+                var encoder = CoreDataEncoder(managedObjectContext: $0)
+                //encoder.log = { print($0) }
+                
+                print("Will encode")
+                
+                let managedObject = try encoder.encode(summit) as! SummitManagedObject
+                
+                print("Did encode")
+                
+                print(managedObject)
+                
+                XCTAssert(managedObject.identifier == summit.identifier.rawValue)
+                
+                var decoder = CoreDataDecoder(managedObjectContext: $0)
+                //decoder.log = { print($0) }
+                
+                print("Will decode")
+                
+                let decoded = try decoder.decode(Model.Summit.self, with: summit.identifier)
+                
+                print("Did decode")
+                
+                XCTAssert(decoded.identifier == summit.identifier)
+                
+                try $0.save()
+            })
+        }
+    }
 }
 
 extension CoreDataCodableTests {
@@ -289,8 +344,8 @@ extension NSManagedObjectContext {
         let fetchRequest = NSFetchRequest<T>(entityName: entityName)
         fetchRequest.predicate = NSPredicate(format: "%K == %@", property, identifier)
         fetchRequest.fetchLimit = 1
-        fetchRequest.includesSubentities = false
-        fetchRequest.returnsObjectsAsFaults = true
+        fetchRequest.includesSubentities = true
+        fetchRequest.returnsObjectsAsFaults = false
         
         if let existing = try self.fetch(fetchRequest).first {
             
@@ -309,14 +364,14 @@ extension NSManagedObjectContext {
     }
 }
 
-protocol Unique {
+protocol TestUnique {
     
     associatedtype Identifier: Codable, RawRepresentable
     
     var identifier: Identifier { get }
 }
 
-extension Unique where Self: CoreDataCodable, Self.Identifier: CoreDataIdentifier {
+extension TestUnique where Self: CoreDataCodable, Self.Identifier: CoreDataIdentifier {
     
     static var identifierKey: String { return "identifier" }
     
