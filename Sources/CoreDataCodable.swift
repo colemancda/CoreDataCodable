@@ -21,12 +21,6 @@ public protocol CoreDataCodable: Codable {
 
 extension CoreDataCodable {
     
-    @inline(__always)
-    func findOrCreate(in managedObjectContext: NSManagedObjectContext) throws -> NSManagedObject {
-        
-        return try self.coreDataIdentifier.findOrCreate(in: managedObjectContext)
-    }
-    
     func encode(to managedObjectContext: NSManagedObjectContext) throws -> NSManagedObject {
         
         let encoder = CoreDataEncoder(managedObjectContext: managedObjectContext)

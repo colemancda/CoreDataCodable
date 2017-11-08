@@ -38,9 +38,9 @@ struct TestAttributes: Codable, TestUnique {
     
     var uuid: UUID
     
-    var urlValue: URL
+    //var urlValue: URL
     
-    var uuidValue: UUID
+    //var uuidValue: UUID
     
     var enumValue: TestEnum
     

@@ -291,7 +291,7 @@ public struct Model {
         
         public let identifier: Identifier
         
-        public let type: ClassName
+        public let venueType: ClassName
         
         public var name: String
         
@@ -930,6 +930,21 @@ extension Model.Video.Identifier: SummitCoreDataIdentifier {
 extension Model.Slide.Identifier: SummitCoreDataIdentifier {
     
     public typealias ManagedObject = SlideManagedObject
+}
+
+extension Model.Member.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = MemberManagedObject
+}
+
+extension Model.Attendee.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = AttendeeManagedObject
+}
+
+extension Model.Feedback.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = FeedbackManagedObject
 }
 
 // MARK: - CoreDataCodable

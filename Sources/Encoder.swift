@@ -39,7 +39,7 @@ public struct CoreDataEncoder {
     fileprivate func encode<Encodable : CoreDataCodable>(_ encodable: Encodable, codingPath: [CodingKey]) throws -> NSManagedObject {
         
         // get managed object
-        let managedObject = try encodable.findOrCreate(in: managedObjectContext)
+        let managedObject = try encodable.coreDataIdentifier.findOrCreate(in: managedObjectContext)
         
         // create encoder for managed object
         let encoder = Encoder(managedObjectContext: managedObjectContext,
@@ -450,25 +450,33 @@ fileprivate extension CoreDataEncoder {
         
         private mutating func setRelationship(_ encodables: [CoreDataCodable], forKey key: Key) throws {
             
-            let managedObjects = try encodables.map { (try $0.findOrCreate(in: encoder.managedObjectContext), $0) }
+            let managedObjectContext = encoder.managedObjectContext
             
-            try managedObjects.forEach {
+            var managedObjects = [NSManagedObject]()
+            managedObjects.reserveCapacity(encodables.count)
+            
+            for (index, encodable) in encodables.enumerated() {
+                
+                let codingPath: [CodingKey] = self.codingPath + [key, Index(intValue: index)]
+                
+                let managedObject = try encodable.coreDataIdentifier.findOrCreate(in: managedObjectContext)
+                managedObjects.append(managedObject)
                 
                 // create encoder for managed object
                 let encoder = Encoder(managedObjectContext: self.encoder.managedObjectContext,
-                                      managedObject: $0,
-                                      encodable: $1,
-                                      codingPath: self.encoder.codingPath,
+                                      managedObject: managedObject,
+                                      encodable: encodable,
+                                      codingPath: codingPath,
                                       userInfo: self.encoder.userInfo,
                                       log: self.encoder.log)
                 
                 // encoder into container
-                try $1.encode(to: encoder)
+                try encodable.encode(to: encoder)
             }
             
             let isOrdered = self.encoder.managedObject.entity.relationshipsByName[key.stringValue]?.isOrdered ?? false
             
-            let set: NSObject = isOrdered ? NSOrderedSet(array: managedObjects.map({ $0.0 })) : NSSet(array: managedObjects.map({ $0.0 }))
+            let set: NSObject = isOrdered ? NSOrderedSet(array: managedObjects) : NSSet(array: managedObjects)
                         
             // set value
             try write(set, forKey: key)
@@ -485,13 +493,15 @@ fileprivate extension CoreDataEncoder {
         
         private mutating func setRelationship(_ encodable: CoreDataCodable, forKey key: Key) throws {
             
-            let managedObject = try encodable.findOrCreate(in: self.encoder.managedObjectContext)
+            let managedObject = try encodable.coreDataIdentifier.findOrCreate(in: self.encoder.managedObjectContext)
+            
+            let codingPath: [CodingKey] = self.codingPath + [key]
             
             // create encoder for managed object
             let newEncoder = Encoder(managedObjectContext: self.encoder.managedObjectContext,
                                   managedObject: managedObject,
                                   encodable: encodable,
-                                  codingPath: self.encoder.codingPath,
+                                  codingPath: codingPath,
                                   userInfo: self.encoder.userInfo,
                                   log: self.encoder.log)
             
@@ -807,3 +817,30 @@ fileprivate extension CoreDataEncoder.Encoder {
         }
     }
 }
+
+fileprivate extension CoreDataEncoder {
+    
+    struct Index: CodingKey {
+        
+        public let index: Int
+        
+        public init(intValue: Int) {
+            
+            self.index = intValue
+        }
+        
+        init?(stringValue: String) {
+            
+            return nil
+        }
+        
+        public var intValue: Int? {
+            return index
+        }
+        
+        public var stringValue: String {
+            return "\(index)"
+        }
+    }
+}
+

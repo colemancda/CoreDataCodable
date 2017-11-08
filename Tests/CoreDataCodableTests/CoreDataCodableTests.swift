@@ -28,8 +28,8 @@ final class CoreDataCodableTests: XCTestCase {
                                    string: "test",
                                    uri: URL(string: "https://swift.org")!,
                                    uuid: UUID(),
-                                   urlValue: URL(string: "https://apple.com")!,
-                                   uuidValue: UUID(),
+                                   //urlValue: URL(string: "https://apple.com")!,
+                                   //uuidValue: UUID(),
                                    enumValue: .three,
                                    optional: nil)
         
@@ -59,8 +59,8 @@ final class CoreDataCodableTests: XCTestCase {
             XCTAssert(managedObject.string == value.string)
             XCTAssert(managedObject.uri == value.uri)
             XCTAssert(managedObject.uuid == value.uuid)
-            XCTAssert(managedObject.urlValue == value.urlValue.absoluteString)
-            XCTAssert(managedObject.uuidValue == value.uuidValue.uuidString)
+            //XCTAssert(managedObject.urlValue == value.urlValue.absoluteString)
+            //XCTAssert(managedObject.uuidValue == value.uuidValue.uuidString)
             XCTAssert(managedObject.enumValue == value.enumValue.rawValue)
             XCTAssertNil(managedObject.optional)
             
@@ -340,7 +340,7 @@ extension NSManagedObjectContext {
         let fetchRequest = NSFetchRequest<T>(entityName: entityName)
         fetchRequest.predicate = NSPredicate(format: "%K == %@", property, identifier)
         fetchRequest.fetchLimit = 1
-        fetchRequest.includesSubentities = false
+        fetchRequest.includesSubentities = true
         fetchRequest.returnsObjectsAsFaults = true
         
         if let existing = try self.fetch(fetchRequest).first {

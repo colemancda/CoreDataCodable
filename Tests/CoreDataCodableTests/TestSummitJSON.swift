@@ -306,7 +306,10 @@ public struct SummitResponse: Codable, RawRepresentable {
         
         public func encode(to encoder: Encoder) throws {
             
-            fatalError()
+            switch self {
+            case let .venue(venue): try venue.encode(to: encoder)
+            case let .room(room): try room.encode(to: encoder)
+            }
         }
     }
     
@@ -951,7 +954,7 @@ extension Model.Venue: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.Venue) {
         
         self.identifier = json.identifier
-        self.type = json.type
+        self.venueType = json.type
         self.name = json.name
         self.descriptionText = json.descriptionText
         self.locationType = json.locationType
