@@ -38,6 +38,10 @@ struct TestAttributes: Codable, TestUnique {
     
     var uuid: UUID
     
+    var urlValue: URL
+    
+    var uuidValue: UUID
+    
     var enumValue: TestEnum
     
     var optional: String?
@@ -131,6 +135,10 @@ final class TestAttributesManagedObject: NSManagedObject {
     @NSManaged var uri: URL
     
     @NSManaged var uuid: UUID
+    
+    @NSManaged var urlValue: String
+    
+    @NSManaged var uuidValue: String
     
     @NSManaged var enumValue: String
     

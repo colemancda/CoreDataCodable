@@ -283,7 +283,7 @@ fileprivate extension CoreDataEncoder {
             
             switch attribute {
                 
-            case .URIAttributeType:
+            case .UUIDAttributeType:
                 
                 try write(box(value), forKey: key)
                 
@@ -292,6 +292,10 @@ fileprivate extension CoreDataEncoder {
                 try write(box(value.uuidString), forKey: key)
                 
             default:
+                
+                // set coding key context
+                codingPath.append(key)
+                defer { codingPath.removeLast() }
                 
                 throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: codingPath, debugDescription: "Invalid value type"))
             }
@@ -304,7 +308,7 @@ fileprivate extension CoreDataEncoder {
             
             switch attribute {
                 
-            case .UUIDAttributeType:
+            case .URIAttributeType:
                 
                 try write(box(value), forKey: key)
                 
@@ -313,6 +317,10 @@ fileprivate extension CoreDataEncoder {
                 try write(box(value.absoluteString), forKey: key)
                 
             default:
+                
+                // set coding key context
+                codingPath.append(key)
+                defer { codingPath.removeLast() }
                 
                 throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: codingPath, debugDescription: "Invalid value type"))
             }

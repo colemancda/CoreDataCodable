@@ -15,10 +15,10 @@ import CoreDataCodable
 open class Entity: NSManagedObject {
     
     /// The unique identifier of this entity.
-    @NSManaged open var identifier: Int64
+    @NSManaged var identifier: Int64
     
     /// The date this object was stored in its entirety.
-    @NSManaged open var cached: Date?
+    @NSManaged var cached: Date?
 }
 
 public extension Entity {
