@@ -274,9 +274,49 @@ fileprivate extension CoreDataEncoder {
         // Custom
         private mutating func encode(_ value: Data, forKey key: Key) throws { try write(box(value), forKey: key) }
         private mutating func encode(_ value: Date, forKey key: Key) throws { try write(box(value), forKey: key) }
-        private mutating func encode(_ value: UUID, forKey key: Key) throws { try write(box(value), forKey: key) }
-        private mutating func encode(_ value: URL, forKey key: Key) throws { try write(box(value), forKey: key) }
         private mutating func encode(_ value: Decimal, forKey key: Key) throws { try write(box(value), forKey: key) }
+        
+        private mutating func encode(_ value: UUID, forKey key: Key) throws {
+            
+            // check if attribute is string
+            let attribute = container.entity.attributesByName[key.stringValue]?.attributeType ?? .undefinedAttributeType
+            
+            switch attribute {
+                
+            case .URIAttributeType:
+                
+                try write(box(value), forKey: key)
+                
+            case .stringAttributeType:
+                
+                try write(box(value.uuidString), forKey: key)
+                
+            default:
+                
+                throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: codingPath, debugDescription: "Invalid value type"))
+            }
+        }
+        
+        private mutating func encode(_ value: URL, forKey key: Key) throws {
+            
+            // check if attribute is string
+            let attribute = container.entity.attributesByName[key.stringValue]?.attributeType ?? .undefinedAttributeType
+            
+            switch attribute {
+                
+            case .UUIDAttributeType:
+                
+                try write(box(value), forKey: key)
+                
+            case .stringAttributeType:
+                
+                try write(box(value.absoluteString), forKey: key)
+                
+            default:
+                
+                throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: codingPath, debugDescription: "Invalid value type"))
+            }
+        }
         
         // Encodable
         public mutating func encode<T: Swift.Encodable>(_ value: T, forKey key: Key) throws {

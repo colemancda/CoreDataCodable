@@ -83,7 +83,7 @@ public final class SummitManagedObject: Entity {
     
     @NSManaged public var defaultStart: Date?
     
-    @NSManaged public var webpageURL: String
+    @NSManaged public var webpage: String
     
     @NSManaged public var active: Bool
     
