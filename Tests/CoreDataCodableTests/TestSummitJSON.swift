@@ -393,7 +393,7 @@ public struct SummitResponse: Codable, RawRepresentable {
         
         public var image: URL?
         
-        public var venue: Image.Identifier
+        public var venue: Venue.Identifier
         
         public var rooms: [VenueRoom.Identifier]?
     }
@@ -534,7 +534,7 @@ public struct SummitResponse: Codable, RawRepresentable {
         
         public var name: String
         
-        public var summit: Identifier
+        public var summit: Summit.Identifier
         
         public var descriptionText: String?
         
@@ -709,6 +709,107 @@ public struct SummitResponse: Codable, RawRepresentable {
         
         public var event: Identifier
     }
+    
+    public struct Member: Codable {
+        
+        public typealias Identifier = Model.Member.Identifier
+        
+        private enum CodingKeys: String, CodingKey {
+            
+            case identifier = "id"
+            case firstName = "first_name"
+            case lastName = "last_name"
+            case gender
+            case biography = "bio"
+            case irc
+            case twitter
+            case linkedIn = "linked_in"
+            case picture = "pic"
+            case speakerRole = "speaker"
+            case schedule = "schedule_summit_events"
+            case groupEvents = "groups_events"
+            case groups
+            case attendeeRole = "attendee"
+            case feedback
+            case favoriteEvents = "favorite_summit_events"
+            case affiliations
+        }
+        
+        public let identifier: Identifier
+        
+        public let firstName: String
+        
+        public let lastName: String
+        
+        public let gender: String?
+        
+        public let picture: URL
+        
+        public let twitter: String?
+        
+        public let linkedIn: String?
+        
+        public let irc: String?
+        
+        public let biography: String?
+        
+        public let speakerRole: Speaker?
+        
+        public let attendeeRole: Attendee?
+        
+        public var schedule: [Event.Identifier]
+        
+        public let groupEvents: [Event.Identifier]
+        
+        public let favoriteEvents: [Event.Identifier]
+        
+        public let groups: [Group]
+        
+        public let feedback: [Feedback.Identifier]
+        
+        public let affiliations: [Affiliation]
+    }
+    
+    public struct Attendee: Codable {
+        
+        public typealias Identifier = Model.Attendee.Identifier
+        
+        public let identifier: Identifier
+        
+        public var member: Member.Identifier
+        
+        public var tickets: [TicketType.Identifier]
+    }
+    
+    public struct Group: Codable {
+        
+        public typealias Identifier = Model.Group.Identifier
+        
+        public let identifier: Identifier
+        
+        public var title: String
+        
+        public var descriptionText: String?
+        
+        public var code: String
+    }
+    
+    public struct Feedback: Codable {
+        
+        public typealias Identifier = Model.Feedback.Identifier
+        
+        public let identifier: Identifier
+        
+        public let rate: Int
+        
+        public let review: String
+        
+        public let date: Date
+        
+        public let event: Event.Identifier
+        
+        public let member: Member
+    }
 }
 
 // MARK: - Model Conversion
@@ -858,6 +959,12 @@ extension Model.Venue: SummitJSONDecodable {
         self.address = json.address
         self.city = json.city
         self.zipCode = json.zipCode
+        self.state = json.state
+        self.longitude = json.longitude
+        self.latitude = json.latitude
+        self.maps = .from(json.maps)
+        self.images = .from(json.images)
+        self.floors = .from(json.floors)
     }
 }
 
@@ -866,6 +973,11 @@ extension Model.VenueRoom: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.VenueRoom) {
         
         self.identifier = json.identifier
+        self.name = json.name
+        self.descriptionText = json.descriptionText
+        self.capacity = json.capacity
+        self.venue = json.venue
+        self.floor = json.floor
     }
 }
 
@@ -874,6 +986,12 @@ extension Model.VenueFloor: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.VenueFloor) {
         
         self.identifier = json.identifier
+        self.name = json.name
+        self.descriptionText = json.descriptionText
+        self.number = json.number
+        self.image = json.image
+        self.venue = json.venue
+        self.rooms = json.rooms ?? []
     }
 }
 
@@ -882,6 +1000,8 @@ extension Model.Track: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.Track) {
         
         self.identifier = json.identifier
+        self.name = json.name
+        self.groups = json.groups
     }
 }
 
@@ -890,6 +1010,10 @@ extension Model.TrackGroup: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.TrackGroup) {
         
         self.identifier = json.identifier
+        self.name = json.name
+        self.descriptionText = json.descriptionText
+        self.color = json.color
+        self.tracks = json.tracks
     }
 }
 
@@ -898,6 +1022,27 @@ extension Model.Event: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.Event) {
         
         self.identifier = json.identifier
+        self.name = json.name
+        self.summit = json.summit
+        self.descriptionText = json.descriptionText
+        self.socialDescription = json.socialDescription
+        self.start = json.start
+        self.end = json.end
+        self.track = json.track
+        self.allowFeedback = json.allowFeedback
+        self.averageFeedback = json.averageFeedback
+        self.type = json.type
+        self.rsvp = json.rsvp
+        self.externalRSVP = json.externalRSVP ?? false
+        self.willRecord = json.willRecord ?? false
+        self.attachment = json.attachment
+        self.sponsors = json.sponsors
+        self.tags = .from(json.tags)
+        self.location = json.location
+        self.videos = .from(json.videos)
+        self.slides = .from(json.slides)
+        self.links = .from(json.links)
+        self.presentation = .init(jsonDecodable: json) // decodes from self
     }
 }
 
@@ -906,6 +1051,9 @@ extension Model.EventType: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.EventType) {
         
         self.identifier = json.identifier
+        self.name = json.name
+        self.color = json.color
+        self.blackOutTimes = json.blackOutTimes
     }
 }
 
@@ -913,7 +1061,10 @@ extension Model.Presentation: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Event) {
         
-        self.identifier = json.identifier
+        self.identifier = Model.Presentation.Identifier(rawValue: json.identifier.rawValue)
+        self.level = json.level
+        self.moderator = json.moderator
+        self.speakers = json.speakers ?? []
     }
 }
 
@@ -922,6 +1073,13 @@ extension Model.Link: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.Link) {
         
         self.identifier = json.identifier
+        self.name = json.name
+        self.descriptionText = json.descriptionText
+        self.displayOnSite = json.displayOnSite
+        self.featured = json.featured
+        self.order = json.order
+        self.link = json.link
+        self.event = json.event
     }
 }
 
@@ -930,6 +1088,7 @@ extension Model.Tag: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.Tag) {
         
         self.identifier = json.identifier
+        self.name = json.name
     }
 }
 
@@ -938,6 +1097,16 @@ extension Model.Video: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.Video) {
         
         self.identifier = json.identifier
+        self.name = json.name
+        self.descriptionText = json.descriptionText
+        self.displayOnSite = json.displayOnSite
+        self.featured = json.featured
+        self.highlighted = json.highlighted
+        self.youtube = json.youtube
+        self.order = json.order
+        self.dataUploaded = json.dataUploaded
+        self.views = json.views
+        self.event = json.event
     }
 }
 
@@ -946,6 +1115,13 @@ extension Model.Slide: SummitJSONDecodable {
     public init(jsonDecodable json: SummitResponse.Slide) {
         
         self.identifier = json.identifier
+        self.name = json.name
+        self.descriptionText = json.descriptionText
+        self.displayOnSite = json.displayOnSite
+        self.featured = json.featured
+        self.order = json.order
+        self.event = json.event
+        self.link = json.link
     }
 }
 

@@ -353,7 +353,7 @@ public struct Model {
         
         public var image: URL?
         
-        public var venue: Image.Identifier
+        public var venue: Venue.Identifier
         
         public var rooms: [VenueRoom.Identifier]
     }
@@ -370,25 +370,7 @@ public struct Model {
             }
         }
         
-        public enum ClassName: String, Codable {
-            
-            case SummitVenueRoom
-        }
-        
-        private enum CodingKeys: String, CodingKey {
-            
-            case identifier = "id"
-            case name
-            case descriptionText = "description"
-            case type = "class_name"
-            case capacity
-            case venue = "venue_id"
-            case floor = "floor_id"
-        }
-        
         public let identifier: Identifier
-        
-        public let type: ClassName
         
         public var name: String
         
@@ -411,13 +393,6 @@ public struct Model {
                 
                 self.rawValue = rawValue
             }
-        }
-        
-        private enum CodingKeys: String, CodingKey {
-            
-            case identifier = "id"
-            case name
-            case groups = "track_groups"
         }
         
         public let identifier: Identifier
@@ -487,7 +462,7 @@ public struct Model {
         
         public var name: String
         
-        public var summit: Identifier
+        public var summit: Summit.Identifier
         
         public var descriptionText: String?
         
@@ -497,13 +472,13 @@ public struct Model {
         
         public var end: Date
         
-        public var track: Identifier?
+        public var track: Track.Identifier?
         
         public var allowFeedback: Bool
         
         public var averageFeedback: Double
         
-        public var type: Identifier
+        public var type: EventType.Identifier
         
         public var rsvp: String?
         

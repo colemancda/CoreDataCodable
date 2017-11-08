@@ -236,14 +236,39 @@ final class CoreDataCodableTests: XCTestCase {
         
         let jsonData = try! Data(contentsOf: URL(fileURLWithPath: resourcePath))
         
-        do {
+        XCTAssertNoThrow(try context {
             
-            let summit = try jsonDecoder.decode(SummitResponse.Summit.self, from: jsonData)
+            let summitJSON = try jsonDecoder.decode(SummitResponse.Summit.self, from: jsonData)
             
-        } catch {
+            let summit = Model.Summit(jsonDecodable: summitJSON)
             
-            XCTFail("\(error)")
-        }
+            var encoder = CoreDataEncoder(managedObjectContext: $0)
+            encoder.log = { print($0) }
+            
+            print("Will encode")
+            
+            let managedObject = try encoder.encode(summit) as! SummitManagedObject
+            
+            print("Did encode")
+            
+            print(managedObject)
+            
+            XCTAssert(managedObject.identifier == summit.identifier.rawValue)
+            
+            var decoder = CoreDataDecoder(managedObjectContext: $0)
+            decoder.log = { print($0) }
+            
+            print("Will decode")
+            
+            let decoded = try decoder.decode(Model.Summit.self, with: summit.identifier)
+            
+            print("Did decode")
+            
+            XCTAssert(decoded.identifier == summit.identifier)
+            XCTAssert(String(describing: decoded) == String(describing: summit))
+            
+            try $0.save()
+        })
     }
 }
 
