@@ -229,11 +229,11 @@ public struct Model {
         case venue(Venue)
         case room(VenueRoom)
         
-        public var identifier: Identifier {
+        public var identifier: CoreDataIdentifier {
             
             switch self {
-            case let .venue(venue): return Identifier(rawValue: venue.identifier.rawValue)
-            case let .room(room): return Identifier(rawValue: room.identifier.rawValue)
+            case let .venue(venue): return venue.identifier
+            case let .room(room): return room.identifier
             }
         }
         
@@ -330,17 +330,6 @@ public struct Model {
                 
                 self.rawValue = rawValue
             }
-        }
-        
-        private enum CodingKeys: String, CodingKey {
-            
-            case identifier = "id"
-            case name
-            case descriptionText = "description"
-            case number
-            case image
-            case venue = "venue_id"
-            case rooms
         }
         
         public let identifier: Identifier
@@ -478,7 +467,7 @@ public struct Model {
         
         public var averageFeedback: Double
         
-        public var type: EventType.Identifier
+        public var eventType: EventType.Identifier
         
         public var rsvp: String?
         
@@ -645,7 +634,7 @@ public struct Model {
         
         public var link: URL
         
-        public var event: Identifier
+        public var event: Event.Identifier
     }
     
     public struct Member: Codable {
@@ -786,7 +775,6 @@ extension Model.Affiliation: SummitUnique { }
 extension Model.AffiliationOrganization: SummitUnique { }
 extension Model.TicketType: SummitUnique { }
 extension Model.Image: SummitUnique { }
-extension Model.Location: SummitUnique { }
 extension Model.Venue: SummitUnique { }
 extension Model.VenueRoom: SummitUnique { }
 extension Model.VenueFloor: SummitUnique { }
@@ -867,11 +855,6 @@ extension Model.Image.Identifier: SummitCoreDataIdentifier {
     public typealias ManagedObject = ImageManagedObject
 }
 
-extension Model.Location.Identifier: SummitCoreDataIdentifier {
-    
-    public typealias ManagedObject = LocationManagedObject
-}
-
 extension Model.Venue.Identifier: SummitCoreDataIdentifier {
     
     public typealias ManagedObject = VenueManagedObject
@@ -947,6 +930,11 @@ extension Model.Feedback.Identifier: SummitCoreDataIdentifier {
     public typealias ManagedObject = FeedbackManagedObject
 }
 
+extension Model.Location.Identifier: SummitCoreDataIdentifier {
+    
+    public typealias ManagedObject = LocationManagedObject
+}
+
 // MARK: - CoreDataCodable
 
 extension Model.Summit: CoreDataCodable {
@@ -961,7 +949,6 @@ extension Model.Affiliation: CoreDataCodable { }
 extension Model.AffiliationOrganization: CoreDataCodable { }
 extension Model.TicketType: CoreDataCodable { }
 extension Model.Image: CoreDataCodable { }
-extension Model.Location: CoreDataCodable { }
 extension Model.Venue: CoreDataCodable { }
 extension Model.VenueRoom: CoreDataCodable { }
 extension Model.VenueFloor: CoreDataCodable { }
@@ -975,3 +962,9 @@ extension Model.Tag: CoreDataCodable { }
 extension Model.Video: CoreDataCodable { }
 extension Model.Slide: CoreDataCodable { }
 
+extension Model.Location: CoreDataCodable {
+    
+    public static var identifierKey: CodingKey { return Model.Summit.identifierKey }
+    
+    public var coreDataIdentifier: CoreDataIdentifier { return identifier }
+}

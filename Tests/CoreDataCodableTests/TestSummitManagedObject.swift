@@ -251,7 +251,7 @@ public final class VenueFloorManagedObject: Entity {
     
     @NSManaged public var number: Int16
     
-    @NSManaged public var imageURL: String?
+    @NSManaged public var image: String?
     
     @NSManaged public var venue: VenueManagedObject
     
@@ -317,7 +317,7 @@ public final class SpeakerManagedObject: Entity {
     
     @NSManaged public var title: String?
     
-    @NSManaged public var pictureURL: String
+    @NSManaged public var picture: String
     
     @NSManaged public var twitter: String?
     
@@ -449,7 +449,7 @@ public final class MemberManagedObject: Entity {
     
     @NSManaged public var gender: String?
     
-    @NSManaged public var pictureURL: String
+    @NSManaged public var picture: String
     
     @NSManaged public var twitter: String?
     

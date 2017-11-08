@@ -341,7 +341,7 @@ extension NSManagedObjectContext {
         fetchRequest.predicate = NSPredicate(format: "%K == %@", property, identifier)
         fetchRequest.fetchLimit = 1
         fetchRequest.includesSubentities = true
-        fetchRequest.returnsObjectsAsFaults = true
+        fetchRequest.returnsObjectsAsFaults = false
         
         if let existing = try self.fetch(fetchRequest).first {
             

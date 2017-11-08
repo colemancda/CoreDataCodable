@@ -335,9 +335,7 @@ fileprivate extension CoreDataEncoder {
             // identifier or to-one relationship
             if let identifier = value as? CoreDataIdentifier {
                 
-                let encodable = encoder.encodable
-                
-                let identifierKey = type(of: encodable).identifierKey.stringValue
+                let identifierKey = type(of: encoder.encodable).identifierKey.stringValue
                 
                 // identifier
                 if key.stringValue == identifierKey {

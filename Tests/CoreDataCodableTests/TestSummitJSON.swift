@@ -710,7 +710,7 @@ public struct SummitResponse: Codable, RawRepresentable {
         
         public var link: URL
         
-        public var event: Identifier
+        public var event: Event.Identifier
     }
     
     public struct Member: Codable {
@@ -1034,7 +1034,7 @@ extension Model.Event: SummitJSONDecodable {
         self.track = json.track
         self.allowFeedback = json.allowFeedback
         self.averageFeedback = json.averageFeedback
-        self.type = json.type
+        self.eventType = json.type
         self.rsvp = json.rsvp
         self.externalRSVP = json.externalRSVP ?? false
         self.willRecord = json.willRecord ?? false

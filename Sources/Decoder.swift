@@ -271,7 +271,15 @@ fileprivate extension CoreDataDecoder.Decoder {
         // override for CoreData supported native types that also are Decodable
         // and don't use Decodable implementation
         
-        if type is Data.Type {
+        if let string = value as? String, type is URL.Type {
+            
+            return URL(string: string) as! T
+            
+        } else if let string = value as? String, type is UUID.Type {
+            
+            return UUID(uuidString: string) as! T
+            
+        } else if type is Data.Type {
             
             return try unbox(value, as: type)
             
