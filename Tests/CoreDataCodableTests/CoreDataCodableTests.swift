@@ -11,6 +11,8 @@ import XCTest
 import CoreData
 import CoreDataCodable
 
+let SummitJSONIdentifiers = [6, 7, 22]
+
 final class CoreDataCodableTests: XCTestCase {
     
     func testAttributes() {
@@ -232,47 +234,49 @@ final class CoreDataCodableTests: XCTestCase {
         
         let jsonDecoder = JSONDecoder()
         
-        let filename = "Summit7"
-        
-        let testBundle = Bundle(for: type(of: self))
-        
-        let resourcePath = testBundle.path(forResource: filename, ofType: "json", inDirectory: nil, forLocalization: nil)!
-        
-        let jsonData = try! Data(contentsOf: URL(fileURLWithPath: resourcePath))
-        
-        XCTAssertNoThrow(try context {
+        for jsonIdentifier in SummitJSONIdentifiers {
             
-            let summitJSON = try jsonDecoder.decode(SummitResponse.Summit.self, from: jsonData)
+            let filename = "Summit\(jsonIdentifier)"
             
-            let summit = Model.Summit(jsonDecodable: summitJSON)
+            let testBundle = Bundle(for: type(of: self))
             
-            var encoder = CoreDataEncoder(managedObjectContext: $0)
-            encoder.log = { print($0) }
+            let resourcePath = testBundle.path(forResource: filename, ofType: "json", inDirectory: nil, forLocalization: nil)!
             
-            print("Will encode")
+            let jsonData = try! Data(contentsOf: URL(fileURLWithPath: resourcePath))
             
-            let managedObject = try encoder.encode(summit) as! SummitManagedObject
-            
-            print("Did encode")
-            
-            print(managedObject)
-            
-            XCTAssert(managedObject.identifier == summit.identifier.rawValue)
-            
-            var decoder = CoreDataDecoder(managedObjectContext: $0)
-            decoder.log = { print($0) }
-            
-            print("Will decode")
-            
-            let decoded = try decoder.decode(Model.Summit.self, with: summit.identifier)
-            
-            print("Did decode")
-            
-            XCTAssert(decoded.identifier == summit.identifier)
-            XCTAssert(String(describing: decoded) == String(describing: summit))
-            
-            try $0.save()
-        })
+            XCTAssertNoThrow(try context {
+                
+                let summitJSON = try jsonDecoder.decode(SummitResponse.Summit.self, from: jsonData)
+                
+                let summit = Model.Summit(jsonDecodable: summitJSON)
+                
+                var encoder = CoreDataEncoder(managedObjectContext: $0)
+                //encoder.log = { print($0) }
+                
+                print("Will encode")
+                
+                let managedObject = try encoder.encode(summit) as! SummitManagedObject
+                
+                print("Did encode")
+                
+                print(managedObject)
+                
+                XCTAssert(managedObject.identifier == summit.identifier.rawValue)
+                
+                var decoder = CoreDataDecoder(managedObjectContext: $0)
+                //decoder.log = { print($0) }
+                
+                print("Will decode")
+                
+                let decoded = try decoder.decode(Model.Summit.self, with: summit.identifier)
+                
+                print("Did decode")
+                
+                XCTAssert(decoded.identifier == summit.identifier)
+                
+                try $0.save()
+            })
+        }
     }
 }
 

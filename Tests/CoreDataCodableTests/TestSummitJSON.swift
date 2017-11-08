@@ -24,7 +24,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Summit: Codable {
         
-        public typealias Identifier = Model.Summit.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -117,7 +117,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct WirelessNetwork: Codable {
         
-        public typealias Identifier = Model.WirelessNetwork.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -141,7 +141,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Company: Codable {
         
-        public typealias Identifier = Model.Company.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -156,7 +156,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Speaker: Codable {
         
-        public typealias Identifier = Model.Speaker.Identifier
+        public typealias Identifier = Int64
         
         public enum CodingKeys: String, CodingKey {
             
@@ -192,7 +192,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Affiliation: Codable {
         
-        public typealias Identifier = Model.Affiliation.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -219,7 +219,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct AffiliationOrganization: Codable {
         
-        public typealias Identifier = Model.AffiliationOrganization.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -234,7 +234,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct TicketType: Codable {
         
-        public typealias Identifier = Model.TicketType.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -252,7 +252,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Image: Codable {
         
-        public typealias Identifier = Model.Image.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -267,7 +267,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public enum Location: Codable {
         
-        public typealias Identifier = Model.Location.Identifier
+        public typealias Identifier = Int64
         
         public enum ClassName: String, Codable {
             
@@ -315,7 +315,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Venue: Codable {
         
-        public typealias Identifier = Model.Venue.Identifier
+        public typealias Identifier = Int64
         
         public typealias LocationType = Model.Venue.LocationType
         
@@ -373,7 +373,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct VenueFloor: Codable {
         
-        public typealias Identifier = Model.VenueFloor.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -403,7 +403,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct VenueRoom: Codable {
         
-        public typealias Identifier = Model.VenueRoom.Identifier
+        public typealias Identifier = Int64
         
         public enum ClassName: String, Codable {
             
@@ -438,7 +438,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Track: Codable {
         
-        public typealias Identifier = Model.Track.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -456,7 +456,7 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct TrackGroup: Codable {
         
-        public typealias Identifier = Model.TrackGroup.Identifier
+        public typealias Identifier = Int64
         
         private enum CodingKeys: String, CodingKey {
             
@@ -480,8 +480,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct EventType: Codable {
         
-        public typealias Identifier = Model.EventType.Identifier
-        
+        public typealias Identifier = Int64
+
         private enum CodingKeys: String, CodingKey {
             
             case identifier = "id"
@@ -501,8 +501,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Event: Codable {
         
-        public typealias Identifier = Model.Event.Identifier
-        
+        public typealias Identifier = Int64
+
         private enum CodingKeys: String, CodingKey {
             
             case identifier = "id"
@@ -592,8 +592,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Link: Codable {
         
-        public typealias Identifier = Model.Link.Identifier
-        
+        public typealias Identifier = Int64
+
         private enum CodingKeys: String, CodingKey {
             
             case identifier = "id"
@@ -625,8 +625,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Tag: Codable {
         
-        public typealias Identifier = Model.Tag.Identifier
-        
+        public typealias Identifier = Int64
+
         private enum CodingKeys: String, CodingKey {
             
             case identifier = "id"
@@ -640,8 +640,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Video: Codable {
         
-        public typealias Identifier = Model.Video.Identifier
-        
+        public typealias Identifier = Int64
+
         private enum CodingKeys: String, CodingKey {
             
             case identifier = "id"
@@ -682,8 +682,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Slide: Codable {
         
-        public typealias Identifier = Model.Slide.Identifier
-        
+        public typealias Identifier = Int64
+
         private enum CodingKeys: String, CodingKey {
             
             case identifier = "id"
@@ -715,8 +715,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Member: Codable {
         
-        public typealias Identifier = Model.Member.Identifier
-        
+        public typealias Identifier = Int64
+
         private enum CodingKeys: String, CodingKey {
             
             case identifier = "id"
@@ -775,8 +775,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Attendee: Codable {
         
-        public typealias Identifier = Model.Attendee.Identifier
-        
+        public typealias Identifier = Int64
+
         public let identifier: Identifier
         
         public var member: Member.Identifier
@@ -786,8 +786,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Group: Codable {
         
-        public typealias Identifier = Model.Group.Identifier
-        
+        public typealias Identifier = Int64
+
         public let identifier: Identifier
         
         public var title: String
@@ -799,8 +799,8 @@ public struct SummitResponse: Codable, RawRepresentable {
     
     public struct Feedback: Codable {
         
-        public typealias Identifier = Model.Feedback.Identifier
-        
+        public typealias Identifier = Int64
+
         public let identifier: Identifier
         
         public let rate: Int
@@ -832,11 +832,43 @@ public extension Collection where Self.Iterator.Element: SummitJSONDecodable {
     }
 }
 
+private extension Collection where Self.Iterator.Element: RawRepresentable {
+    
+    static func from(_ rawValues: [Self.Iterator.Element.RawValue]?) -> [Self.Iterator.Element] {
+        
+        return rawValues?.flatMap { Self.Iterator.Element.init(rawValue: $0) } ?? []
+    }
+}
+
+private extension Int64 {
+    
+    func toIdentifier<T>() -> T? where T: CoreDataIdentifier, T: RawRepresentable, T.RawValue == Int64 {
+        
+        return T.init(rawValue: self)
+    }
+}
+
+private extension Collection where Self.Iterator.Element == Int64 {
+    
+    func toIdentifiers<T>() -> [T] where T: CoreDataIdentifier, T: RawRepresentable, T.RawValue == Int64 {
+        
+        return flatMap { $0.toIdentifier() }
+    }
+}
+
+private extension Optional where Wrapped: Collection, Wrapped.Iterator.Element == Int64 {
+    
+    func toIdentifiers<T>() -> [T] where T: CoreDataIdentifier, T: RawRepresentable, T.RawValue == Int64 {
+        
+        return self?.toIdentifiers() ?? []
+    }
+}
+
 extension Model.Summit: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Summit) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
         self.timeZone = json.timeZone.name
         self.datesLabel = json.datesLabel
@@ -862,7 +894,7 @@ extension Model.Company: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Company) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
     }
 }
@@ -871,7 +903,8 @@ extension Model.Speaker: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Speaker) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
+        self.addressBookSectionName = AddressBook.section(for: json.firstName)
         self.firstName = json.firstName
         self.lastName = json.lastName
         self.title = json.title
@@ -887,11 +920,11 @@ extension Model.WirelessNetwork: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.WirelessNetwork) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
         self.password = json.password
         self.descriptionText = json.descriptionText
-        self.summit = json.summit
+        self.summit = .init(json.summit)
     }
 }
 
@@ -899,8 +932,8 @@ extension Model.Affiliation: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Affiliation) {
         
-        self.identifier = json.identifier
-        self.member = json.member
+        self.identifier = .init(json.identifier)
+        self.member = .init(json.member)
         self.start = json.start
         self.end = json.end
         self.isCurrent = json.isCurrent
@@ -912,7 +945,7 @@ extension Model.AffiliationOrganization: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.AffiliationOrganization) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
     }
 }
@@ -921,7 +954,7 @@ extension Model.TicketType: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.TicketType) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
         self.descriptionText = json.descriptionText
     }
@@ -931,7 +964,7 @@ extension Model.Image: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Image) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.url = json.url
     }
 }
@@ -953,7 +986,7 @@ extension Model.Venue: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Venue) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.venueType = json.type
         self.name = json.name
         self.descriptionText = json.descriptionText
@@ -975,12 +1008,12 @@ extension Model.VenueRoom: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.VenueRoom) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
         self.descriptionText = json.descriptionText
         self.capacity = json.capacity
-        self.venue = json.venue
-        self.floor = json.floor
+        self.venue = .init(json.venue)
+        self.floor = json.floor?.toIdentifier()
     }
 }
 
@@ -988,13 +1021,13 @@ extension Model.VenueFloor: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.VenueFloor) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
         self.descriptionText = json.descriptionText
         self.number = json.number
         self.image = json.image
-        self.venue = json.venue
-        self.rooms = json.rooms ?? []
+        self.venue = .init(json.venue)
+        self.rooms = json.rooms.toIdentifiers()
     }
 }
 
@@ -1002,9 +1035,9 @@ extension Model.Track: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Track) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
-        self.groups = json.groups
+        self.groups = json.groups.toIdentifiers()
     }
 }
 
@@ -1012,11 +1045,11 @@ extension Model.TrackGroup: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.TrackGroup) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
         self.descriptionText = json.descriptionText
         self.color = json.color
-        self.tracks = json.tracks
+        self.tracks = json.tracks.toIdentifiers()
     }
 }
 
@@ -1024,24 +1057,24 @@ extension Model.Event: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Event) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
-        self.summit = json.summit
+        self.summit = .init(json.summit)
         self.descriptionText = json.descriptionText
         self.socialDescription = json.socialDescription
         self.start = json.start
         self.end = json.end
-        self.track = json.track
+        self.track = json.track?.toIdentifier()
         self.allowFeedback = json.allowFeedback
         self.averageFeedback = json.averageFeedback
-        self.eventType = json.type
+        self.eventType = .init(json.type)
         self.rsvp = json.rsvp
         self.externalRSVP = json.externalRSVP ?? false
         self.willRecord = json.willRecord ?? false
         self.attachment = json.attachment
-        self.sponsors = json.sponsors
+        self.sponsors = json.sponsors.toIdentifiers()
         self.tags = .from(json.tags)
-        self.location = json.location
+        self.location = json.location?.toIdentifier()
         self.videos = .from(json.videos)
         self.slides = .from(json.slides)
         self.links = .from(json.links)
@@ -1053,7 +1086,7 @@ extension Model.EventType: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.EventType) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
         self.color = json.color
         self.blackOutTimes = json.blackOutTimes
@@ -1064,10 +1097,10 @@ extension Model.Presentation: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Event) {
         
-        self.identifier = Model.Presentation.Identifier(rawValue: json.identifier.rawValue)
+        self.identifier = .init(json.identifier)
         self.level = json.level
-        self.moderator = json.moderator
-        self.speakers = json.speakers ?? []
+        self.moderator = json.moderator?.toIdentifier()
+        self.speakers = json.speakers.toIdentifiers()
     }
 }
 
@@ -1075,14 +1108,14 @@ extension Model.Link: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Link) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
         self.descriptionText = json.descriptionText
         self.displayOnSite = json.displayOnSite
         self.featured = json.featured
         self.order = json.order
         self.link = json.link
-        self.event = json.event
+        self.event = .init(json.event)
     }
 }
 
@@ -1090,7 +1123,7 @@ extension Model.Tag: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Tag) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
     }
 }
@@ -1099,7 +1132,7 @@ extension Model.Video: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Video) {
         
-        self.identifier = json.identifier
+        self.identifier = .init(json.identifier)
         self.name = json.name
         self.descriptionText = json.descriptionText
         self.displayOnSite = json.displayOnSite
@@ -1109,7 +1142,7 @@ extension Model.Video: SummitJSONDecodable {
         self.order = json.order
         self.dataUploaded = json.dataUploaded
         self.views = json.views
-        self.event = json.event
+        self.event = .init(json.event)
     }
 }
 
@@ -1117,13 +1150,13 @@ extension Model.Slide: SummitJSONDecodable {
     
     public init(jsonDecodable json: SummitResponse.Slide) {
         
-        self.identifier = json.identifier
-        self.name = json.name
+        self.identifier = .init(json.identifier)
+        self.name = json.name ?? ""
         self.descriptionText = json.descriptionText
         self.displayOnSite = json.displayOnSite
         self.featured = json.featured
         self.order = json.order
-        self.event = json.event
+        self.event = .init(json.event)
         self.link = json.link
     }
 }

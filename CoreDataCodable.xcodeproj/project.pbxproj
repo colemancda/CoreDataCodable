@@ -15,6 +15,10 @@
 		6E0BD4AD1FABB7C300498866 /* TestAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */; };
 		6E0BD4AE1FABB7C300498866 /* TestAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */; };
 		6E0BD4AF1FABB7C300498866 /* TestAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */; };
+		6E5958281FB38507000C7F3A /* Summit6.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E5958261FB38506000C7F3A /* Summit6.json */; };
+		6E5958291FB38507000C7F3A /* Summit6.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E5958261FB38506000C7F3A /* Summit6.json */; };
+		6E59582A1FB38507000C7F3A /* Summit22.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E5958271FB38506000C7F3A /* Summit22.json */; };
+		6E59582B1FB38507000C7F3A /* Summit22.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E5958271FB38506000C7F3A /* Summit22.json */; };
 		6E5C6DAC1FB0253F0081FD21 /* TestNested.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5C6DAB1FB0253E0081FD21 /* TestNested.swift */; };
 		6E5C6DAD1FB0253F0081FD21 /* TestNested.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5C6DAB1FB0253E0081FD21 /* TestNested.swift */; };
 		6E5C6DAE1FB0253F0081FD21 /* TestNested.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5C6DAB1FB0253E0081FD21 /* TestNested.swift */; };
@@ -54,6 +58,8 @@
 		6E79B7011FAD2D59008B3B93 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E79B6FF1FAD2D59008B3B93 /* CoreDataExtensions.swift */; };
 		6E79B7021FAD2D59008B3B93 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E79B6FF1FAD2D59008B3B93 /* CoreDataExtensions.swift */; };
 		6E79B7031FAD2D59008B3B93 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E79B6FF1FAD2D59008B3B93 /* CoreDataExtensions.swift */; };
+		6EA3E37F1FB387A000D0FA82 /* Summit22.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E5958271FB38506000C7F3A /* Summit22.json */; };
+		6EA3E3801FB387A300D0FA82 /* Summit6.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E5958261FB38506000C7F3A /* Summit6.json */; };
 		6ED33FC91FB157B40082A845 /* SummitModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6ED33FC71FB157B30082A845 /* SummitModel.xcdatamodeld */; };
 		6ED33FCA1FB157B40082A845 /* SummitModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6ED33FC71FB157B30082A845 /* SummitModel.xcdatamodeld */; };
 		6ED33FCB1FB157B40082A845 /* SummitModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6ED33FC71FB157B30082A845 /* SummitModel.xcdatamodeld */; };
@@ -100,6 +106,8 @@
 		52D6DA0F1BF000BD002C0205 /* CoreDataCodable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreDataCodable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E0BD4A71FAB8EE100498866 /* Encoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encoder.swift; sourceTree = "<group>"; };
 		6E0BD4AC1FABB7C300498866 /* TestAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAttributes.swift; sourceTree = "<group>"; };
+		6E5958261FB38506000C7F3A /* Summit6.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Summit6.json; sourceTree = "<group>"; };
+		6E5958271FB38506000C7F3A /* Summit22.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Summit22.json; sourceTree = "<group>"; };
 		6E5C6DAB1FB0253E0081FD21 /* TestNested.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestNested.swift; sourceTree = "<group>"; };
 		6E5C6DAF1FB0332A0081FD21 /* TestSummitJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSummitJSON.swift; sourceTree = "<group>"; };
 		6E5C6DB31FB033BF0081FD21 /* Summit7.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Summit7.json; sourceTree = "<group>"; };
@@ -234,7 +242,9 @@
 				6E5C6DAF1FB0332A0081FD21 /* TestSummitJSON.swift */,
 				6E5C6DB71FB0C6760081FD21 /* TestSummitModel.swift */,
 				6E5C6DBB1FB0D0910081FD21 /* TestSummitManagedObject.swift */,
+				6E5958261FB38506000C7F3A /* Summit6.json */,
 				6E5C6DB31FB033BF0081FD21 /* Summit7.json */,
+				6E5958271FB38506000C7F3A /* Summit22.json */,
 				6E7250DE1FAAD15700BCF637 /* TestModel.xcdatamodeld */,
 				6ED33FC71FB157B30082A845 /* SummitModel.xcdatamodeld */,
 			);
@@ -493,7 +503,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EA3E37F1FB387A000D0FA82 /* Summit22.json in Resources */,
 				6E5C6DB41FB033BF0081FD21 /* Summit7.json in Resources */,
+				6EA3E3801FB387A300D0FA82 /* Summit6.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,7 +534,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E59582A1FB38507000C7F3A /* Summit22.json in Resources */,
 				6E5C6DB51FB033BF0081FD21 /* Summit7.json in Resources */,
+				6E5958281FB38507000C7F3A /* Summit6.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,7 +544,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E59582B1FB38507000C7F3A /* Summit22.json in Resources */,
 				6E5C6DB61FB033BF0081FD21 /* Summit7.json in Resources */,
+				6E5958291FB38507000C7F3A /* Summit6.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

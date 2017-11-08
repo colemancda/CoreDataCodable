@@ -16,11 +16,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -69,11 +78,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -92,11 +110,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -109,15 +136,26 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
         public let identifier: Identifier
+        
+        public var addressBookSectionName: String
         
         public var firstName: String
         
@@ -140,11 +178,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -165,11 +212,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -182,11 +238,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -201,11 +266,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -218,11 +292,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -239,23 +322,40 @@ public struct Model {
         
         public init(from decoder: Decoder) throws {
             
-            if let venue = try? Venue(from: decoder) {
+            var errors = [Swift.Error]()
+            
+            do {
+                
+                let venue = try Venue(from: decoder)
                 
                 self = .venue(venue)
+                return
                 
-            } else if let room = try? VenueRoom(from: decoder) {
+            } catch {
                 
-                self = .room(room)
-                
-            } else {
-                
-                struct InvalidLocationError: Error {
-                    
-                    let context: DecodingError.Context
-                }
-                
-                throw InvalidLocationError(context: DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Could not decode location."))
+                errors.append(error)
             }
+            
+            do {
+                
+                let venue = try VenueRoom(from: decoder)
+                
+                self = .room(venue)
+                return
+                
+            } catch {
+                
+                errors.append(error)
+            }
+            
+            struct InvalidLocationError: Error {
+                
+                let errors: [Error]
+                
+                let context: DecodingError.Context
+            }
+            
+            throw InvalidLocationError(errors: errors, context: DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Could not decode location."))
         }
         
         public func encode(to encoder: Encoder) throws {
@@ -271,11 +371,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -324,11 +433,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -351,11 +469,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -376,11 +503,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -395,11 +531,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -418,11 +563,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -439,11 +593,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -502,11 +665,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -531,11 +703,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -560,11 +741,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -577,11 +767,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -612,17 +811,26 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
         public let identifier: Identifier
         
-        public var name: String?
+        public var name: String
         
         public var descriptionText: String?
         
@@ -641,11 +849,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -688,11 +905,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -707,11 +933,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -728,11 +963,20 @@ public struct Model {
         
         public struct Identifier: Codable, RawRepresentable {
             
-            public var rawValue: Int64
+            public let rawValue: Int64
             
-            public init(rawValue: Int64) {
+            public init?(rawValue: Int64) {
+                
+                guard rawValue > 0 else { return nil }
                 
                 self.rawValue = rawValue
+            }
+            
+            internal init(_ identifier: Int64) {
+                
+                assert(identifier > 0)
+                
+                self.rawValue = identifier
             }
         }
         
@@ -747,6 +991,26 @@ public struct Model {
         public let event: Event.Identifier
         
         public let member: Member
+    }
+}
+
+/// Type for organizing `Person` entities into an address book.
+public struct AddressBook {
+    
+    /// All the sections in the address book.
+    public static let sections = ["#","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+    
+    /// Generate an uppercase letter to use as an address book section derived from the person's name.
+    public static func section(for name: String) -> String {
+        
+        let unknownLetter = sections[0] // "#"
+        
+        guard let firstLetter = name.first
+            else { return unknownLetter }
+        
+        let uppercaseLetter = String(firstLetter).uppercased()
+        
+        return sections.contains(uppercaseLetter) ? uppercaseLetter : unknownLetter
     }
 }
 

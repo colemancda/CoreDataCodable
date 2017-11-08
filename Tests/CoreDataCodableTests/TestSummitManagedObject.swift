@@ -496,3 +496,109 @@ open class FeedbackManagedObject: Entity {
     @NSManaged open var member: MemberManagedObject
 }
 
+// MARK: - DecodableManagedObject
+
+extension Entity {
+    
+    public var decodedIdentifier: Any { return identifier }
+}
+
+extension SummitManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Summit.self }
+}
+
+extension WirelessNetworkManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.WirelessNetwork.self }
+}
+
+extension CompanyManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Company.self }
+}
+
+extension SpeakerManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Speaker.self }
+}
+
+extension AffiliationManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Affiliation.self }
+}
+
+extension AffiliationOrganizationManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.AffiliationOrganization.self }
+}
+
+extension TicketTypeManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.TicketType.self }
+}
+
+extension ImageManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Image.self }
+}
+
+extension VenueManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Venue.self }
+}
+
+extension VenueRoomManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.VenueRoom.self }
+}
+
+extension VenueFloorManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.VenueFloor.self }
+}
+
+extension TrackManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Track.self }
+}
+
+extension TrackGroupManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.TrackGroup.self }
+}
+
+extension EventManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Event.self }
+}
+
+extension EventTypeManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.EventType.self }
+}
+
+extension PresentationManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Presentation.self }
+}
+
+extension LinkManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Link.self }
+}
+
+extension TagManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Tag.self }
+}
+
+extension VideoManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Video.self }
+}
+
+extension SlideManagedObject: DecodableManagedObject {
+    
+    public var decodable: CoreDataCodable.Type { return Model.Slide.self }
+}
