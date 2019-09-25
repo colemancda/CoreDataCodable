@@ -9,8 +9,8 @@
 import Foundation
 import CoreData
 
-public struct CoreDataDecoder {
-
+public final class CoreDataDecoder {
+    
     // MARK: - Properties
     
     /// The managed object used to encode values.
@@ -60,15 +60,15 @@ public struct CoreDataDecoder {
 
 public extension CoreDataDecoder {
     
-    public typealias Log = (String) -> ()
+    typealias Log = (String) -> ()
     
-    public struct Options {
+    struct Options {
         
         public var nonNativeIntegerDecodingStrategy: NonNativeIntegerDecodingStrategy = .exactly
     }
     
     /// How to decode integers that arent supported by CoreData (e.g. Int8, UInt16).
-    public enum NonNativeIntegerDecodingStrategy {
+    enum NonNativeIntegerDecodingStrategy {
         
         /// Always throw for unsupported integer types.
         case `throw`
@@ -85,7 +85,7 @@ public extension CoreDataDecoder {
 
 fileprivate extension CoreDataDecoder {
     
-    fileprivate final class Decoder: Swift.Decoder {
+    final class Decoder: Swift.Decoder {
         
         // MARK: - Properties
         
@@ -187,7 +187,7 @@ fileprivate extension CoreDataDecoder {
 
 fileprivate extension CoreDataDecoder {
     
-    fileprivate struct Stack {
+    struct Stack {
         
         private(set) var containers = [Container]()
         
@@ -529,7 +529,7 @@ fileprivate extension CoreDataDecoder.Decoder {
 
 fileprivate extension CoreDataDecoder {
     
-    fileprivate struct ManagedObjectKeyedDecodingContainer<K : Swift.CodingKey>: Swift.KeyedDecodingContainerProtocol {
+    struct ManagedObjectKeyedDecodingContainer<K : Swift.CodingKey>: Swift.KeyedDecodingContainerProtocol {
         
         typealias Key = K
         
@@ -555,7 +555,7 @@ fileprivate extension CoreDataDecoder {
             self.decoder = decoder
             self.container = container
             self.codingPath = decoder.codingPath
-            self.allKeys = container.entity.allKeys.flatMap { Key(stringValue: $0) }
+            self.allKeys = container.entity.allKeys.compactMap { Key(stringValue: $0) }
         }
         
         // MARK: KeyedDecodingContainerProtocol
@@ -735,7 +735,7 @@ fileprivate extension CoreDataDecoder {
 
 fileprivate extension CoreDataDecoder {
     
-    fileprivate struct AttributeSingleValueDecodingContainer: Swift.SingleValueDecodingContainer {
+    struct AttributeSingleValueDecodingContainer: Swift.SingleValueDecodingContainer {
         
         // MARK: Properties
         
@@ -862,7 +862,7 @@ fileprivate extension CoreDataDecoder {
 
 fileprivate extension CoreDataDecoder {
     
-    fileprivate struct RelationshipUnkeyedDecodingContainer: Swift.UnkeyedDecodingContainer {
+    struct RelationshipUnkeyedDecodingContainer: Swift.UnkeyedDecodingContainer {
         
         // MARK: Properties
         
@@ -1052,7 +1052,7 @@ fileprivate extension CoreDataDecoder.RelationshipUnkeyedDecodingContainer {
 
 fileprivate extension CoreDataDecoder {
     
-    fileprivate struct RelationshipSingleValueDecodingContainer: Swift.SingleValueDecodingContainer {
+    struct RelationshipSingleValueDecodingContainer: Swift.SingleValueDecodingContainer {
         
         // MARK: Properties
         

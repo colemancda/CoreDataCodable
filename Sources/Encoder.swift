@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-public struct CoreDataEncoder {
+public final class CoreDataEncoder {
     
     // MARK: - Properties
     
@@ -60,7 +60,7 @@ public struct CoreDataEncoder {
 
 public extension CoreDataEncoder {
     
-    public enum Error: Swift.Error {
+    enum Error: Swift.Error {
         
         /// No key specified for container.
         case noKey
@@ -72,14 +72,14 @@ public extension CoreDataEncoder {
         case invalidType
     }
     
-    public typealias Log = (String) -> ()
+    typealias Log = (String) -> ()
 }
 
 // MARK: - Encoder
 
 fileprivate extension CoreDataEncoder {
     
-    fileprivate class Encoder: Swift.Encoder {
+    class Encoder: Swift.Encoder {
         
         // MARK: - Properties
         
@@ -233,7 +233,7 @@ fileprivate extension CoreDataEncoder {
 
 fileprivate extension CoreDataEncoder {
     
-    fileprivate struct KeyedEncodingContainer<K : CodingKey> : KeyedEncodingContainerProtocol {
+    struct KeyedEncodingContainer<K : CodingKey> : KeyedEncodingContainerProtocol {
         
         public typealias Key = K
         
@@ -516,7 +516,7 @@ fileprivate extension CoreDataEncoder {
 
 fileprivate extension CoreDataEncoder.Encoder {
     
-    fileprivate struct SingleValueEncodingContainer: Swift.SingleValueEncodingContainer {
+    struct SingleValueEncodingContainer: Swift.SingleValueEncodingContainer {
         
         fileprivate let encoder: CoreDataEncoder.Encoder
         
@@ -634,7 +634,7 @@ fileprivate extension CoreDataEncoder.Encoder {
 
 fileprivate extension CoreDataEncoder.Encoder {
     
-    fileprivate struct UnkeyedEncodingContainer: Swift.UnkeyedEncodingContainer {
+    struct UnkeyedEncodingContainer: Swift.UnkeyedEncodingContainer {
         
         fileprivate let encoder: CoreDataEncoder.Encoder
         

@@ -19,7 +19,7 @@ final class CoreDataCodableTests: XCTestCase {
         
         let value = TestAttributes(identifier: TestAttributes.Identifier(rawValue: "test01"),
                                    boolean: true,
-                                   data: Data(bytes: [0x01, 0x02, 0x03]),
+                                   data: Data([0x01, 0x02, 0x03]),
                                    date: Date(),
                                    decimal: Decimal(100.555555),
                                    double: 1.66666,
@@ -37,7 +37,7 @@ final class CoreDataCodableTests: XCTestCase {
         
         XCTAssertNoThrow(try context {
             
-            var encoder = CoreDataEncoder(managedObjectContext: $0)
+            let encoder = CoreDataEncoder(managedObjectContext: $0)
             encoder.log = { print($0) }
             
             print("Will encode")
@@ -66,7 +66,7 @@ final class CoreDataCodableTests: XCTestCase {
             XCTAssert(managedObject.enumValue == value.enumValue.rawValue)
             XCTAssertNil(managedObject.optional)
             
-            var decoder = CoreDataDecoder(managedObjectContext: $0)
+            let decoder = CoreDataDecoder(managedObjectContext: $0)
             decoder.log = { print($0) }
             
             print("Will decode")
@@ -105,7 +105,7 @@ final class CoreDataCodableTests: XCTestCase {
         
         XCTAssertNoThrow(try context {
             
-            var encoder = CoreDataEncoder(managedObjectContext: $0)
+            let encoder = CoreDataEncoder(managedObjectContext: $0)
             encoder.log = { print($0) }
             
             print("Will encode")
@@ -120,7 +120,7 @@ final class CoreDataCodableTests: XCTestCase {
             XCTAssert(Set(managedObject.children.map({ $0.identifier })) == Set(parent.children.map({ $0.rawValue })))
             XCTAssert(managedObject.child?.identifier == parent.child?.rawValue)
             
-            var decoder = CoreDataDecoder(managedObjectContext: $0)
+            let decoder = CoreDataDecoder(managedObjectContext: $0)
             decoder.log = { print($0) }
             
             print("Will decode")
@@ -151,13 +151,15 @@ final class CoreDataCodableTests: XCTestCase {
             TestChild(identifier: TestChild.Identifier(rawValue: "children03"), parent: parentIdentifier, parentToOne: nil)
         ]
         
-        let parent = TestFullfilledParent(identifier: parentIdentifier,
-                                child: child,
-                                children: children)
+        let parent = TestFullfilledParent(
+            identifier: parentIdentifier,
+            child: child,
+            children: children
+        )
         
          XCTAssertNoThrow(try context {
             
-            var encoder = CoreDataEncoder(managedObjectContext: $0)
+            let encoder = CoreDataEncoder(managedObjectContext: $0)
             encoder.log = { print($0) }
             
             let managedObject = try encoder.encode(parent) as! TestParentManagedObject
@@ -168,7 +170,7 @@ final class CoreDataCodableTests: XCTestCase {
             XCTAssert(Set(managedObject.children.map({ $0.identifier })) == Set(parent.children.map({ $0.identifier.rawValue })))
             XCTAssert(managedObject.child?.identifier == parent.child?.identifier.rawValue)
             
-            var decoder = CoreDataDecoder(managedObjectContext: $0)
+            let decoder = CoreDataDecoder(managedObjectContext: $0)
             decoder.log = { print($0) }
             
             print("Will decode")
@@ -201,7 +203,7 @@ final class CoreDataCodableTests: XCTestCase {
         
         XCTAssertNoThrow(try context {
             
-            var encoder = CoreDataEncoder(managedObjectContext: $0)
+            let encoder = CoreDataEncoder(managedObjectContext: $0)
             encoder.log = { print($0) }
             
             print("Will encode")
@@ -214,7 +216,7 @@ final class CoreDataCodableTests: XCTestCase {
             
             XCTAssert(managedObject.identifier == parent.identifier.rawValue)
             
-            var decoder = CoreDataDecoder(managedObjectContext: $0)
+            let decoder = CoreDataDecoder(managedObjectContext: $0)
             decoder.log = { print($0) }
             
             print("Will decode")
@@ -250,7 +252,7 @@ final class CoreDataCodableTests: XCTestCase {
                 
                 let summit = Model.Summit(jsonDecodable: summitJSON)
                 
-                var encoder = CoreDataEncoder(managedObjectContext: $0)
+                let encoder = CoreDataEncoder(managedObjectContext: $0)
                 //encoder.log = { print($0) }
                 
                 print("Will encode")
@@ -263,7 +265,7 @@ final class CoreDataCodableTests: XCTestCase {
                 
                 XCTAssert(managedObject.identifier == summit.identifier.rawValue)
                 
-                var decoder = CoreDataDecoder(managedObjectContext: $0)
+                let decoder = CoreDataDecoder(managedObjectContext: $0)
                 //decoder.log = { print($0) }
                 
                 print("Will decode")

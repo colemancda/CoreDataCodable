@@ -836,7 +836,7 @@ private extension Collection where Self.Iterator.Element: RawRepresentable {
     
     static func from(_ rawValues: [Self.Iterator.Element.RawValue]?) -> [Self.Iterator.Element] {
         
-        return rawValues?.flatMap { Self.Iterator.Element.init(rawValue: $0) } ?? []
+        return rawValues?.compactMap { Self.Iterator.Element.init(rawValue: $0) } ?? []
     }
 }
 
@@ -852,7 +852,7 @@ private extension Collection where Self.Iterator.Element == Int64 {
     
     func toIdentifiers<T>() -> [T] where T: CoreDataIdentifier, T: RawRepresentable, T.RawValue == Int64 {
         
-        return flatMap { $0.toIdentifier() }
+        return compactMap { $0.toIdentifier() }
     }
 }
 
