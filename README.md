@@ -1,5 +1,7 @@
 # CoreDataCodable
 
+Deprecated, instead use https://github.com/PureSwift/CoreModel
+
 `CoreDataCodable` framework provides a `CoreDataEncoder` and `CoreDataDecoder` to encode and decode Swift `Codable` types to CoreData `NSManagedObject`.
 
 # How to use
